@@ -1,10 +1,14 @@
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import Meta from 'gi://Meta';
+import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-import { Utils, Tiling, Keybindings, Topbar, Scratch, Minimap } from './imports.js';
+import {
+    Utils, Tiling, Keybindings, Topbar,
+    Scratch, Minimap, Settings
+} from './imports.js';
 
 /**
   Navigation and previewing functionality.
@@ -283,6 +287,17 @@ export let navigator;
 class NavigatorClass {
     constructor() {
         console.debug("#navigator", "nav created");
+
+        /**
+         * Hint for using take window mode (used in `takeWindow`).
+         */
+        this.takeHint = new St.Label({ style_class: 'take-window-hint' });
+        this.takeHint.clutter_text.set_markup(
+            `<b>Take window mode:</b>
+<i>• release keys to return all taken windows</i>
+<i>• press <span foreground="#6be67b">spacebar</span> to return the last taken window</i>
+<i>• press <span foreground="#6be67b">q</span> to close all taken windows</i>`);
+
         navigating = true;
 
         this.was_accepted = false;
@@ -318,6 +333,38 @@ class NavigatorClass {
             this.minimaps.set(space, minimapId);
         } else {
             typeof minimap !== 'number' && minimap.show();
+        }
+    }
+
+    /**
+     * Shows the "take window" hint.
+     * @param {Boolean} show
+     */
+    showTakeHint(show = true) {
+        if (show) {
+            const stage = global.stage;
+            // set position on stage
+            const x = stage.width - 400;
+            const y = 40;
+
+            this.takeHint.opacity = 0;
+            global.stage.add_child(this.takeHint);
+            this.takeHint.set_position(x, y);
+
+            Utils.Easer.addEase(this.takeHint, {
+                time: Settings.prefs.animation_time,
+                opacity: 255,
+            });
+        } else {
+            this.takeHint.opacity = 255;
+            global.stage.add_child(this.takeHint);
+            Utils.Easer.addEase(this.takeHint, {
+                time: Settings.prefs.animation_time,
+                opacity: 0,
+                onComplete: () => {
+                    global.stage.remove_child(this.takeHint);
+                },
+            });
         }
     }
 

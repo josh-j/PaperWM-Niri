@@ -4783,6 +4783,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
         return;
 
     if (!navigator._moving) {
+        navigator.showTakeHint(true);
         navigator._moving = [];
 
         // get the action dispatcher signal to connect to
@@ -4807,7 +4808,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
                 if (keysym === Clutter.KEY_q) {
                     // close all taken windows
                     navigator._moving.forEach(w => {
-                        Easer.addEase(w.clone, {
+                        Utils.Easer.addEase(w.clone, {
                             time: Settings.prefs.animation_time,
                             opacity: 0,
                             onComplete: () => {
@@ -4826,6 +4827,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
 
 
         signals.connectOneShot(navigator, 'destroy', () => {
+            navigator.showTakeHint(false);
             let selectedSpace = spaces.selectedSpace;
             navigator._moving.forEach(w => {
                 w.change_workspace(selectedSpace.workspace);
