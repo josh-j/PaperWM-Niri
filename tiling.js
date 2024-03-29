@@ -2,6 +2,7 @@ import Clutter from 'gi://Clutter';
 import GDesktopEnums from 'gi://GDesktopEnums';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
 import Graphene from 'gi://Graphene';
 import Meta from 'gi://Meta';
 import St from 'gi://St';
@@ -224,6 +225,51 @@ export function setInGrab(value) {
     inGrab = value;
 }
 
+export const SpaceShade = GObject.registerClass(
+    class SpaceShade extends St.Widget {
+        _init(space) {
+            super._init();
+
+            this.space = space;
+            const actor = space.actor;
+
+            // create shade
+            const shade = new St.Widget({ style_class: 'paperwm-clone-shade' });
+            this.shade = shade;
+            // default opacity
+            actor.add_child(shade);
+            Utils.actor_raise(shade);
+            shade.opacity = 255;
+            shade.show();
+            shade.set_size(100, 100);
+        }
+
+        updateSize(monitor) {
+            if (!monitor) {
+                return;
+            }
+
+            // get size of monitor
+            let y = monitor.y;
+            const width = monitor.width;
+            let height = monitor.height;
+
+            // check if space has topbar (to perterb height)
+            if (monitor === Topbar.panelMonitor()) {
+                const offset = Topbar.panelBox.height;
+                if (offset) {
+                    console.log(`has topbar ${offset}`);
+                    height -= offset;
+                    y += offset;
+                }
+            }
+
+            this.shade.set_position(0, y);
+            this.shade.set_size(width, height);
+        }
+    }
+);
+
 export class Space extends Array {
     /** @type {import('@gi-types/clutter10').Actor} */
     actor;
@@ -328,6 +374,9 @@ export class Space extends Array {
         if (Settings.prefs.show_window_position_bar) {
             this.enableWindowPositionBar();
         }
+
+        // add space shade
+        this.shade = new SpaceShade(this);
 
         // now set monitor for this space
         this.setMonitor(monitor);
@@ -1813,9 +1862,6 @@ border-radius: ${borderWidth}px;
             this.createBackground();
             this.updateColor();
             this.updateBackground();
-
-            // update width of windowPositonBarBackdrop (to match monitor)
-            this.windowPositionBarBackdrop.width = monitor.width;
         }
 
         let background = this.background;
@@ -1823,6 +1869,10 @@ border-radius: ${borderWidth}px;
 
         this.width = monitor.width;
         this.height = monitor.height;
+
+        // update width of windowPositonBarBackdrop (to match monitor)
+        this.windowPositionBarBackdrop.width = monitor.width;
+        this.shade.updateSize(this.monitor);
 
         let time = animate ? Settings.prefs.animation_time : 0;
 
