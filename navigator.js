@@ -93,8 +93,18 @@ class ActionDispatcher {
         this.signals.connect(this.actor, 'key-press-event', this._keyPressEvent.bind(this));
         this.signals.connect(this.actor, 'key-release-event', this._keyReleaseEvent.bind(this));
 
+        this.keyPressCallbacks = [];
+
         this._noModsTimeoutId = null;
         this._doActionTimeout = null;
+    }
+
+    /**
+     * Adds a signal to this dispatcher.  Will be destroyed when this
+     * dispatcher is destroyed.
+     */
+    addKeypressCallback(handler) {
+        this.keyPressCallbacks.push(handler);
     }
 
     show(backward, binding, mask) {
@@ -148,6 +158,11 @@ class ActionDispatcher {
         }
         let keysym = event.get_key_symbol();
         let action = global.display.get_keybinding_action(event.get_key_code(), event.get_state());
+
+        // action callbacks that have been added
+        this.keyPressCallbacks.forEach(callback => {
+            callback(actor, event);
+        });
 
         // Popping the modal on keypress doesn't work properly, as the release
         // event will leak to the active window. To work around this we initate
@@ -442,6 +457,14 @@ export function getActionDispatcher(mode) {
     }
     dispatcher = new ActionDispatcher();
     return getActionDispatcher(mode);
+}
+
+/**
+ * Returns the current ActionDispatcher (if there is one).
+ * @returns {ActionDispatcher}
+ */
+export function getCurrentDispatcher() {
+    return dispatcher;
 }
 
 /**
