@@ -4788,22 +4788,17 @@ export function takeWindow(metaWindow, space, { navigator }) {
         // get the action dispatcher signal to connect to
         Navigator.getCurrentDispatcher()
             .addKeypressCallback((actor, event) => {
-                console.log(`pressed`);
                 const keysym = event.get_key_symbol();
                 if (keysym === Clutter.KEY_space) {
                     // remove the last window you got
+                    const pop = navigator._moving.pop();
                     let selectedSpace = spaces.selectedSpace;
-                    navigator._moving.forEach(w => {
-                        w.change_workspace(selectedSpace.workspace);
-                        if (w.get_workspace() === selectedSpace.workspace) {
-                            insertWindow(w, { existing: true });
-
-                            // make space selectedWindow (keeps index for next insert)
-                            selectedSpace.selectedWindow = w;
-                        }
-                    });
-
-                    return Clutter.EVENT_STOP;
+                    if (pop) {
+                        pop.change_workspace(selectedSpace.workspace);
+                        insertWindow(pop, { existing: true });
+                        // make space selectedWindow (keeps index for next insert)
+                        selectedSpace.selectedWindow = pop;
+                    }
                 }
             });
 
