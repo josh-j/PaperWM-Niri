@@ -4799,6 +4799,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
                         insertWindow(pop, { existing: true });
                         // make space selectedWindow (keeps index for next insert)
                         selectedSpace.selectedWindow = pop;
+                        ensureViewport(pop);
                     }
                     // return true if this was actioned
                     return true;
