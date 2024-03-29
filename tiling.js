@@ -4786,7 +4786,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
         navigator._moving = [];
 
         // get the action dispatcher signal to connect to
-        Navigator.getCurrentDispatcher()
+        Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
             .addKeypressCallback((actor, event) => {
                 const keysym = event.get_key_symbol();
                 if (keysym === Clutter.KEY_space) {
@@ -4799,7 +4799,23 @@ export function takeWindow(metaWindow, space, { navigator }) {
                         // make space selectedWindow (keeps index for next insert)
                         selectedSpace.selectedWindow = pop;
                     }
+                    // return true if this was actioned
+                    return true;
                 }
+
+                // quit / close all that have been taken
+                if (keysym === Clutter.KEY_q) {
+                    // close all taken windows
+                    navigator._moving.forEach(w => {
+                        w.delete(global.get_current_time());
+                    });
+
+                    navigator._moving = [];
+                    return true;
+                }
+
+                // return false if no action taken
+                return false;
             });
 
 

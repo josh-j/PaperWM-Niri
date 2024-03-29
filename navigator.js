@@ -157,12 +157,16 @@ class ActionDispatcher {
             this._modifierMask = getModLock(event.get_state());
         }
         let keysym = event.get_key_symbol();
-        let action = global.display.get_keybinding_action(event.get_key_code(), event.get_state());
+        let action = global.display.get_keybinding_action(
+            event.get_key_code(),
+            event.get_state());
 
-        // action callbacks that have been added
-        this.keyPressCallbacks.forEach(callback => {
-            callback(actor, event);
-        });
+        // run callbacks and if any return true, stop bubbling
+        if (this.keyPressCallbacks.some(callback => {
+            return callback(actor, event);
+        })) {
+            return Clutter.EVENT_STOP;
+        }
 
         // Popping the modal on keypress doesn't work properly, as the release
         // event will leak to the active window. To work around this we initate
@@ -457,14 +461,6 @@ export function getActionDispatcher(mode) {
     }
     dispatcher = new ActionDispatcher();
     return getActionDispatcher(mode);
-}
-
-/**
- * Returns the current ActionDispatcher (if there is one).
- * @returns {ActionDispatcher}
- */
-export function getCurrentDispatcher() {
-    return dispatcher;
 }
 
 /**
