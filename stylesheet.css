@@ -33,7 +33,7 @@ NOTE: please update `./config/users.css` with any new styles added here.
 }
 
 .take-window-hint {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.8);
     padding: 8px;
     border-radius: 8px;
 }
