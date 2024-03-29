@@ -342,9 +342,9 @@ class NavigatorClass {
      */
     showTakeHint(show = true) {
         if (show) {
-            const stage = global.stage;
-            // set position on stage
-            const x = stage.width - 334;
+            // set position on stage, take into account monitor
+            const monitor = this.space.monitor;
+            const x = monitor.x + monitor.width - 335;
             const y = 40;
 
             this.takeHint.opacity = 0;
