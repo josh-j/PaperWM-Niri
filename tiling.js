@@ -238,7 +238,7 @@ export const SpaceShade = GObject.registerClass(
             this.shade = shade;
             // default opacity
             actor.add_child(shade);
-            Utils.actor_raise(shade);
+            Utils.actor_lower(shade);
             shade.opacity = 0;
             shade.hide;
         }
@@ -273,6 +273,19 @@ export const SpaceShade = GObject.registerClass(
                 time: Settings.prefs.animation_time,
                 opacity: Settings.prefs.minimap_shade_opacity,
             });
+
+            // now show for each window
+            this.space.getWindows().forEach(w => {
+                w.clone?.shade?.show();
+                if (w === this.space.selectedWindow) {
+                    return;
+                }
+
+                Easer.addEase(w.clone?.shade, {
+                    time: Settings.prefs.animation_time,
+                    opacity: Settings.prefs.minimap_shade_opacity,
+                });
+            });
         }
 
         hide() {
@@ -281,6 +294,15 @@ export const SpaceShade = GObject.registerClass(
                 opacity: 0,
                 onComplete: () => this.shade.hide(),
             });
+
+            this.space.getWindows()
+                .forEach(w => {
+                    Easer.addEase(w.clone?.shade, {
+                        time: Settings.prefs.animation_time,
+                        opacity: 0,
+                        onComplete: () => w.clone?.shade.hide(),
+                    });
+                });
         }
     }
 );

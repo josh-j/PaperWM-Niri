@@ -367,6 +367,16 @@ export function actor_raise(actor, above) {
     parent.set_child_above_sibling(actor, above);
 }
 
+export function actor_lower(actor, below) {
+    const parent = actor.get_parent();
+    if (!parent) {
+        return;
+    }
+    // needs to be null (not undefined) for valid second argument
+    below = below ?? null;
+    parent.set_child_below_sibling(actor, below);
+}
+
 export function actor_reparent(actor, newParent) {
     const parent = actor.get_parent();
     if (parent) {
