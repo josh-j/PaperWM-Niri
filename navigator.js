@@ -293,7 +293,7 @@ class NavigatorClass {
          */
         this.takeHint = new St.Label({ style_class: 'take-window-hint' });
         this.takeHint.clutter_text.set_markup(
-            `<b>Take window mode:</b>
+            `<b>"Take window" mode:</b>
 <i>• release keys to return all taken windows</i>
 <i>• press <span foreground="#6be67b">spacebar</span> to return the last taken window</i>
 <i>• press <span foreground="#6be67b">q</span> to close all taken windows</i>`);
@@ -344,7 +344,7 @@ class NavigatorClass {
         if (show) {
             const stage = global.stage;
             // set position on stage
-            const x = stage.width - 400;
+            const x = stage.width - 334;
             const y = 40;
 
             this.takeHint.opacity = 0;

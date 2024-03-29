@@ -4808,13 +4808,8 @@ export function takeWindow(metaWindow, space, { navigator }) {
                 if (keysym === Clutter.KEY_q) {
                     // close all taken windows
                     navigator._moving.forEach(w => {
-                        Utils.Easer.addEase(w.clone, {
-                            time: Settings.prefs.animation_time,
-                            opacity: 0,
-                            onComplete: () => {
-                                w.delete(global.get_current_time());
-                            },
-                        });
+                        insertWindow(w, { existing: true });
+                        w.delete(global.get_current_time());
                     });
 
                     navigator._moving = [];
