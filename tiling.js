@@ -234,14 +234,13 @@ export const SpaceShade = GObject.registerClass(
             const actor = space.actor;
 
             // create shade
-            const shade = new St.Widget({ style_class: 'paperwm-clone-shade' });
+            const shade = new St.Widget({ style_class: 'paperwm-space-shade' });
             this.shade = shade;
             // default opacity
             actor.add_child(shade);
             Utils.actor_raise(shade);
-            shade.opacity = 255;
-            shade.show();
-            shade.set_size(100, 100);
+            shade.opacity = 0;
+            shade.hide;
         }
 
         updateSize(monitor) {
@@ -266,6 +265,22 @@ export const SpaceShade = GObject.registerClass(
 
             this.shade.set_position(0, y);
             this.shade.set_size(width, height);
+        }
+
+        show() {
+            this.shade.show();
+            Easer.addEase(this.shade, {
+                time: Settings.prefs.animation_time,
+                opacity: Settings.prefs.minimap_shade_opacity,
+            });
+        }
+
+        hide() {
+            Easer.addEase(this.shade, {
+                time: Settings.prefs.animation_time,
+                opacity: 0,
+                onComplete: () => this.shade.hide(),
+            });
         }
     }
 );

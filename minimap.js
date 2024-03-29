@@ -20,18 +20,7 @@ export class Minimap extends Array {
         super();
         this.space = space;
         // initial fade
-        space.getWindows()
-            .forEach(w => {
-                w.clone?.shade?.show();
-                if (w === space.selectedWindow) {
-                    return;
-                }
-
-                Easer.addEase(w.clone?.shade, {
-                    time: Settings.prefs.animation_time,
-                    opacity: Settings.prefs.minimap_shade_opacity,
-                });
-            });
+        space.shade.show();
 
         this.monitor = monitor;
         let actor = new St.Widget({
@@ -273,14 +262,7 @@ export class Minimap extends Array {
     destroy() {
         if (this.destroyed)
             return;
-        this.space.getWindows()
-            .forEach(w => {
-                Easer.addEase(w.clone?.shade, {
-                    time: Settings.prefs.animation_time,
-                    opacity: 0,
-                    onComplete: () => w.clone?.shade.hide(),
-                });
-            });
+        this.space.shade.hide();
         this.destroyed = true;
         this.signals.destroy();
         this.signals = null;
