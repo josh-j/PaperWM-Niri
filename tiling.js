@@ -4790,6 +4790,10 @@ export function takeWindow(metaWindow, space, { navigator }) {
         Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
             .addKeypressCallback((actor, event) => {
                 const keysym = event.get_key_symbol();
+
+                /**
+                 * Pressing space returns the last taken window.
+                 */
                 if (keysym === Clutter.KEY_space) {
                     // remove the last window you got
                     const pop = navigator._moving.pop();
@@ -4802,6 +4806,25 @@ export function takeWindow(metaWindow, space, { navigator }) {
                         ensureViewport(pop);
                     }
                     // return true if this was actioned
+                    return true;
+                }
+
+                /**
+                 * Tab cycles the taken window order. Users can use this
+                 * to choose a window.
+                 */
+                if (keysym === Clutter.KEY_Tab) {
+                    const temparr = [];
+                    navigator._moving.unshift(navigator._moving.pop());
+                    navigator._moving.forEach(w => {
+                        temparr.push(w);
+                        insertWindow(w, { existing: true });
+                    });
+
+                    navigator._moving = [];
+                    temparr.forEach(w => {
+                        takeWindow(w, space, { navigator });
+                    });
                     return true;
                 }
 
@@ -4860,9 +4883,9 @@ export function takeWindow(metaWindow, space, { navigator }) {
         }));
     metaWindow.clone.set_position(point.x, point.y);
     let x = Math.round(space.monitor.x + space.monitor.width -
-        (0.1 * space.monitor.width * (1 + navigator._moving.length)));
+        (0.04 * space.monitor.width * (1 + navigator._moving.length)));
     let y = Math.round(space.monitor.y + space.monitor.height * 2 / 3) +
-        20 * navigator._moving.length;
+        10 * navigator._moving.length;
     animateWindow(metaWindow);
     Easer.addEase(metaWindow.clone,
         {

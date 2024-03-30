@@ -294,6 +294,7 @@ class NavigatorClass {
         this.takeHint = new St.Label({ style_class: 'take-window-hint' });
         this.takeHint.clutter_text.set_markup(
             `<i>• release keys to return all taken windows</i>
+<i>• press <span foreground="#6be67b">tab</span> to cycle through taken windows</i>
 <i>• press <span foreground="#6be67b">spacebar</span> to return the last taken window</i>
 <i>• press <span foreground="#6be67b">q</span> to close all taken windows</i>`);
 
@@ -344,7 +345,7 @@ class NavigatorClass {
             // set position on stage, take into account monitor
             const monitor = this.space.monitor;
             const x = monitor.x + monitor.width - 334;
-            const y = monitor.height - 80;
+            const y = monitor.height - 98;
 
             this.takeHint.opacity = 0;
             global.stage.add_child(this.takeHint);
