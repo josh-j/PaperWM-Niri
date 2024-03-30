@@ -4786,17 +4786,24 @@ export function takeWindow(metaWindow, space, { navigator }) {
         navigator.showTakeHint(true);
         navigator._moving = [];
 
+        const selectedSpace = () => spaces.selectedSpace;
+        const changeSpace = metaWindow => {
+            const space = selectedSpace();
+            if (spaces.spaceOfWindow(metaWindow) !== space) {
+                metaWindow.change_workspace(space.workspace);
+            }
+        };
+
         /**
          * Cycling function which orders the navigator._moving
          * array according to direction.
          */
-        const selectedSpace = () => spaces.selectedSpace;
         const cycler = order => {
             const temparr = [];
             order(navigator._moving);
             navigator._moving.forEach(w => {
                 temparr.push(w);
-                w.change_workspace(selectedSpace().workspace);
+                changeSpace(w);
                 insertWindow(w, { existing: true });
             });
 
@@ -4815,7 +4822,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
                     // remove the last window you got
                     const pop = navigator._moving.pop();
                     if (pop) {
-                        pop.change_workspace(selectedSpace().workspace);
+                        changeSpace(pop);
                         insertWindow(pop, { existing: true });
                         // make space selectedWindow (keeps index for next insert)
                         selectedSpace().selectedWindow = pop;
@@ -4840,7 +4847,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
                 // close all taken windows
                 case Clutter.KEY_q: {
                     navigator._moving.forEach(w => {
-                        w.change_workspace(selectedSpace().workspace);
+                        changeSpace(w);
                         insertWindow(w, { existing: true });
                         w.delete(global.get_current_time());
                     });
@@ -4859,13 +4866,11 @@ export function takeWindow(metaWindow, space, { navigator }) {
             navigator.showTakeHint(false);
             let selectedSpace = spaces.selectedSpace;
             navigator._moving.forEach(w => {
-                w.change_workspace(selectedSpace.workspace);
-                if (w.get_workspace() === selectedSpace.workspace) {
-                    insertWindow(w, { existing: true });
+                changeSpace(w);
+                insertWindow(w, { existing: true });
 
-                    // make space selectedWindow (keeps index for next insert)
-                    selectedSpace.selectedWindow = w;
-                }
+                // make space selectedWindow (keeps index for next insert)
+                selectedSpace.selectedWindow = w;
             });
 
             // activate last metaWindow after taken windows inserted
