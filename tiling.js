@@ -4893,9 +4893,9 @@ export function takeWindow(metaWindow, space, { navigator }) {
         }));
     metaWindow.clone.set_position(point.x, point.y);
     let x = Math.round(space.monitor.x + space.monitor.width -
-        (0.1 * space.monitor.width * (1 + navigator._moving.length)));
+        (0.08 * space.monitor.width * (1 + navigator._moving.length)));
     let y = Math.round(space.monitor.y + space.monitor.height * 2 / 3) +
-        20 * navigator._moving.length;
+        16 * navigator._moving.length;
     animateWindow(metaWindow);
     Easer.addEase(metaWindow.clone,
         {
