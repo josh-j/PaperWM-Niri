@@ -4790,11 +4790,8 @@ export function takeWindow(metaWindow, space, { navigator }) {
         Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
             .addKeypressCallback((actor, event) => {
                 const keysym = event.get_key_symbol();
-
-                /**
-                 * Pressing space returns the last taken window.
-                 */
-                if (keysym === Clutter.KEY_space) {
+                switch (keysym) {
+                case Clutter.KEY_space: {
                     // remove the last window you got
                     const pop = navigator._moving.pop();
                     let selectedSpace = spaces.selectedSpace;
@@ -4809,11 +4806,8 @@ export function takeWindow(metaWindow, space, { navigator }) {
                     return true;
                 }
 
-                /**
-                 * Tab cycles the taken window order. Users can use this
-                 * to choose a window.
-                 */
-                if (keysym === Clutter.KEY_Tab) {
+                // cycle forwards through taken windows
+                case Clutter.KEY_Tab: {
                     const temparr = [];
                     navigator._moving.unshift(navigator._moving.pop());
                     navigator._moving.forEach(w => {
@@ -4828,9 +4822,24 @@ export function takeWindow(metaWindow, space, { navigator }) {
                     return true;
                 }
 
-                // quit / close all that have been taken
-                if (keysym === Clutter.KEY_q) {
-                    // close all taken windows
+                // cycle backwards through taken windows
+                case Clutter.KEY_grave: {
+                    const temparr = [];
+                    navigator._moving.push(navigator._moving.shift());
+                    navigator._moving.forEach(w => {
+                        temparr.push(w);
+                        insertWindow(w, { existing: true });
+                    });
+
+                    navigator._moving = [];
+                    temparr.forEach(w => {
+                        takeWindow(w, space, { navigator });
+                    });
+                    return true;
+                }
+
+                // close all taken windows
+                case Clutter.KEY_q: {
                     navigator._moving.forEach(w => {
                         insertWindow(w, { existing: true });
                         w.delete(global.get_current_time());
@@ -4840,8 +4849,9 @@ export function takeWindow(metaWindow, space, { navigator }) {
                     return true;
                 }
 
-                // return false if no action taken
-                return false;
+                default:
+                    return false;
+                }
             });
 
 
@@ -4883,9 +4893,9 @@ export function takeWindow(metaWindow, space, { navigator }) {
         }));
     metaWindow.clone.set_position(point.x, point.y);
     let x = Math.round(space.monitor.x + space.monitor.width -
-        (0.04 * space.monitor.width * (1 + navigator._moving.length)));
+        (0.1 * space.monitor.width * (1 + navigator._moving.length)));
     let y = Math.round(space.monitor.y + space.monitor.height * 2 / 3) +
-        10 * navigator._moving.length;
+        20 * navigator._moving.length;
     animateWindow(metaWindow);
     Easer.addEase(metaWindow.clone,
         {
