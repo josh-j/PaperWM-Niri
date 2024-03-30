@@ -4786,6 +4786,26 @@ export function takeWindow(metaWindow, space, { navigator }) {
         navigator.showTakeHint(true);
         navigator._moving = [];
 
+        /**
+         * Cycling function which orders the navigator._moving
+         * array according to direction.
+         */
+        const selectedSpace = () => spaces.selectedSpace;
+        const cycler = order => {
+            const temparr = [];
+            order(navigator._moving);
+            navigator._moving.forEach(w => {
+                temparr.push(w);
+                w.change_workspace(selectedSpace().workspace);
+                insertWindow(w, { existing: true });
+            });
+
+            navigator._moving = [];
+            temparr.forEach(w => {
+                takeWindow(w, selectedSpace(), { navigator });
+            });
+        };
+
         // get the action dispatcher signal to connect to
         Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
             .addKeypressCallback((actor, event) => {
@@ -4794,12 +4814,11 @@ export function takeWindow(metaWindow, space, { navigator }) {
                 case Clutter.KEY_space: {
                     // remove the last window you got
                     const pop = navigator._moving.pop();
-                    let selectedSpace = spaces.selectedSpace;
                     if (pop) {
-                        pop.change_workspace(selectedSpace.workspace);
+                        pop.change_workspace(selectedSpace().workspace);
                         insertWindow(pop, { existing: true });
                         // make space selectedWindow (keeps index for next insert)
-                        selectedSpace.selectedWindow = pop;
+                        selectedSpace().selectedWindow = pop;
                         ensureViewport(pop);
                     }
                     // return true if this was actioned
@@ -4808,39 +4827,20 @@ export function takeWindow(metaWindow, space, { navigator }) {
 
                 // cycle forwards through taken windows
                 case Clutter.KEY_Tab: {
-                    const temparr = [];
-                    navigator._moving.unshift(navigator._moving.pop());
-                    navigator._moving.forEach(w => {
-                        temparr.push(w);
-                        insertWindow(w, { existing: true });
-                    });
-
-                    navigator._moving = [];
-                    temparr.forEach(w => {
-                        takeWindow(w, space, { navigator });
-                    });
+                    cycler(moving => moving.unshift(moving.pop()));
                     return true;
                 }
 
                 // cycle backwards through taken windows
                 case Clutter.KEY_grave: {
-                    const temparr = [];
-                    navigator._moving.push(navigator._moving.shift());
-                    navigator._moving.forEach(w => {
-                        temparr.push(w);
-                        insertWindow(w, { existing: true });
-                    });
-
-                    navigator._moving = [];
-                    temparr.forEach(w => {
-                        takeWindow(w, space, { navigator });
-                    });
+                    cycler(moving => moving.push(moving.shift()));
                     return true;
                 }
 
                 // close all taken windows
                 case Clutter.KEY_q: {
                     navigator._moving.forEach(w => {
+                        w.change_workspace(selectedSpace().workspace);
                         insertWindow(w, { existing: true });
                         w.delete(global.get_current_time());
                     });
