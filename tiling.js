@@ -4845,7 +4845,6 @@ export function takeWindow(metaWindow, space, params) {
         // get the action dispatcher signal to connect to
         Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
             .addKeypressCallback((modmask, keysym, event) => {
-                console.log(`mask ${modmask}, keysym ${keysym}, state ${event.get_state()}`);
                 switch (keysym) {
                 case Clutter.KEY_space: {
                     // remove the last window you got
