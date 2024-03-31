@@ -4834,12 +4834,8 @@ export function takeWindow(metaWindow, space, params) {
          * array according to direction.
          */
         const cycler = order => {
-            const temparr = [];
             order(navigator._moving);
-            navigator._moving.forEach(w => {
-                temparr.push(w);
-            });
-
+            const temparr = [...navigator._moving];
             navigator._moving = [];
             temparr.forEach(w => {
                 animateTake(w, true);
@@ -4848,8 +4844,8 @@ export function takeWindow(metaWindow, space, params) {
 
         // get the action dispatcher signal to connect to
         Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
-            .addKeypressCallback((actor, event) => {
-                const keysym = event.get_key_symbol();
+            .addKeypressCallback((modmask, keysym, event) => {
+                console.log(`mask ${modmask}, keysym ${keysym}, state ${event.get_state()}`);
                 switch (keysym) {
                 case Clutter.KEY_space: {
                     // remove the last window you got
@@ -4871,8 +4867,8 @@ export function takeWindow(metaWindow, space, params) {
                     return true;
                 }
 
-                // cycle backwards through taken windows
-                case Clutter.KEY_grave: {
+                // cycle backwards through taken windows (shift+tab)
+                case Clutter.KEY_ISO_Left_Tab: {
                     cycler(moving => moving.push(moving.shift()));
                     return true;
                 }
