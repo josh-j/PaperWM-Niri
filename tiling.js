@@ -4775,12 +4775,47 @@ export function moveUpSpace(mw, space) {
    Detach the @metaWindow, storing it at the bottom right corner while
    navigating. When done, insert all the detached windows again.
  */
-export function takeWindow(metaWindow, space, { navigator }) {
-    space = space || spaces.selectedSpace;
-    metaWindow = metaWindow || space.selectedWindow;
-    navigator = navigator || Navigator.getNavigator();
-    if (!space.removeWindow(metaWindow))
+export function takeWindow(metaWindow, space, params) {
+    space = space ?? spaces.selectedSpace;
+    metaWindow = metaWindow ?? space.selectedWindow;
+    const navigator = params?.navigator ?? Navigator.getNavigator();
+    const existing = params?.existing ?? false;
+
+    if (!existing && !space.removeWindow(metaWindow))
         return;
+
+    // setup animate function
+    const animateTake = (window, existing) => {
+        navigator._moving.push(window);
+        if (!existing) {
+            backgroundGroup.add_child(metaWindow.clone);
+        }
+
+        const lowest = navigator._moving[navigator._moving.length - 2];
+        lowest && backgroundGroup.set_child_below_sibling(
+            window.clone,
+            lowest.clone);
+        const point = space.cloneContainer.apply_relative_transform_to_point(
+            backgroundGroup, new Graphene.Point3D({
+                x: window.clone.x,
+                y: window.clone.y,
+            }));
+
+        if (!existing) {
+            window.clone.set_position(point.x, point.y);
+        }
+
+        let x = Math.round(space.monitor.x + space.monitor.width -
+            (0.08 * space.monitor.width * (1 + navigator._moving.length)));
+        let y = Math.round(space.monitor.y + space.monitor.height * 2 / 3) +
+            16 * navigator._moving.length;
+        animateWindow(window);
+        Easer.addEase(window.clone,
+            {
+                x, y,
+                time: Settings.prefs.animation_time,
+            });
+    };
 
     if (!navigator._moving) {
         navigator.showTakeHint(true);
@@ -4803,13 +4838,11 @@ export function takeWindow(metaWindow, space, { navigator }) {
             order(navigator._moving);
             navigator._moving.forEach(w => {
                 temparr.push(w);
-                changeSpace(w);
-                insertWindow(w, { existing: true });
             });
 
             navigator._moving = [];
             temparr.forEach(w => {
-                takeWindow(w, selectedSpace(), { navigator });
+                animateTake(w, true);
             });
         };
 
@@ -4886,27 +4919,7 @@ export function takeWindow(metaWindow, space, { navigator }) {
         });
     }
 
-    navigator._moving.push(metaWindow);
-    let parent = backgroundGroup;
-    parent.add_child(metaWindow.clone);
-    let lowest = navigator._moving[navigator._moving.length - 2];
-    lowest && parent.set_child_below_sibling(metaWindow.clone, lowest.clone);
-    let point = space.cloneContainer.apply_relative_transform_to_point(
-        parent, new Graphene.Point3D({
-            x: metaWindow.clone.x,
-            y: metaWindow.clone.y,
-        }));
-    metaWindow.clone.set_position(point.x, point.y);
-    let x = Math.round(space.monitor.x + space.monitor.width -
-        (0.08 * space.monitor.width * (1 + navigator._moving.length)));
-    let y = Math.round(space.monitor.y + space.monitor.height * 2 / 3) +
-        16 * navigator._moving.length;
-    animateWindow(metaWindow);
-    Easer.addEase(metaWindow.clone,
-        {
-            x, y,
-            time: Settings.prefs.animation_time,
-        });
+    animateTake(metaWindow, false);
 }
 
 /**
