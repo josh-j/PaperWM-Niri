@@ -257,6 +257,13 @@ export class UnalignedLayoutStrategy extends Workspace.LayoutStrategy {
 export function sortWindows(a, b) {
     let aw = a.metaWindow;
     let bw = b.metaWindow;
+    if (!aw) {
+        return 1;
+    }
+    if (!bw) {
+        return -1;
+    }
+
     let spaceA = Tiling.spaces.spaceOfWindow(aw);
     let spaceB = Tiling.spaces.spaceOfWindow(bw);
     let ia = spaceA.indexOf(aw);
