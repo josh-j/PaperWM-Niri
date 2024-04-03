@@ -420,11 +420,13 @@ export function setupOverrides() {
     registerOverridePrototype(Screenshot.ScreenshotUI, 'open', async function(mode) {
         const saved = getSavedPrototype(Screenshot.ScreenshotUI, 'open');
 
-        Tiling.spaces.forEach(s => {
-            s.visible.forEach(w => {
-                w.get_compositor_private()?.remove_clip();
+        if (!Main.overview.visible) {
+            Tiling.spaces.forEach(s => {
+                s.visible.forEach(w => {
+                    w.get_compositor_private()?.remove_clip();
+                });
             });
-        });
+        }
 
         await saved.call(this, mode);
     });
@@ -432,11 +434,13 @@ export function setupOverrides() {
     registerOverridePrototype(Screenshot.ScreenshotUI, 'close', function(instantly) {
         const saved = getSavedPrototype(Screenshot.ScreenshotUI, 'close');
 
-        Tiling.spaces.forEach(s => {
-            s.visible.forEach(w => {
-                s.applyClipToClone(w);
+        if (!Main.overview.visible) {
+            Tiling.spaces.forEach(s => {
+                s.visible.forEach(w => {
+                    s.applyClipToClone(w);
+                });
             });
-        });
+        }
 
         saved.call(this, instantly);
     });
