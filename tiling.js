@@ -375,7 +375,6 @@ export class Space extends Array {
             // if space is different, activate that one
             if (this !== space) {
                 space?.activateWithFocus(space?.selectedWindow, false, false);
-                Utils.warpPointerToMonitor(monitor);
             }
 
             Utils.later_add(Meta.LaterType.IDLE, () => {
