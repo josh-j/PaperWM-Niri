@@ -15,6 +15,7 @@ import * as AltTab from 'resource:///org/gnome/shell/ui/altTab.js';
 import * as WindowManager from 'resource:///org/gnome/shell/ui/windowManager.js';
 import * as WindowPreview from 'resource:///org/gnome/shell/ui/windowPreview.js';
 import * as Screenshot from 'resource:///org/gnome/shell/ui/screenshot.js';
+import { TransientSignalHolder } from 'resource:///org/gnome/shell/misc/signalTracker.js';
 
 import { Utils, Tiling, Scratch, Settings, OverviewLayout } from './imports.js';
 
@@ -444,6 +445,79 @@ export function setupOverrides() {
 
         saved.call(this, instantly);
     });
+
+    // registerOverridePrototype(WorkspaceThumbnail.WorkspaceThumbnail, '_isMyWindow', function(actor) {
+    //     const win = actor.meta_window;
+    //     const workspace = Tiling.spaces.spaceOfWindow(win).workspace;
+    //     return win.located_on_workspace(workspace);
+    // });
+
+    // registerOverridePrototype(WorkspaceThumbnail.ThumbnailsBox, '_createThumbnails', function() {
+    //     if (this._thumbnails.length > 0)
+    //         return;
+
+    //     const { workspaceManager } = global;
+    //     this._transientSignalHolder = new TransientSignalHolder(this);
+    //     workspaceManager.connectObject(
+    //         'notify::n-workspaces', this._workspacesChanged.bind(this),
+    //         'active-workspace-changed', () => this._updateIndicator(),
+    //         'workspaces-reordered', () => {
+    //             this._thumbnails.sort((a, b) => {
+    //                 return a.metaWorkspace.index() - b.metaWorkspace.index();
+    //             });
+    //             this.queue_relayout();
+    //         }, this._transientSignalHolder);
+    //     Main.overview.connectObject('windows-restacked',
+    //         this._syncStacking.bind(this), this._transientSignalHolder);
+
+    //     this._targetScale = 0;
+    //     this._scale = 0;
+    //     this._pendingScaleUpdate = false;
+    //     this._unqueueUpdateStates();
+
+    //     this._stateCounts = {};
+    //     for (let key in WorkspaceThumbnail.ThumbnailState)
+    //         this._stateCounts[WorkspaceThumbnail.ThumbnailState[key]] = 0;
+
+    //     this.addThumbnails(0, workspaceManager.n_workspaces);
+
+    //     this._updateShouldShow();
+    // });
+
+    registerOverridePrototype(WorkspaceThumbnail.ThumbnailsBox, 'addThumbnails', function(start, count) {
+        let workspaceManager = global.workspace_manager;
+
+        for (let k = start; k < start + 1; k++) {
+            let metaWorkspace = workspaceManager.get_workspace_by_index(k);
+            // let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace, this._monitorIndex);
+            let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace, 0);
+            thumbnail.setPorthole(
+                this._porthole.x, this._porthole.y,
+                this._porthole.width, this._porthole.height);
+            this._thumbnails.push(thumbnail);
+            this.add_child(thumbnail);
+
+            if (this._shouldShow && start > 0 && this._spliceIndex === -1) {
+                // not the initial fill, and not splicing via DND
+                thumbnail.state = ThumbnailState.NEW;
+                thumbnail.slide_position = 1; // start slid out
+                thumbnail.collapse_fraction = 1; // start fully collapsed
+                this._haveNewThumbnails = true;
+            } else {
+                thumbnail.state = WorkspaceThumbnail.ThumbnailState.NORMAL;
+            }
+
+            this._stateCounts[thumbnail.state]++;
+        }
+
+        this._queueUpdateStates();
+
+        // The thumbnails indicator actually needs to be on top of the thumbnails
+        this.set_child_above_sibling(this._indicator, null);
+
+        // Clear the splice index, we got the message
+        this._spliceIndex = -1;
+    });
 }
 
 /**
@@ -562,6 +636,7 @@ export function setupActions() {
      * In particular the 3-finger hold + tap can randomly activate a minimized
      * window when tapping after a 3-finger swipe
      */
+    // eslint-disable-next-line array-callback-return
     actions = global.stage.get_actions().filter(a => {
         switch (a.constructor) {
         case WindowManager.AppSwitchAction:
@@ -649,7 +724,7 @@ export function _checkWorkspaces() {
 
     // Keep visible spaces
     if (Tiling?.spaces?.monitors) {
-        for (let [monitor, space] of Tiling.spaces.monitors) {
+        for (let [, space] of Tiling.spaces.monitors) {
             emptyWorkspaces[space.workspace.index()] = false;
         }
     }
@@ -657,6 +732,7 @@ export function _checkWorkspaces() {
     // Delete empty workspaces except for the last one; do it from the end
     // to avoid index changes
     for (i = lastIndex; i >= 0; i--) {
+        // eslint-disable-next-line eqeqeq
         if (emptyWorkspaces[i] && i != lastEmptyIndex) {
             workspaceManager.remove_workspace(this._workspaces[i]
                 , global.get_current_time());
