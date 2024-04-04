@@ -367,8 +367,17 @@ export class Space extends Array {
             if (!spaces.isActiveSpace(this)) {
                 return;
             }
-            // warp pointer to monitor that is active
-            Utils.warpPointerToMonitor(this.monitor);
+
+            // check if after hiding the mouse is on another monitor
+            const monitor = Utils.monitorAtCurrentPoint();
+            const space = spaces.monitors.get(monitor);
+
+            // if space is different, activate that one
+            if (this !== space) {
+                space?.activateWithFocus(space?.selectedWindow, false, false);
+                Utils.warpPointerToMonitor(monitor);
+            }
+
             Utils.later_add(Meta.LaterType.IDLE, () => {
                 this.moveDone(() => {
                     ensureViewport(display.focus_window, this, {
