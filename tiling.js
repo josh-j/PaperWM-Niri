@@ -378,7 +378,7 @@ export class Space extends Array {
             }
 
             Utils.later_add(Meta.LaterType.IDLE, () => {
-                this.moveDone(() => {
+                space.moveDone(() => {
                     ensureViewport(display.focus_window, this, {
                         moveto: true,
                         force: true,
