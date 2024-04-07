@@ -4573,9 +4573,7 @@ export function setFocusMode(mode, space) {
         break;
     default:
         // for other modes run a `layout` call to action the mode
-        if (selectedWin) {
-            space.layout();
-        }
+        space.layout();
         break;
     }
     if (mode === FocusModes.CENTER) {
