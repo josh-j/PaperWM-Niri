@@ -3807,18 +3807,18 @@ export function ensuredX(meta_window, space) {
     let min = workArea.x;
     let max = min + workArea.width;
 
-    if (space.focusMode == FocusModes.CENTER) {
+    if (space.focusMode === FocusModes.CENTER) {
         // window switching should centre focus
         x = workArea.x + Math.round(workArea.width / 2 - frame.width / 2);
     } else if (meta_window.fullscreen) {
         x = 0;
-    } else if (space.focusMode == FocusModes.EDGE) {
+    } else if (space.focusMode === FocusModes.EDGE) {
         // Align to the closest edge, with special cases for
         // only (center), first (left), and last (right) windows
         if (index === 0 && space.length === 1)
             x = min + Math.round((workArea.width - frame.width) / 2);
-        else if (index === 0 || (Math.abs(x - min) < Math.abs(x + frame.width - max)
-                                 && index !== space.length - 1))
+        else if (index === 0 || (Math.abs(x - min) < Math.abs(x + frame.width - max) &&
+                                 index !== space.length - 1))
             x = min + Settings.prefs.horizontal_margin;
         else
             x = max - Settings.prefs.horizontal_margin - frame.width;
@@ -4556,6 +4556,28 @@ export function setFocusMode(mode, space) {
     const workArea = space.workArea();
     const selectedWin = space.selectedWindow;
     // if centre also center selectedWindow
+    switch (mode) {
+    case FocusModes.CENTER:
+        if (selectedWin) {
+            // check it closer to min or max of workArea
+            const frame = selectedWin.get_frame_rect();
+            const winMidpoint = space.visibleX(selectedWin) + frame.width / 2;
+            const workAreaMidpoint = workArea.width / 2;
+            if (winMidpoint <= workAreaMidpoint) {
+                space.unfocusXPosition = 0;
+            } else {
+                space.unfocusXPosition = workArea.width;
+            }
+            centerWindowHorizontally(selectedWin);
+        }
+        break;
+    default:
+        // for other modes just ensure viewport on window
+        if (selectedWin) {
+            space.ensureViewport(selectedWin);
+        }
+        break;
+    }
     if (mode === FocusModes.CENTER) {
         if (selectedWin) {
             // check it closer to min or max of workArea

@@ -1512,6 +1512,7 @@
                                 <items>
                                   <item id="default" translatable="yes">Default</item>
                                   <item id="center" translatable="yes">Center</item>
+                                  <item id="edge" translatable="yes">Edge</item>
                                 </items>
                               </object>
                             </child>
