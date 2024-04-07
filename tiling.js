@@ -34,7 +34,7 @@ export const PreviewMode = { NONE: 0, STACK: 1, SEQUENTIAL: 2 }; // export
 export let inPreview = PreviewMode.NONE; // export
 
 // DEFAULT mode is normal/original PaperWM window focus behaviour
-export const FocusModes = { DEFAULT: 0, CENTER: 1 }; // export
+export const FocusModes = { DEFAULT: 0, CENTER: 1, EDGE: 2 }; // export
 
 export const CycleWindowSizesDirection = { FORWARD: 0, BACKWARDS: 1 };
 
@@ -3812,6 +3812,16 @@ export function ensuredX(meta_window, space) {
         x = workArea.x + Math.round(workArea.width / 2 - frame.width / 2);
     } else if (meta_window.fullscreen) {
         x = 0;
+    } else if (space.focusMode == FocusModes.EDGE) {
+        // Align to the closest edge, with special cases for
+        // only (center), first (left), and last (right) windows
+        if (index === 0 && space.length === 1)
+            x = min + Math.round((workArea.width - frame.width) / 2);
+        else if (index === 0 || (Math.abs(x - min) < Math.abs(x + frame.width - max)
+                                 && index !== space.length - 1))
+            x = min + Settings.prefs.horizontal_margin;
+        else
+            x = max - Settings.prefs.horizontal_margin - frame.width;
     } else if (frame.width > workArea.width * 0.9 - 2 * (Settings.prefs.horizontal_margin + Settings.prefs.window_gap)) {
         // Consider the window to be wide and center it
         x = min + Math.round((workArea.width - frame.width) / 2);
