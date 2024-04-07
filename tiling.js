@@ -4572,9 +4572,9 @@ export function setFocusMode(mode, space) {
         }
         break;
     default:
-        // for other modes just ensure viewport on window
+        // for other modes run a `layout` call to action the mode
         if (selectedWin) {
-            space.ensureViewport(selectedWin);
+            space.layout();
         }
         break;
     }
