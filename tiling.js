@@ -4576,20 +4576,6 @@ export function setFocusMode(mode, space) {
         space.layout();
         break;
     }
-    if (mode === FocusModes.CENTER) {
-        if (selectedWin) {
-            // check it closer to min or max of workArea
-            const frame = selectedWin.get_frame_rect();
-            const winMidpoint = space.visibleX(selectedWin) + frame.width / 2;
-            const workAreaMidpoint = workArea.width / 2;
-            if (winMidpoint <= workAreaMidpoint) {
-                space.unfocusXPosition = 0;
-            } else {
-                space.unfocusXPosition = workArea.width;
-            }
-            centerWindowHorizontally(selectedWin);
-        }
-    }
 
     // if normal and has saved x position from previous
     if (mode === FocusModes.DEFAULT && space.unfocusXPosition != null) {
