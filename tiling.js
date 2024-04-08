@@ -123,6 +123,10 @@ export function enable(extension) {
     gsettings.connect('changed::vertical-margin', marginsGapChanged);
     gsettings.connect('changed::vertical-margin-bottom', marginsGapChanged);
     gsettings.connect('changed::window-gap', marginsGapChanged);
+    gsettings.connect('changed::selection-border-size', () => {
+        const selected = spaces.activeSpace?.selectedWindow;
+        allocateClone(selected);
+    });
 
     backgroundGroup = Main.layoutManager._backgroundGroup;
 
