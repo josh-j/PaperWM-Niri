@@ -114,7 +114,12 @@ export function enable(extension) {
         Utils.timeout_remove(timerId);
         timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
             spaces.mru().forEach(space => {
-                space.layout();
+                space.layout(true, {
+                    callback: () => {
+                        const selected = spaces.activeSpace?.selectedWindow;
+                        allocateClone(selected);
+                    },
+                });
             });
             timerId = null;
             return false; // on return false destroys timeout
@@ -3234,7 +3239,14 @@ export function allocateClone(metaWindow) {
         let selection = metaWindow.clone.first_child;
         let vMax = metaWindow.maximized_vertically;
         let hMax = metaWindow.maximized_horizontally;
-        let protrusion = Settings.prefs.selection_border_size;
+
+        const protrusion = Math.min(
+            Settings.prefs.selection_border_size,
+            Settings.prefs.vertical_margin,
+            Settings.prefs.vertical_margin_bottom,
+            Settings.prefs.window_gap
+        );
+
         selection.x = hMax ? 0 : -protrusion;
         selection.y = vMax ? 0 : -protrusion;
         selection.set_size(
