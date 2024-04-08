@@ -3235,11 +3235,12 @@ export function allocateClone(metaWindow) {
         let selection = metaWindow.clone.first_child;
         let vMax = metaWindow.maximized_vertically;
         let hMax = metaWindow.maximized_horizontally;
-        let protrusion = Math.round(Settings.prefs.window_gap / 2);
+        let protrusion = Settings.prefs.selection_border_size;
         selection.x = hMax ? 0 : -protrusion;
         selection.y = vMax ? 0 : -protrusion;
-        selection.set_size(frame.width + (hMax ? 0 : Settings.prefs.window_gap),
-            frame.height + (vMax ? 0 : Settings.prefs.window_gap));
+        selection.set_size(
+            frame.width + (hMax ? 0 : protrusion * 2),
+            frame.height + (vMax ? 0 : protrusion * 2));
     }
 }
 
