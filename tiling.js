@@ -343,6 +343,9 @@ export class Space extends Array {
         let workspace = this.workspace;
         let prevSpace = saveState.getPrevSpaceByUUID(this.uuid);
         console.info(`restore by uuid: ${this.uuid}, prevSpace name: ${prevSpace?.name}`);
+
+        // get previous focus mode (if exists)
+        const focusMode = prevSpace?.focusMode;
         this.addAll(prevSpace);
         saveState.prevSpaces.delete(workspace);
         this._populated = true;
@@ -352,7 +355,7 @@ export class Space extends Array {
         this.setSpaceTopbarElementsVisible();
 
         // apply default focus mode
-        setFocusMode(getDefaultFocusMode(), this);
+        setFocusMode(focusMode ?? getDefaultFocusMode(), this);
 
         this.getWindows().forEach(w => {
             animateWindow(w);
