@@ -109,16 +109,8 @@ export function enable(extension) {
     signals = new Utils.Signals();
     grabSignals = new Utils.Signals();
 
-    let setVerticalMargin = () => {
-        let vMargin = gsettings.get_int('vertical-margin');
-        let gap = gsettings.get_int('window-gap');
-        Settings.prefs.vertical_margin = Math.max(Math.round(gap / 2), vMargin);
-    };
-    setVerticalMargin();
-
     // setup actions on gap changes
-    let onWindowGapChanged = () => {
-        setVerticalMargin();
+    let marginsGapChanged = () => {
         Utils.timeout_remove(timerId);
         timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
             spaces.mru().forEach(space => {
@@ -128,9 +120,9 @@ export function enable(extension) {
             return false; // on return false destroys timeout
         });
     };
-    gsettings.connect('changed::vertical-margin', onWindowGapChanged);
-    gsettings.connect('changed::vertical-margin-bottom', onWindowGapChanged);
-    gsettings.connect('changed::window-gap', onWindowGapChanged);
+    gsettings.connect('changed::vertical-margin', marginsGapChanged);
+    gsettings.connect('changed::vertical-margin-bottom', marginsGapChanged);
+    gsettings.connect('changed::window-gap', marginsGapChanged);
 
     backgroundGroup = Main.layoutManager._backgroundGroup;
 
