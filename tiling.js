@@ -350,7 +350,7 @@ export class Space extends Array {
         this.windowPositionBarBackdrop.height = Topbar.panelBox.height;
         this.setSpaceTopbarElementsVisible();
 
-        // apply default focus mode
+        // restore focus mode (or fallback to default)
         setFocusMode(focusMode ?? getDefaultFocusMode(), this);
 
         this.getWindows().forEach(w => {
