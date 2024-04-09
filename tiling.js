@@ -3243,7 +3243,6 @@ export function allocateClone(metaWindow) {
         const protrusion = Math.min(
             Settings.prefs.selection_border_size,
             Settings.prefs.vertical_margin,
-            Settings.prefs.vertical_margin_bottom,
             Settings.prefs.window_gap
         );
 
