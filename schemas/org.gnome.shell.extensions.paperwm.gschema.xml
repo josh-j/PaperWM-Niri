@@ -109,19 +109,19 @@
     </key>
 
     <key type="as" name="move-space-monitor-right">
-        <default><![CDATA[['<Ctrl><Alt>Right']]]></default>
+        <default><![CDATA[['<Ctrl><Alt><Shift>Right']]]></default>
         <summary>Move workspace to monitor on the right</summary>
     </key>
     <key type="as" name="move-space-monitor-left">
-        <default><![CDATA[['<Ctrl><Alt>Left']]]></default>
+        <default><![CDATA[['<Ctrl><Alt><Shift>Left']]]></default>
         <summary>Move workspace to monitor on the left</summary>
     </key>
     <key type="as" name="move-space-monitor-above">
-        <default><![CDATA[['<Ctrl><Alt>Up']]]></default>
+        <default><![CDATA[['<Ctrl><Alt><Shift>Up']]]></default>
         <summary>Move workspace to monitor above</summary>
     </key>
     <key type="as" name="move-space-monitor-below">
-        <default><![CDATA[['<Ctrl><Alt>Down']]]></default>
+        <default><![CDATA[['<Ctrl><Alt><Shift>Down']]]></default>
         <summary>Move workspace to monitor below</summary>
     </key>
 
