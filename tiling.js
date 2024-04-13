@@ -2051,14 +2051,14 @@ export const Spaces = class Spaces extends Map {
         });
 
         this.signals.connect(display, 'window-created',
-            (display, metaWindow, user_data) => this.window_created(metaWindow));
+            (display, metaWindow, _user_data) => this.window_created(metaWindow));
 
         this.signals.connect(display, 'grab-op-begin', (display, mw, type) => grabBegin(mw, type));
         this.signals.connect(display, 'grab-op-end', (display, mw, type) => grabEnd(mw, type));
 
 
         this.signals.connect(global.window_manager, 'switch-workspace',
-            (wm, from, to, direction) => this.switchWorkspace(wm, from, to));
+            (wm, from, to, _direction) => this.switchWorkspace(wm, from, to));
 
         this.signals.connect(this.overrideSettings, 'changed::workspaces-only-on-primary', () => {
             displayConfig.upgradeGnomeMonitors(() => this.monitorsChanged());
@@ -2286,7 +2286,7 @@ export const Spaces = class Spaces extends Map {
         this.signals = null;
 
         // remove spaces
-        for (let [workspace, space] of this) {
+        for (let [, space] of this) {
             this.removeSpace(space);
         }
 
@@ -2312,7 +2312,7 @@ export const Spaces = class Spaces extends Map {
         }
 
         let nextUnusedWorkspaceIndex = nWorkspaces;
-        for (let [workspace, space] of this) {
+        for (let [, space] of this) {
             if (workspaces[space.workspace] !== true) {
                 this.removeSpace(space);
 
@@ -2952,7 +2952,7 @@ export const Spaces = class Spaces extends Map {
         }
 
         let visible = new Map();
-        for (let [monitor, space] of this.monitors) {
+        for (let [, space] of this.monitors) {
             visible.set(space, true);
         }
 
