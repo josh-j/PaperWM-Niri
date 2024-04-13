@@ -2382,7 +2382,12 @@ export const Spaces = class Spaces extends Map {
         const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
         // if last space on this monitor, then swap
         if (numSpaces <= 1) {
+            // focus other monitor and switch back
+            this.switchMonitor(direction, false, false);
             this.swapMonitor(backDirection, direction);
+
+            // now switch monitor since we back-flipped
+            this.switchMonitor(direction, false, true);
             return;
         }
 
