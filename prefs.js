@@ -66,12 +66,13 @@ class SettingsWidget {
             this.builder.get_object('keybindings_page'),
             this.builder.get_object('winprops_page'),
             this.builder.get_object('advanced_page'),
+            this.builder.get_object('about_page'),
         ];
 
         pages.forEach(page => prefsWindow.add(page));
         prefsWindow.set_visible_page(pages[selectedPage]);
 
-        this.aboutButton = this.builder.get_object('about_button');
+        // this.aboutButton = this.builder.get_object('about_button');
         this._backgroundFilter = new Gtk.FileFilter();
         this._backgroundFilter.add_pixbuf_formats();
 
@@ -443,9 +444,9 @@ class SettingsWidget {
         percentValueChanged('maximize-width-percent', 'maximize-width-percent');
 
         // About
-        let versionLabel = this.builder.get_object('extension_version');
-        let version = this.extension.metadata.version?.toString() ?? '?';
-        versionLabel.set_text(version);
+        // let versionLabel = this.builder.get_object('extension_version');
+        // let version = this.extension.metadata.version?.toString() ?? '?';
+        // versionLabel.set_text(version);
     }
 
     range(n) {

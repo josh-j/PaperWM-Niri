@@ -1827,7 +1827,21 @@
       </object>
     </child>
   </object>
-  <object class="GtkPopover" id="about_popover">
+
+  <object class="AdwPreferencesPage" id="about_page">
+    <property name="title" translatable="yes">About</property>
+    <property name="icon-name">dialog-information-symbolic</property>
+    <child>
+      <object class="GtkScrolledWindow" id="about_scrolledWindow">
+        <property name="hscrollbar_policy">never</property>
+      </object>
+    </child>
+  </object>
+
+
+
+
+  <!-- <object class="GtkPopover" id="about_popover">
     <child>
       <object class="GtkBox" id="about">
         <property name="focusable">False</property>
@@ -1880,5 +1894,5 @@
   <object class="GtkMenuButton" id="about_button">
     <property name="popover">about_popover</property>
     <property name="icon-name">dialog-information-symbolic</property>
-  </object>
+  </object> -->
 </interface>
