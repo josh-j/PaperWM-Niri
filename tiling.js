@@ -2382,12 +2382,7 @@ export const Spaces = class Spaces extends Map {
         const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
         // if last space on this monitor, then swap
         if (numSpaces <= 1) {
-            // focus other monitor and switch back
-            this.switchMonitor(direction, false, false);
-            this.swapMonitor(backDirection, direction);
-
-            // now switch monitor since we back-flipped
-            this.switchMonitor(direction, false, true);
+            this.swapMonitor(direction, backDirection);
             return;
         }
 
@@ -2417,11 +2412,32 @@ export const Spaces = class Spaces extends Map {
         this.setSpaceTopbarElementsVisible(true, { force: true });
     }
 
-    swapMonitor(direction, backDirection) {
+    swapMonitor(direction, backDirection, options = {}) {
+        const checkIfLast = options.checkIfLast ?? true;
+        const warpIfLast = options.warpIfLast ?? true;
+
         const monitor = focusMonitor();
         const i = display.get_monitor_neighbor_index(monitor.index, direction);
         if (i === -1)
             return;
+
+        if (checkIfLast) {
+            // check how many spaces are on this monitor
+            const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
+            // if last space on this monitor, then swap
+            if (numSpaces <= 1) {
+                // focus other monitor for a switchback
+                this.switchMonitor(direction, false, false);
+                this.swapMonitor(backDirection, direction, {
+                    checkIfLast: false,
+                    warpIfLast: false,
+                });
+
+                // now switch monitor with warp since we back-flipped
+                this.switchMonitor(direction, false, true);
+                return;
+            }
+        }
 
         let navFinish = () => Navigator.getNavigator().finish();
         // action on current monitor
@@ -2436,7 +2452,7 @@ export const Spaces = class Spaces extends Map {
         this.selectStackSpace(Meta.MotionDirection.DOWN);
         navFinish();
         // final switch with warp
-        this.switchMonitor(direction);
+        this.switchMonitor(direction, false, warpIfLast);
 
         // /**
         //  * Fullscreen monitor workaround.
