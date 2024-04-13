@@ -2331,6 +2331,20 @@ export const Spaces = class Spaces extends Map {
         }
     }
 
+    /**
+     * Return true if there are less-than-or-equal-to spaces than monitors.
+     */
+    lteSpacesThanMonitors(onFalseCallback) {
+        const cb = onFalseCallback ?? function(_nSpaces, _nMonitors) {};
+        const nSpaces = [...this].length;
+        const nMonitors = Main.layoutManager.monitors.length;
+
+        if (nSpaces <= nMonitors) {
+            cb(nSpaces, nMonitors);
+        }
+        return nSpaces <= nMonitors;
+    }
+
     switchMonitor(direction, move, warp = true) {
         let focus = display.focus_window;
         let monitor = focusMonitor();
@@ -2378,6 +2392,15 @@ export const Spaces = class Spaces extends Map {
         if (i === -1)
             return;
 
+        if (this.lteSpacesThanMonitors(
+            (s, m) => Main.notify(
+                `PaperWM (cannot move workspace)`,
+                `You need at least ${m + 1} workspaces to complete this operation.`
+            )
+        )) {
+            return;
+        }
+
         // check how many spaces are on this monitor
         const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
         // if last space on this monitor, then swap
@@ -2420,6 +2443,15 @@ export const Spaces = class Spaces extends Map {
         const i = display.get_monitor_neighbor_index(monitor.index, direction);
         if (i === -1)
             return;
+
+        if (this.lteSpacesThanMonitors(
+            (s, m) => Main.notify(
+                `PaperWM (cannot swap workspaces)`,
+                `You need at least ${m + 1} workspaces to complete this operation.`
+            )
+        )) {
+            return;
+        }
 
         if (checkIfLast) {
             // check how many spaces are on this monitor
