@@ -116,6 +116,14 @@
         <default><![CDATA[['<Ctrl><Alt>Left']]]></default>
         <summary>Move workspace to monitor on the left</summary>
     </key>
+    <key type="as" name="move-space-monitor-above">
+        <default><![CDATA[['<Ctrl><Alt>Up']]]></default>
+        <summary>Move workspace to monitor above</summary>
+    </key>
+    <key type="as" name="move-space-monitor-below">
+        <default><![CDATA[['<Ctrl><Alt>Down']]]></default>
+        <summary>Move workspace to monitor below</summary>
+    </key>
 
     <key type="as" name="swap-monitor-right">
         <default><![CDATA[['<Super><Alt>Right']]]></default>
