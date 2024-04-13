@@ -1834,6 +1834,44 @@
     <child>
       <object class="GtkScrolledWindow" id="about_scrolledWindow">
         <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="focusable">False</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="halign">center</property>
+                <property name="margin_start">36</property>
+                <property name="margin_end">36</property>
+                <property name="margin_top">16</property>
+                <property name="margin_bottom">16</property>
+                <property name="orientation">vertical</property>
+                <property name="spacing">12</property>
+                <property name="width_request">480</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="hexpand">True</property>
+                    <property name="label" translatable="yes">PaperWM Version Information</property>
+                    <attributes>
+                      <attribute name="weight" value="bold" />
+                    </attributes>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTextView" id="about_version_textView">
+                    <property name="editable">False</property>
+                    <property name="vexpand">True</property>
+                    <property name="top-margin">6</property>
+                    <property name="right-margin">6</property>
+                    <property name="bottom-margin">6</property>
+                    <property name="left-margin">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </object>

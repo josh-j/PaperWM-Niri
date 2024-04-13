@@ -447,6 +447,15 @@ class SettingsWidget {
         // let versionLabel = this.builder.get_object('extension_version');
         // let version = this.extension.metadata.version?.toString() ?? '?';
         // versionLabel.set_text(version);
+
+        // build version information
+        const buffer = new Gtk.TextBuffer();
+        buffer.set_text(JSON.stringify(this.extension.metadata), -1);
+
+        // set text to buffer
+        const aboutVersionView = this.builder.get_object('about_version_textView');
+        aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
+        aboutVersionView.set_buffer(buffer);
     }
 
     range(n) {
