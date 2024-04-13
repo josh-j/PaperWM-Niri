@@ -2372,6 +2372,46 @@ export const Spaces = class Spaces extends Map {
         }
     }
 
+    moveToMonitor(direction, backDirection) {
+        const monitor = focusMonitor();
+        const i = display.get_monitor_neighbor_index(monitor.index, direction);
+        if (i === -1)
+            return;
+
+        // check how many spaces are on this monitor
+        const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
+        // if last space on this monitor, then swap
+        if (numSpaces <= 1) {
+            this.swapMonitor(backDirection, direction);
+            return;
+        }
+
+        let navFinish = () => Navigator.getNavigator().finish();
+        // action on current monitor
+        this.selectStackSpace(Meta.MotionDirection.DOWN);
+        navFinish();
+        // switch to target monitor and action mru
+        this.switchMonitor(direction, false, true);
+        this.selectStackSpace(Meta.MotionDirection.DOWN);
+        navFinish();
+
+        // /**
+        //  * Fullscreen monitor workaround.
+        //  * see https://github.com/paperwm/PaperWM/issues/638
+        //  */
+        // this.forEach(space => {
+        //     space.getWindows().filter(w => w.fullscreen).forEach(w => {
+        //         animateWindow(w);
+        //         w.unmake_fullscreen();
+        //         w.make_fullscreen();
+        //         showWindow(w);
+        //     });
+        // });
+
+        // ensure after swapping that the space elements are shown correctly
+        this.setSpaceTopbarElementsVisible(true, { force: true });
+    }
+
     swapMonitor(direction, backDirection) {
         const monitor = focusMonitor();
         const i = display.get_monitor_neighbor_index(monitor.index, direction);
@@ -2393,18 +2433,18 @@ export const Spaces = class Spaces extends Map {
         // final switch with warp
         this.switchMonitor(direction);
 
-        /**
-         * Fullscreen monitor workaround.
-         * see https://github.com/paperwm/PaperWM/issues/638
-         */
-        this.forEach(space => {
-            space.getWindows().filter(w => w.fullscreen).forEach(w => {
-                animateWindow(w);
-                w.unmake_fullscreen();
-                w.make_fullscreen();
-                showWindow(w);
-            });
-        });
+        // /**
+        //  * Fullscreen monitor workaround.
+        //  * see https://github.com/paperwm/PaperWM/issues/638
+        //  */
+        // this.forEach(space => {
+        //     space.getWindows().filter(w => w.fullscreen).forEach(w => {
+        //         animateWindow(w);
+        //         w.unmake_fullscreen();
+        //         w.make_fullscreen();
+        //         showWindow(w);
+        //     });
+        // });
 
         // ensure after swapping that the space elements are shown correctly
         this.setSpaceTopbarElementsVisible(true, { force: true });
@@ -2484,11 +2524,18 @@ export const Spaces = class Spaces extends Map {
         let out = [];
         for (let i = 0; i < nWorkspaces; i++) {
             let space = this.spaceOf(workspaceManager.get_workspace_by_index(i));
-            if (space.monitor === monitor ||
-                (space.length === 0 && this.monitors.get(space.monitor) !== space)) {
-                // include workspace if it is the current one
-                // or if it is empty and not active on another monitor
+
+            if (space.monitor === monitor) {
                 out.push(space);
+                continue;
+            }
+
+            // include workspace if it is the current one
+            // or if it is empty and not active on another monitor
+            if (space.length === 0 &&
+                this.monitors.get(space.monitor) !== space) {
+                out.push(space);
+                continue;
             }
         }
         return out;

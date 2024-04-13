@@ -124,6 +124,13 @@ export function setupActions(settings) {
         Tiling.spaces.switchMonitor(Meta.DisplayDirection.DOWN, false);
     }, { settings });
 
+    registerAction('move-space-monitor-right', () => {
+        Tiling.spaces.moveToMonitor(Meta.DisplayDirection.RIGHT, Meta.DisplayDirection.LEFT);
+    }, { settings });
+    registerAction('move-space-monitor-left', () => {
+        Tiling.spaces.moveToMonitor(Meta.DisplayDirection.LEFT, Meta.DisplayDirection.RIGHT);
+    }, { settings });
+
     registerAction('swap-monitor-right', () => {
         Tiling.spaces.swapMonitor(Meta.DisplayDirection.RIGHT, Meta.DisplayDirection.LEFT);
     }, { settings });

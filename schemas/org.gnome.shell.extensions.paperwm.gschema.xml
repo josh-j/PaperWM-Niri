@@ -108,6 +108,15 @@
         <summary>Switch to the below monitor</summary>
     </key>
 
+    <key type="as" name="move-space-monitor-right">
+        <default><![CDATA[['<Ctrl><Alt>Right']]]></default>
+        <summary>Move workspace to monitor on the right</summary>
+    </key>
+    <key type="as" name="move-space-monitor-left">
+        <default><![CDATA[['<Ctrl><Alt>Left']]]></default>
+        <summary>Move workspace to monitor on the left</summary>
+    </key>
+
     <key type="as" name="swap-monitor-right">
         <default><![CDATA[['<Super><Alt>Right']]]></default>
         <summary>Swap workspace with monitor to the right</summary>
