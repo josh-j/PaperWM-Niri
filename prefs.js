@@ -3,9 +3,7 @@ import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import Gtk from 'gi://Gtk';
 
-import {
-    ExtensionPreferences
-} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import * as Settings from './settings.js';
 import { WorkspaceSettings } from './workspace.js';
@@ -450,12 +448,43 @@ class SettingsWidget {
 
         // build version information
         const buffer = new Gtk.TextBuffer();
-        buffer.set_text(JSON.stringify(this.extension.metadata), -1);
+
+        this._gatherInfo(stdout => buffer.set_text(stdout, -1));
 
         // set text to buffer
         const aboutVersionView = this.builder.get_object('about_version_textView');
         aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
         aboutVersionView.set_buffer(buffer);
+    }
+
+    async _gatherInfo(callback) {
+        const cb = callback ?? function() {};
+
+        const flags = Gio.SubprocessFlags.STDOUT_PIPE |
+        Gio.SubprocessFlags.STDERR_PIPE;
+
+        const proc = new Gio.Subprocess({
+            argv: ['echo', 'cheese'],
+            flags,
+        });
+        proc.init(null);
+
+        try {
+            await new Promise((resolve, reject) => {
+                proc.communicate_utf8_async(null, null, (obj, res) => {
+                    try {
+                        const [, stdout] = obj.communicate_utf8_finish(res);
+                        const status = obj.get_exit_status();
+                        cb(stdout);
+                        resolve([status, stdout]);
+                    } catch (e) {
+                        reject(e);
+                    }
+                });
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     range(n) {
