@@ -449,42 +449,47 @@ class SettingsWidget {
         // build version information
         const buffer = new Gtk.TextBuffer();
 
-        this._gatherInfo(stdout => buffer.set_text(stdout, -1));
+        // dbus to get extensions
+        const wrapper = Gio.DBusProxy.makeProxyWrapper(
+            `<node>
+                <interface name="org.gnome.Mutter.DisplayConfig">
+                    <method name="GetCurrentState">
+                    <arg name="serial" direction="out" type="u" />
+                    <arg name="monitors" direction="out" type="a((ssss)a(siiddada{sv})a{sv})" />
+                    <arg name="logical_monitors" direction="out" type="a(iiduba(ssss)a{sv})" />
+                    <arg name="properties" direction="out" type="a{sv}" />
+                    </method>
+                    <signal name="MonitorsChanged" />
+                </interface>
+            </node>`
+        );
+
+        const proxy = wrapper(
+            Gio.DBus.session,
+            'org.gnome.Mutter.DisplayConfig',
+            '/org/gnome/Mutter/DisplayConfig',
+            (_proxy, error) => {
+                if (error) {
+                    console.error(error);
+                }
+            }
+        );
+        // this._gatherInfo(stdout => buffer.set_text(stdout, -1));
+
+        // now call it
+        proxy.GetCurrentStateRemote((state, error) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            buffer.set_text(JSON.stringify(state), -1);
+        });
 
         // set text to buffer
         const aboutVersionView = this.builder.get_object('about_version_textView');
         aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
         aboutVersionView.set_buffer(buffer);
-    }
-
-    async _gatherInfo(callback) {
-        const cb = callback ?? function() {};
-
-        const flags = Gio.SubprocessFlags.STDOUT_PIPE |
-        Gio.SubprocessFlags.STDERR_PIPE;
-
-        const proc = new Gio.Subprocess({
-            argv: ['echo', 'cheese'],
-            flags,
-        });
-        proc.init(null);
-
-        try {
-            await new Promise((resolve, reject) => {
-                proc.communicate_utf8_async(null, null, (obj, res) => {
-                    try {
-                        const [, stdout] = obj.communicate_utf8_finish(res);
-                        const status = obj.get_exit_status();
-                        cb(stdout);
-                        resolve([status, stdout]);
-                    } catch (e) {
-                        reject(e);
-                    }
-                });
-            });
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     range(n) {
