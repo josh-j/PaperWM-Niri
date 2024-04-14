@@ -377,7 +377,7 @@ class SettingsWidget {
         let winprops = this._settings.get_value('winprops').deep_unpack()
             .map(p => JSON.parse(p));
         // sort a little nicer
-        let valueFn = wp =>  {
+        let valueFn = wp => {
             if (wp.wm_class) {
                 return wp.wm_class;
             }
@@ -443,83 +443,78 @@ class SettingsWidget {
 
         // About
         // let versionLabel = this.builder.get_object('extension_version');
-        // let version = this.extension.metadata.version?.toString() ?? '?';
+        const version = this.extension.metadata['version-name'] ?? '?';
         // versionLabel.set_text(version);
 
         // build version information
         const buffer = new Gtk.TextBuffer();
 
-        this._getExtensions();
+        // this._getVersions();
 
-        // // dbus to get extensions
-        // const wrapper = Gio.DBusProxy.makeProxyWrapper(
-        //     `<node>
-        //         <interface name="org.gnome.Mutter.DisplayConfig">
-        //             <method name="GetCurrentState">
-        //             <arg name="serial" direction="out" type="u" />
-        //             <arg name="monitors" direction="out" type="a((ssss)a(siiddada{sv})a{sv})" />
-        //             <arg name="logical_monitors" direction="out" type="a(iiduba(ssss)a{sv})" />
-        //             <arg name="properties" direction="out" type="a{sv}" />
-        //             </method>
-        //             <signal name="MonitorsChanged" />
-        //         </interface>
-        //     </node>`
-        // );
+        // dbus to get extensions
+        const wrapper = Gio.DBusProxy.makeProxyWrapper(
+            `
+            <node>
+                <interface name="org.gnome.Shell.Extensions">
+                    <method name="ListExtensions">
+                        <arg type="a{sa{sv}}" direction="out" name="extensions"/>
+                    </method>
+                </interface>
+            </node>
+            `
+        );
 
-        // const proxy = wrapper(
-        //     Gio.DBus.session,
-        //     'org.gnome.Shell.Extensions',
-        //     '/org/gnome/Shell/Extensions',
-        //     (_proxy, error) => {
-        //         if (error) {
-        //             console.error(error);
-        //         }
-        //     }
-        // );
-        // // this._gatherInfo(stdout => buffer.set_text(stdout, -1));
+        const proxy = wrapper(
+            Gio.DBus.session,
+            'org.gnome.Shell.Extensions',
+            '/org/gnome/Shell/Extensions',
+            (_proxy, error) => {
+                if (error) {
+                    console.error(error);
+                }
+            }
+        );
 
-        // // now call it
-        // proxy.GetCurrentStateRemote((state, error) => {
-        //     if (error) {
-        //         console.error(error);
-        //         return;
-        //     }
+        // now call it
+        let extensions = "";
+        proxy.ListExtensionsRemote((state, error) => {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            const [ext] = state;
+            extensions = Object.keys(ext).map(
+                // e => console.log(`key=${e}  value=${extensions[e].enabled.deep_unpack()}`)
+                k => {
+                    return {
+                        uuid: k,
+                        active: ext[k].enabled.deep_unpack(),
+                    };
+                }
+            )
+            .filter(v => v.active === true)
+            .map(v => `- ${v.uuid}`)
+            .join("\n");
 
-        //     buffer.set_text(JSON.stringify(state), -1);
-        // });
+            const text = `
+            Please include this information in your bug report on GitHub!
+            PaperWM version: ${version}
+            Enabled extensions:
+            ${extensions}
+            `;
+
+            buffer.set_text(
+                text.split('\n')
+                .map(v => v.trim())
+                .join('\n').trim(),
+                -1);
+        });
 
         // set text to buffer
+
         const aboutVersionView = this.builder.get_object('about_version_textView');
         aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
         aboutVersionView.set_buffer(buffer);
-    }
-
-    // gdbus call --session --dest org.gnome.Shell.Extensions --object-path /org/gnome/Shell/Extensions
-    // --method org.gnome.Shell.Extensions.ListExtensions
-
-    async _getExtensions() {
-        try {
-            const reply = await Gio.DBus.session.call(
-                'org.gnome.Shell.Extensions',
-                '/org/gnome/Shell/Extensions',
-                'org.gnome.Shell.Extensions',
-                'ListExtensions',
-                null,
-                null,
-                Gio.DBusCallFlags.NONE,
-                -1,
-                null,
-                _result => {
-                    console.log(`reply returned`);
-                });
-
-            // Our method call has a reply, so we will extract it by getting the
-            // first child of the tuple, which is the actual method return value.
-            const value = reply.get_child_value(0);
-            console.log(value);
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     range(n) {
