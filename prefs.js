@@ -70,7 +70,6 @@ class SettingsWidget {
         pages.forEach(page => prefsWindow.add(page));
         prefsWindow.set_visible_page(pages[selectedPage]);
 
-        // this.aboutButton = this.builder.get_object('about_button');
         this._backgroundFilter = new Gtk.FileFilter();
         this._backgroundFilter.add_pixbuf_formats();
 
@@ -443,16 +442,16 @@ class SettingsWidget {
 
         // About
         // build version information
-        const buffer = new Gtk.TextBuffer();
         const text = `
-            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
-            GNOME Shell: ${this._getGnomeVersion()}${this._getLastDisplayServer()}
-            PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
-            Enabled extensions: ${this._getExtensions()}
-            `.split('\n')
-            .map(v => v.trim())
-            .join('\n').trim();
+        Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
+        GNOME Shell: ${this._getGnomeVersion()}${this._getLastDisplayServer()}
+        PaperWM version: ${this.extension.metadata['version-name'] ?? 'UNKNOWN'}
+        Enabled extensions: ${this._getExtensions()}
+        `.split('\n')
+        .map(v => v.trim())
+        .join('\n').trim();
 
+        const buffer = new Gtk.TextBuffer();
         buffer.set_text(text, -1);
 
         const clipboard = Gdk.Display.get_default()?.get_clipboard();
