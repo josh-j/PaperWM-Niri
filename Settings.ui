@@ -1869,7 +1869,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="about_version_button">
+                  <object class="GtkButton" id="about_version_copy_button">
                     <property name="label">Copy to Clipboard</property>
                     <property name="tooltip_text" translatable="yes">Copies PaperWM version information to clipboard</property>
                     <style>

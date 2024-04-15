@@ -445,19 +445,24 @@ class SettingsWidget {
         // build version information
         const buffer = new Gtk.TextBuffer();
         const text = `
-            Please copy/paste this information in any submitted bug report:
-
             Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
             GNOME Shell: ${this._getGnomeVersion()}
             PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
             Enabled extensions: ${this._getExtensions()}
-            `;
+            `.split('\n')
+            .map(v => v.trim())
+            .join('\n').trim();
 
-        buffer.set_text(
-            text.split('\n')
-                .map(v => v.trim())
-                .join('\n').trim(),
-            -1);
+        buffer.set_text(text, -1);
+
+        const clipboard = Gdk.Display.get_default()?.get_clipboard();
+        if (clipboard) {
+            const copyToClipboard = this.builder.get_object('about_version_copy_button');
+            copyToClipboard.connect('clicked', () => {
+                clipboard.set_content(Gdk.ContentProvider.new_for_value(text));
+            });
+        }
+
 
         // set text to buffer
         const aboutVersionView = this.builder.get_object('about_version_textView');
