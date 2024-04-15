@@ -445,9 +445,10 @@ class SettingsWidget {
         // build version information
         const buffer = new Gtk.TextBuffer();
         const text = `
-            Please include this information in your bug report on GitHub!
-            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'}, ${GLib.get_os_info('VERSION') ?? ""}
-            GNOME Shell:
+            Please copy/paste this information in any submitted bug report:
+
+            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
+            GNOME Shell: ${this._getGnomeVersion()}
             PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
             Enabled extensions: ${this._getExtensions()}
             `;
@@ -468,6 +469,34 @@ class SettingsWidget {
      * Returns a formatted list of currently active extensions.
      * @returns String
      */
+    _getGnomeVersion() {
+        try {
+            const reply = Gio.DBus.session.call_sync(
+                'org.gnome.Shell',
+                '/org/gnome/Shell',
+                'org.freedesktop.DBus.Properties',
+                'Get',
+                new GLib.Variant('(ss)', [
+                    'org.gnome.Shell',
+                    'ShellVersion',
+                ]),
+                null,
+                Gio.DBusCallFlags.NONE,
+                -1,
+                null);
+
+            const [version] = reply.deep_unpack();
+            return version.deep_unpack();
+        } catch (error) {
+            console.error(error);
+            return 'UNKNOWN';
+        }
+    }
+
+    /**
+     * Returns a formatted list of currently active extensions.
+     * @returns String
+     */
     _getExtensions() {
         try {
             const reply = Gio.DBus.session.call_sync(
@@ -475,8 +504,8 @@ class SettingsWidget {
                 '/org/gnome/Shell',
                 'org.gnome.Shell.Extensions',
                 'ListExtensions',
-                null,                                // The method arguments
-                new GLib.VariantType('(a{sa{sv}})'), // The expected reply type
+                null,
+                new GLib.VariantType('(a{sa{sv}})'),
                 Gio.DBusCallFlags.NONE,
                 -1,
                 null
