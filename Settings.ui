@@ -1868,6 +1868,15 @@
                     <property name="left-margin">6</property>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkButton" id="about_version_button">
+                    <property name="label">Copy to Clipboard</property>
+                    <property name="tooltip_text" translatable="yes">Copies PaperWM version information to clipboard</property>
+                    <style>
+                      <class name="suggested-action" />
+                    </style>
+                  </object>
+                </child>
               </object>
             </child>
           </object>
