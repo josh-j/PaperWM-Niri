@@ -370,6 +370,10 @@
   </schema>
 
   <schema id="org.gnome.shell.extensions.paperwm" path="/org/gnome/shell/extensions/paperwm/">
+    <key type="s" name="last-used-display-server">
+        <default>''</default>
+        <summary>Saves the last display server used for PaperWM (Wayland / X11)</summary>
+    </key>
 
     <!-- backup settings (used for restore) -->
     <key type="s" name="restore-keybinds">
