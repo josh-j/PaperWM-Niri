@@ -447,6 +447,7 @@ class SettingsWidget {
         const text = `
             Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
             GNOME Shell: ${this._getGnomeVersion()}
+            Display server: ${this._getLastDisplayServer()}
             PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
             Enabled extensions: ${this._getExtensions()}
             `.split('\n')
@@ -495,6 +496,16 @@ class SettingsWidget {
         } catch (error) {
             console.error(error);
             return 'UNKNOWN';
+        }
+    }
+
+    _getLastDisplayServer() {
+        const ds = this._settings.get_string('last-used-display-server');
+        if (ds.length > 0) {
+            return ds;
+        }
+        else {
+            return "UNKNOWN";
         }
     }
 
