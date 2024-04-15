@@ -446,8 +446,7 @@ class SettingsWidget {
         const buffer = new Gtk.TextBuffer();
         const text = `
             Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
-            GNOME Shell: ${this._getGnomeVersion()}
-            Display server: ${this._getLastDisplayServer()}
+            GNOME Shell: ${this._getGnomeVersion()}${this._getLastDisplayServer()}
             PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
             Enabled extensions: ${this._getExtensions()}
             `.split('\n')
@@ -464,7 +463,6 @@ class SettingsWidget {
             });
         }
 
-
         // set text to buffer
         const aboutVersionView = this.builder.get_object('about_version_textView');
         aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
@@ -472,7 +470,7 @@ class SettingsWidget {
     }
 
     /**
-     * Returns a formatted list of currently active extensions.
+     * Returns the current detected Gnome shell version.
      * @returns String
      */
     _getGnomeVersion() {
@@ -499,13 +497,17 @@ class SettingsWidget {
         }
     }
 
+    /**
+     * Returns the last used display server (Wayland / X11)
+     * @returns String
+     */
     _getLastDisplayServer() {
         const ds = this._settings.get_string('last-used-display-server');
         if (ds.length > 0) {
-            return ds;
+            return `\nDisplay server: ${ds}`;
         }
         else {
-            return "UNKNOWN";
+            return "";
         }
     }
 
