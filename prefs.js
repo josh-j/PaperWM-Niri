@@ -444,9 +444,10 @@ class SettingsWidget {
         // build version information
         const text = `
         Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
-        GNOME Shell: ${this._getGnomeVersion()}${this._getLastDisplayServer()}
-        PaperWM version: ${this.extension.metadata['version-name'] ?? 'UNKNOWN'}
-        Enabled extensions: ${this._getExtensions()}
+        GNOME Shell: ${this._getGnomeVersion()}\
+        ${this._getLastDisplayServer()}
+        PaperWM version: ${this.extension.metadata['version-name'] ?? 'UNKNOWN'}\
+        ${this._getExtensions()}
         `.split('\n')
         .map(v => v.trim())
         .join('\n').trim();
@@ -533,7 +534,7 @@ class SettingsWidget {
                 k => {
                     return {
                         uuid: k,
-                        active: ext[k].enabled.deep_unpack(),
+                        active: ext[k].state.deep_unpack() === 1, // state 1 = active
                     };
                 }
             )
@@ -541,10 +542,13 @@ class SettingsWidget {
                 .map(v => `- ${v.uuid}`)
                 .join("\n");
 
-            return `\n${extensions}`;
+            if (extensions.length <= 0) {
+                return '';
+            }
+            return `\nEnabled extensions:\n${extensions}`;
         } catch (error) {
             console.error(error);
-            return 'UNKNOWN';
+            return '\nEnabled extensions: UNKNOWN';
         }
     }
 
