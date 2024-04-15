@@ -442,49 +442,48 @@ class SettingsWidget {
         percentValueChanged('maximize-width-percent', 'maximize-width-percent');
 
         // About
-        // let versionLabel = this.builder.get_object('extension_version');
-        const version = this.extension.metadata['version-name'] ?? '?';
-        // versionLabel.set_text(version);
-
         // build version information
         const buffer = new Gtk.TextBuffer();
+        const text = `
+            Please include this information in your bug report on GitHub!
+            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'}, ${GLib.get_os_info('VERSION') ?? ""}
+            GNOME Shell:
+            PaperWM version: ${this.extension.metadata['version-name'] ?? '?'}
+            Enabled extensions: ${this._getExtensions()}
+            `;
 
-        // this._getVersions();
+        buffer.set_text(
+            text.split('\n')
+                .map(v => v.trim())
+                .join('\n').trim(),
+            -1);
 
-        // dbus to get extensions
-        const wrapper = Gio.DBusProxy.makeProxyWrapper(
-            `
-            <node>
-                <interface name="org.gnome.Shell.Extensions">
-                    <method name="ListExtensions">
-                        <arg type="a{sa{sv}}" direction="out" name="extensions"/>
-                    </method>
-                </interface>
-            </node>
-            `
-        );
+        // set text to buffer
+        const aboutVersionView = this.builder.get_object('about_version_textView');
+        aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
+        aboutVersionView.set_buffer(buffer);
+    }
 
-        const proxy = wrapper(
-            Gio.DBus.session,
-            'org.gnome.Shell.Extensions',
-            '/org/gnome/Shell/Extensions',
-            (_proxy, error) => {
-                if (error) {
-                    console.error(error);
-                }
-            }
-        );
+    /**
+     * Returns a formatted list of currently active extensions.
+     * @returns String
+     */
+    _getExtensions() {
+        try {
+            const reply = Gio.DBus.session.call_sync(
+                'org.gnome.Shell',
+                '/org/gnome/Shell',
+                'org.gnome.Shell.Extensions',
+                'ListExtensions',
+                null,                                // The method arguments
+                new GLib.VariantType('(a{sa{sv}})'), // The expected reply type
+                Gio.DBusCallFlags.NONE,
+                -1,
+                null
+            );
 
-        // now call it
-        let extensions = "";
-        proxy.ListExtensionsRemote((state, error) => {
-            if (error) {
-                console.error(error);
-                return;
-            }
-            const [ext] = state;
-            extensions = Object.keys(ext).map(
-                // e => console.log(`key=${e}  value=${extensions[e].enabled.deep_unpack()}`)
+            const [ext] = reply.deep_unpack();
+            const extensions = Object.keys(ext).map(
                 k => {
                     return {
                         uuid: k,
@@ -492,32 +491,15 @@ class SettingsWidget {
                     };
                 }
             )
-            .filter(v => v.active === true)
-            .map(v => `- ${v.uuid}`)
-            .join("\n");
+                .filter(v => v.active === true)
+                .map(v => `- ${v.uuid}`)
+                .join("\n");
 
-            const text = `
-            Please include this information in your bug report on GitHub!
-            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'}, ${GLib.get_os_info('VERSION') ?? ""}
-            GNOME Shell:
-            Display server: ${Meta.is_wayland_compositor() ? 'Wayland' : "X11"}
-            PaperWM version: ${version}
-            Enabled extensions:
-            ${extensions}
-            `;
-
-            buffer.set_text(
-                text.split('\n')
-                .map(v => v.trim())
-                .join('\n').trim(),
-                -1);
-        });
-
-        // set text to buffer
-
-        const aboutVersionView = this.builder.get_object('about_version_textView');
-        aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
-        aboutVersionView.set_buffer(buffer);
+            return `\n${extensions}`;
+        } catch (error) {
+            console.error(error);
+            return 'UNKNOWN';
+        }
     }
 
     range(n) {
