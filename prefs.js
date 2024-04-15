@@ -498,6 +498,9 @@ class SettingsWidget {
 
             const text = `
             Please include this information in your bug report on GitHub!
+            Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'}, ${GLib.get_os_info('VERSION') ?? ""}
+            GNOME Shell:
+            Display server: ${Meta.is_wayland_compositor() ? 'Wayland' : "X11"}
             PaperWM version: ${version}
             Enabled extensions:
             ${extensions}
