@@ -383,7 +383,7 @@ Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
                         this.tooltip.set_text('');
                         break;
                     }
-                },
+                }
             );
         }
     }
@@ -447,18 +447,21 @@ export const OpenPositionIcon = GObject.registerClass(
                     this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end.svg'));
                 },
                 mode => {
-                    mode = mode ?? Tiling.FocusModes.DEFAULT;
+                    mode = mode ?? Settings.OpenWindowPositions.RIGHT;
                     this.mode = mode;
 
                     switch (mode) {
-                    case Tiling.FocusModes.CENTER:
-                        this.gicon = this.gIconCenter;
+                    case Settings.OpenWindowPositions.LEFT:
+                        this.gicon = this.gIconRight;
                         break;
-                    case Tiling.FocusModes.EDGE:
-                        this.gicon = this.gIconEdge;
+                    case Settings.OpenWindowPositions.START:
+                        this.gicon = this.gIconStart;
+                        break;
+                    case Settings.OpenWindowPositions.END:
+                        this.gicon = this.gIconEnd;
                         break;
                     default:
-                        this.gicon = this.gIconDefault;
+                        this.gicon = this.gIconRight;
                         break;
                     }
 
@@ -466,28 +469,27 @@ export const OpenPositionIcon = GObject.registerClass(
                     return this;
                 },
                 () => {
-                    const markup = (color, mode) => {
+                    const markup = mode => {
                         this.tooltip.clutter_text
                             .set_markup(
-                                `    <i>Window focus mode</i>
-Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
+                                `    <i>Open Window Position</i>
+Current position: <b>${mode}</b>`);
                     };
                     switch (this.mode) {
-                    case Tiling.FocusModes.DEFAULT:
-                        markup('#6be67b', 'DEFAULT');
+                    case Settings.OpenWindowPositions.LEFT:
+                        markup('LEFT');
                         return;
-                    case Tiling.FocusModes.CENTER:
-                        markup('#6be6cb', 'CENTER');
+                    case Settings.OpenWindowPositions.START:
+                        markup('START');
                         break;
-                    case Tiling.FocusModes.EDGE:
-                        markup('#abe67b', 'EDGE');
+                    case Settings.OpenWindowPositions.END:
+                        markup('END');
                         break;
                     default:
-                        markup('#6be67b', 'DEFAULT');
-                        this.tooltip.set_text('');
+                        markup('RIGHT');
                         break;
                     }
-                },
+                }
             );
         }
     }
