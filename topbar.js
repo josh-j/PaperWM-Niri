@@ -24,7 +24,7 @@ const display = global.display;
 
 export let panelBox = Main.layoutManager.panelBox;
 
-export let menu, focusButton;
+export let menu, focusButton, openPositionButton;
 let openPrefs, screenSignals, signals, gsettings;
 export function enable (extension) {
     openPrefs = () => extension.openPreferences();
@@ -37,9 +37,11 @@ export function enable (extension) {
 
     menu = new WorkspaceMenu();
     focusButton = new FocusButton();
+    openPositionButton = new OpenPositionButton();
 
     Main.panel.addToStatusArea('WorkspaceMenu', menu, 1, 'left');
     Main.panel.addToStatusArea('FocusButton', focusButton, 2, 'left');
+    Main.panel.addToStatusArea('OpenPositionButton', openPositionButton, 3, 'left');
 
     Tiling.spaces.forEach(s => {
         s.workspaceLabel.clutter_text.set_font_description(menu.label.clutter_text.font_description);
@@ -103,6 +105,8 @@ export function disable() {
     signals = null;
     focusButton.destroy();
     focusButton = null;
+    openPositionButton.destroy();
+    openPositionButton = null;
     menu.destroy();
     menu = null;
     Main.panel.statusArea.activities.show();
@@ -253,7 +257,7 @@ const BaseIcon = GObject.registerClass(
         _init(
             props = {},
             tooltipProps = {},
-            initIcons = () => {},
+            init = () => {},
             setMode = _mode => {},
             updateTooltipText = () => {}
         ) {
@@ -263,13 +267,13 @@ const BaseIcon = GObject.registerClass(
             this.tooltip_parent = tooltipProps?.parent ?? this;
             this.tooltip_x_point = tooltipProps?.x_point ?? 0;
 
-            initIcons();
-
+            // assign functions
             this.setMode = setMode;
-            setMode();
-
             this.updateTooltipText = updateTooltipText;
+
+            init();
             this.initToolTip();
+            this.setMode();
 
             this.reactive = true;
             this.connect('button-press-event', () => {
@@ -338,9 +342,9 @@ export const FocusIcon = GObject.registerClass(
                 tooltipProps,
                 () => {
                     const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
-                    this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default.svg'));
-                    this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center.svg'));
-                    this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge.svg'));
+                    this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default-symbolic.svg'));
+                    this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center-symbolic.svg'));
+                    this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge-symbolic.svg'));
                 },
                 mode => {
                     mode = mode ?? Tiling.FocusModes.DEFAULT;
@@ -396,7 +400,7 @@ export const FocusButton = GObject.registerClass(
 
             this._icon = new FocusIcon({
                 style_class: 'system-status-icon focus-mode-button',
-            }, this, -10);
+            }, { parent: this, x_point: -10 });
 
             this.setFocusMode();
             this.add_child(this._icon);
@@ -441,10 +445,16 @@ export const OpenPositionIcon = GObject.registerClass(
                 tooltipProps,
                 () => {
                     const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
-                    this.gIconRight = Gio.icon_new_for_string(pather('./resources/open-position-right.svg'));
-                    this.gIconLeft = Gio.icon_new_for_string(pather('./resources/open-position-left.svg'));
-                    this.gIconStart = Gio.icon_new_for_string(pather('./resources/open-position-start.svg'));
-                    this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end.svg'));
+                    this.gIconRight = Gio.icon_new_for_string(pather('./resources/open-position-right-symbolic.svg'));
+                    this.gIconLeft = Gio.icon_new_for_string(pather('./resources/open-position-left-symbolic.svg'));
+                    this.gIconStart = Gio.icon_new_for_string(pather('./resources/open-position-start-symbolic.svg'));
+                    this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end-symbolic.svg'));
+
+                    // connection to update based on gsetting
+                    signals.connect(gsettings, 'changed::open-window-position', (_settings, _key) => {
+                        const mode = Settings.prefs.open_window_position;
+                        this.setMode(mode);
+                    });
                 },
                 mode => {
                     mode = mode ?? Settings.OpenWindowPositions.RIGHT;
@@ -452,7 +462,7 @@ export const OpenPositionIcon = GObject.registerClass(
 
                     switch (mode) {
                     case Settings.OpenWindowPositions.LEFT:
-                        this.gicon = this.gIconRight;
+                        this.gicon = this.gIconLeft;
                         break;
                     case Settings.OpenWindowPositions.START:
                         this.gicon = this.gIconStart;
@@ -500,37 +510,27 @@ export const OpenPositionButton = GObject.registerClass(
         _init() {
             super._init(0.0, 'OpenPosition');
 
-            this._icon = new FocusIcon({
+            this._icon = new OpenPositionIcon({
                 style_class: 'system-status-icon focus-mode-button',
             }, this, -10);
 
-            this.setFocusMode();
+            this.setPositionMode();
             this.add_child(this._icon);
             this.connect('event', this._onClicked.bind(this));
         }
 
         /**
-         * Sets the focus mode with this button.
+         * Sets the position mode with this button.
          * @param {*} mode
          */
-        setFocusMode(mode) {
-            mode = mode ?? Tiling.FocusModes.DEFAULT;
-            this.focusMode = mode;
+        setPositionMode(mode) {
+            mode = mode ?? Settings.OpenWindowPositions.RIGHT;
+            this.positionMode = mode;
             this._icon.setMode(mode);
             return this;
         }
 
-        _onClicked(actor, event) {
-            if (Tiling.inPreview !== Tiling.PreviewMode.NONE || Main.overview.visible) {
-                return Clutter.EVENT_PROPAGATE;
-            }
-
-            if (event.type() !== Clutter.EventType.TOUCH_BEGIN &&
-                event.type() !== Clutter.EventType.BUTTON_PRESS) {
-                return Clutter.EVENT_PROPAGATE;
-            }
-
-            Tiling.switchToNextFocusMode();
+        _onClicked(_actor, _event) {
             return Clutter.EVENT_PROPAGATE;
         }
     }
