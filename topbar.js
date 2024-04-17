@@ -254,8 +254,8 @@ const BaseIcon = GObject.registerClass(
             props = {},
             tooltipProps = {},
             initIcons = () => {},
-            updateTooltipText = () => {},
-            setMode = _mode => {}
+            setMode = _mode => {},
+            updateTooltipText = () => {}
         ) {
             super._init(props);
 
@@ -265,11 +265,11 @@ const BaseIcon = GObject.registerClass(
 
             initIcons();
 
-            this.updateTooltipText = updateTooltipText;
-            this.initToolTip();
-
             this.setMode = setMode;
             setMode();
+
+            this.updateTooltipText = updateTooltipText;
+            this.initToolTip();
 
             this.reactive = true;
             this.connect('button-press-event', () => {
@@ -338,9 +338,28 @@ export const FocusIcon = GObject.registerClass(
                 tooltipProps,
                 () => {
                     const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
-                    this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default-symbolic.svg'));
-                    this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center-symbolic.svg'));
-                    this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge-symbolic.svg'));
+                    this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default.svg'));
+                    this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center.svg'));
+                    this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge.svg'));
+                },
+                mode => {
+                    mode = mode ?? Tiling.FocusModes.DEFAULT;
+                    this.mode = mode;
+
+                    switch (mode) {
+                    case Tiling.FocusModes.CENTER:
+                        this.gicon = this.gIconCenter;
+                        break;
+                    case Tiling.FocusModes.EDGE:
+                        this.gicon = this.gIconEdge;
+                        break;
+                    default:
+                        this.gicon = this.gIconDefault;
+                        break;
+                    }
+
+                    this.updateTooltipText();
+                    return this;
                 },
                 () => {
                     const markup = (color, mode) => {
@@ -365,6 +384,68 @@ Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
                         break;
                     }
                 },
+            );
+        }
+    }
+);
+
+export const FocusButton = GObject.registerClass(
+    class FocusButton extends panelMenu.Button {
+        _init() {
+            super._init(0.0, 'FocusMode');
+
+            this._icon = new FocusIcon({
+                style_class: 'system-status-icon focus-mode-button',
+            }, this, -10);
+
+            this.setFocusMode();
+            this.add_child(this._icon);
+            this.connect('event', this._onClicked.bind(this));
+        }
+
+        /**
+         * Sets the focus mode with this button.
+         * @param {*} mode
+         */
+        setFocusMode(mode) {
+            mode = mode ?? Tiling.FocusModes.DEFAULT;
+            this.focusMode = mode;
+            this._icon.setMode(mode);
+            return this;
+        }
+
+        _onClicked(actor, event) {
+            if (Tiling.inPreview !== Tiling.PreviewMode.NONE || Main.overview.visible) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
+            if (event.type() !== Clutter.EventType.TOUCH_BEGIN &&
+                event.type() !== Clutter.EventType.BUTTON_PRESS) {
+                return Clutter.EVENT_PROPAGATE;
+            }
+
+            Tiling.switchToNextFocusMode();
+            return Clutter.EVENT_PROPAGATE;
+        }
+    }
+);
+
+export const OpenPositionIcon = GObject.registerClass(
+    class OpenPositionIcon extends BaseIcon {
+        _init(
+            props = {},
+            tooltipProps = {}
+        ) {
+            super._init(
+                props,
+                tooltipProps,
+                () => {
+                    const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
+                    this.gIconRight = Gio.icon_new_for_string(pather('./resources/open-position-right.svg'));
+                    this.gIconLeft = Gio.icon_new_for_string(pather('./resources/open-position-left.svg'));
+                    this.gIconStart = Gio.icon_new_for_string(pather('./resources/open-position-start.svg'));
+                    this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end.svg'));
+                },
                 mode => {
                     mode = mode ?? Tiling.FocusModes.DEFAULT;
                     this.mode = mode;
@@ -383,16 +464,39 @@ Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
 
                     this.updateTooltipText();
                     return this;
-                }
+                },
+                () => {
+                    const markup = (color, mode) => {
+                        this.tooltip.clutter_text
+                            .set_markup(
+                                `    <i>Window focus mode</i>
+Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
+                    };
+                    switch (this.mode) {
+                    case Tiling.FocusModes.DEFAULT:
+                        markup('#6be67b', 'DEFAULT');
+                        return;
+                    case Tiling.FocusModes.CENTER:
+                        markup('#6be6cb', 'CENTER');
+                        break;
+                    case Tiling.FocusModes.EDGE:
+                        markup('#abe67b', 'EDGE');
+                        break;
+                    default:
+                        markup('#6be67b', 'DEFAULT');
+                        this.tooltip.set_text('');
+                        break;
+                    }
+                },
             );
         }
     }
 );
 
-export const FocusButton = GObject.registerClass(
-    class FocusButton extends panelMenu.Button {
+export const OpenPositionButton = GObject.registerClass(
+    class OpenPositionButton extends panelMenu.Button {
         _init() {
-            super._init(0.0, 'FocusMode');
+            super._init(0.0, 'OpenPosition');
 
             this._icon = new FocusIcon({
                 style_class: 'system-status-icon focus-mode-button',
