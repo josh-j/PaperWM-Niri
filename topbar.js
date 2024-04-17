@@ -327,9 +327,6 @@ const BaseIcon = GObject.registerClass(
     }
 );
 
-/**
- * FocusMode icon class.
- */
 export const FocusIcon = GObject.registerClass(
     class FocusIcon extends BaseIcon {
         _init(
