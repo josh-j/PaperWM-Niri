@@ -248,28 +248,30 @@ export const PopupMenuEntry = GObject.registerClass(
 //     }
 // }
 
-/**
- * FocusMode icon class.
- */
-export const FocusIcon = GObject.registerClass(
-    class FocusIcon extends St.Icon {
-        _init(properties = {}, tooltip_parent, tooltip_x_point = 0) {
-            super._init(properties);
-            this.reactive = true;
+const BaseIcon = GObject.registerClass(
+    class BaseIcon extends St.Icon {
+        _init(
+            props = {},
+            tooltipProps = {},
+            initIcons = () => {},
+            updateTooltipText = () => {},
+            setMode = _mode => {}
+        ) {
+            super._init(props);
 
             // allow custom x position for tooltip
-            this.tooltip_parent = tooltip_parent ?? this;
-            this.tooltip_x_point = tooltip_x_point;
+            this.tooltip_parent = tooltipProps?.parent ?? this;
+            this.tooltip_x_point = tooltipProps?.x_point ?? 0;
 
-            // read in focus icons from resources folder
-            const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
-            this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default-symbolic.svg'));
-            this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center-symbolic.svg'));
-            this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge-symbolic.svg'));
+            initIcons();
 
-            this._initToolTip();
-            this.setMode();
+            this.updateTooltipText = updateTooltipText;
+            this.initToolTip();
 
+            this.setMode = setMode;
+            setMode();
+
+            this.reactive = true;
             this.connect('button-press-event', () => {
                 if (this.clickFunction) {
                     this.clickFunction();
@@ -277,24 +279,14 @@ export const FocusIcon = GObject.registerClass(
             });
         }
 
-        /**
-         * Sets a function to be executed on click.
-         * @param {Function} clickFunction
-         * @returns
-         */
-        setClickFunction(clickFunction) {
-            this.clickFunction = clickFunction;
-            return this;
-        }
-
-        _initToolTip() {
+        initToolTip() {
             const tt = new St.Label({ style_class: 'focus-button-tooltip' });
             tt.hide();
             // eslint-disable-next-line no-undef
             global.stage.add_child(tt);
             this.tooltip_parent.connect('enter-event', _icon => {
                 this._updateTooltipPosition(this.tooltip_x_point);
-                this._updateTooltipText();
+                this.updateTooltipText();
                 tt.show();
             });
             this.tooltip_parent.connect('leave-event', (_icon, _event) => {
@@ -314,51 +306,13 @@ export const FocusIcon = GObject.registerClass(
             this.tooltip.set_position(Math.max(0, point.x - 62), point.y + 34);
         }
 
-        _updateTooltipText() {
-            const markup = (color, mode) => {
-                this.tooltip.clutter_text
-                    .set_markup(
-                        `    <i>Window focus mode</i>
-Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
-            };
-            switch (this.mode) {
-            case Tiling.FocusModes.DEFAULT:
-                markup('#6be67b', 'DEFAULT');
-                return;
-            case Tiling.FocusModes.CENTER:
-                markup('#6be6cb', 'CENTER');
-                break;
-            case Tiling.FocusModes.EDGE:
-                markup('#abe67b', 'EDGE');
-                break;
-            default:
-                markup('#6be67b', 'DEFAULT');
-                this.tooltip.set_text('');
-                break;
-            }
-        }
-
         /**
-         * Set the mode that this icon will display.
-         * @param {Tiling.FocusModes} mode
+         * Sets a function to be executed on click.
+         * @param {Function} clickFunction
+         * @returns
          */
-        setMode(mode) {
-            mode = mode ?? Tiling.FocusModes.DEFAULT;
-            this.mode = mode;
-
-            switch (mode) {
-            case Tiling.FocusModes.CENTER:
-                this.gicon = this.gIconCenter;
-                break;
-            case Tiling.FocusModes.EDGE:
-                this.gicon = this.gIconEdge;
-                break;
-            default:
-                this.gicon = this.gIconDefault;
-                break;
-            }
-
-            this._updateTooltipText();
+        setClickFunction(clickFunction) {
+            this.clickFunction = clickFunction;
             return this;
         }
 
@@ -369,6 +323,71 @@ Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
         setVisible(visible = true) {
             this.visible = visible;
             return this;
+        }
+    }
+);
+
+/**
+ * FocusMode icon class.
+ */
+export const FocusIcon = GObject.registerClass(
+    class FocusIcon extends BaseIcon {
+        _init(
+            props = {},
+            tooltipProps = {}
+        ) {
+            super._init(
+                props,
+                tooltipProps,
+                () => {
+                    const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
+                    this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default-symbolic.svg'));
+                    this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center-symbolic.svg'));
+                    this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge-symbolic.svg'));
+                },
+                () => {
+                    const markup = (color, mode) => {
+                        this.tooltip.clutter_text
+                            .set_markup(
+                                `    <i>Window focus mode</i>
+Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
+                    };
+                    switch (this.mode) {
+                    case Tiling.FocusModes.DEFAULT:
+                        markup('#6be67b', 'DEFAULT');
+                        return;
+                    case Tiling.FocusModes.CENTER:
+                        markup('#6be6cb', 'CENTER');
+                        break;
+                    case Tiling.FocusModes.EDGE:
+                        markup('#abe67b', 'EDGE');
+                        break;
+                    default:
+                        markup('#6be67b', 'DEFAULT');
+                        this.tooltip.set_text('');
+                        break;
+                    }
+                },
+                mode => {
+                    mode = mode ?? Tiling.FocusModes.DEFAULT;
+                    this.mode = mode;
+
+                    switch (mode) {
+                    case Tiling.FocusModes.CENTER:
+                        this.gicon = this.gIconCenter;
+                        break;
+                    case Tiling.FocusModes.EDGE:
+                        this.gicon = this.gIconEdge;
+                        break;
+                    default:
+                        this.gicon = this.gIconDefault;
+                        break;
+                    }
+
+                    this.updateTooltipText();
+                    return this;
+                }
+            );
         }
     }
 );
@@ -410,90 +429,6 @@ export const FocusButton = GObject.registerClass(
 
             Tiling.switchToNextFocusMode();
             return Clutter.EVENT_PROPAGATE;
-        }
-    }
-);
-
-const BaseIcon = GObject.registerClass(
-    class BaseIcon extends St.Icon {
-        _init(props = {}, tooltipProps = {}, iconInit = _path => {} ) {
-            super._init(props);
-
-            // allow custom x position for tooltip
-            this.tooltip_parent = tooltipProps?.parent ?? this;
-            this.tooltip_x_point = tooltipProps?.x_point ?? 0;
-
-            this.reactive = true;
-
-            // read in focus icons from resources folder
-            const path = extPath => GLib.uri_resolve_relative(import.meta.url, extPath, GLib.UriFlags.NONE);
-            iconInit(path);
-
-            this._initToolTip();
-            this.setMode();
-
-            this.connect('button-press-event', () => {
-                if (this.clickFunction) {
-                    this.clickFunction();
-                }
-            });
-        }
-
-        /**
-         * Sets a function to be executed on click.
-         * @param {Function} clickFunction
-         * @returns
-         */
-        setClickFunction(clickFunction) {
-            this.clickFunction = clickFunction;
-            return this;
-        }
-
-        _initToolTip() {
-            const tt = new St.Label({ style_class: 'focus-button-tooltip' });
-            tt.hide();
-            // eslint-disable-next-line no-undef
-            global.stage.add_child(tt);
-            this.tooltip_parent.connect('enter-event', _icon => {
-                this._updateTooltipPosition(this.tooltip_x_point);
-                this._updateTooltipText();
-                tt.show();
-            });
-            this.tooltip_parent.connect('leave-event', (_icon, _event) => {
-                if (!this.has_pointer) {
-                    tt.hide();
-                }
-            });
-            this.tooltip = tt;
-        }
-
-        /**
-         * Updates tooltip position relative to this button.
-         */
-        _updateTooltipPosition(xpoint = 0) {
-            let point = this.apply_transform_to_point(
-                new Graphene.Point3D({ x: xpoint, y: 0 }));
-            this.tooltip.set_position(Math.max(0, point.x - 62), point.y + 34);
-        }
-
-        _updateTooltipText() {
-            throw new Error(`please implement '_updateTooltipText' function`);
-        }
-
-        /**
-         * Set the mode that this icon will display.
-         */
-        setMode(_mode) {
-            throw new Error(`please implement 'setMode' function`);
-        }
-
-        /**
-         * Sets visibility of icon.
-         * @param {boolean} visible
-         */
-        setVisible(visible = true) {
-            this.visible = visible;
-            return this;
         }
     }
 );
