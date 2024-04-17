@@ -414,21 +414,20 @@ export const FocusButton = GObject.registerClass(
     }
 );
 
-export const OpenDirIcon = GObject.registerClass(
-    class OpenDirIcon extends St.Icon {
-        _init(properties = {}, tooltip_parent, tooltip_x_point = 0) {
-            super._init(properties);
-            this.reactive = true;
+const BaseIcon = GObject.registerClass(
+    class BaseIcon extends St.Icon {
+        _init(props = {}, tooltipProps = {}, iconInit = _path => {} ) {
+            super._init(props);
 
             // allow custom x position for tooltip
-            this.tooltip_parent = tooltip_parent ?? this;
-            this.tooltip_x_point = tooltip_x_point;
+            this.tooltip_parent = tooltipProps?.parent ?? this;
+            this.tooltip_x_point = tooltipProps?.x_point ?? 0;
+
+            this.reactive = true;
 
             // read in focus icons from resources folder
-            const pather = relativePath => GLib.uri_resolve_relative(import.meta.url, relativePath, GLib.UriFlags.NONE);
-            this.gIconDefault = Gio.icon_new_for_string(pather('./resources/focus-mode-default-symbolic.svg'));
-            this.gIconCenter = Gio.icon_new_for_string(pather('./resources/focus-mode-center-symbolic.svg'));
-            this.gIconEdge = Gio.icon_new_for_string(pather('./resources/focus-mode-edge-symbolic.svg'));
+            const path = extPath => GLib.uri_resolve_relative(import.meta.url, extPath, GLib.UriFlags.NONE);
+            iconInit(path);
 
             this._initToolTip();
             this.setMode();
@@ -478,45 +477,14 @@ export const OpenDirIcon = GObject.registerClass(
         }
 
         _updateTooltipText() {
-            const markup = (color, mode) => {
-                this.tooltip.clutter_text
-                    .set_markup(
-                        `    <i>Window focus mode</i>
-Current mode: <span foreground="${color}"><b>${mode}</b></span>`);
-            };
-            if (this.mode === Tiling.FocusModes.DEFAULT) {
-                markup('#6be67b', 'DEFAULT');
-            } else if (this.mode === Tiling.FocusModes.CENTER) {
-                markup('#6be6cb', 'CENTER');
-            } else if (this.mode === Tiling.FocusModes.EDGE) {
-                markup('#abe67b', 'EDGE');
-            } else {
-                this.tooltip.set_text('');
-            }
+            throw new Error(`please implement '_updateTooltipText' function`);
         }
 
         /**
          * Set the mode that this icon will display.
-         * @param {Tiling.FocusModes} mode
          */
-        setMode(mode) {
-            mode = mode ?? Tiling.FocusModes.DEFAULT;
-            this.mode = mode;
-
-            switch (mode) {
-            case Tiling.FocusModes.CENTER:
-                this.gicon = this.gIconCenter;
-                break;
-            case Tiling.FocusModes.EDGE:
-                this.gicon = this.gIconEdge;
-                break;
-            default:
-                this.gicon = this.gIconDefault;
-                break;
-            }
-
-            this._updateTooltipText();
-            return this;
+        setMode(_mode) {
+            throw new Error(`please implement 'setMode' function`);
         }
 
         /**
