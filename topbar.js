@@ -70,6 +70,7 @@ export function enable (extension) {
 
     fixWorkspaceIndicator();
     fixFocusModeIcon();
+    fixOpenPositionIcon();
     fixStyle();
 
     screenSignals.push(
@@ -105,6 +106,10 @@ export function enable (extension) {
 
     signals.connect(gsettings, 'changed::show-focus-mode-icon', (_settings, _key) => {
         fixFocusModeIcon();
+    });
+
+    signals.connect(gsettings, 'changed::show-open-position-icon', (_settings, _key) => {
+        fixOpenPositionIcon();
     });
 
     signals.connect(panelBox, 'show', () => {
@@ -938,6 +943,10 @@ export function fixWorkspaceIndicator() {
 export function fixFocusModeIcon() {
     Settings.prefs.show_focus_mode_icon ? focusButton.show() : focusButton.hide();
     Tiling.spaces.forEach(s => s.showFocusModeIcon());
+}
+
+export function fixOpenPositionIcon() {
+    Settings.prefs.show_open_position_icon ? openPositionButton.show() : openPositionButton.hide();
 }
 
 /**

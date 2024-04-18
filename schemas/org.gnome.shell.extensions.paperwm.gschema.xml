@@ -547,6 +547,11 @@
         <summary>Show the focus mode icon in the topbar</summary>
     </key>
 
+    <key type="b" name="show-open-position-icon">
+        <default>true</default>
+        <summary>Show the open window position icon</summary>
+    </key>
+
     <key type="d" name="animation-time">
         <default>0.25</default>
         <summary>Duration of animations in seconds</summary>

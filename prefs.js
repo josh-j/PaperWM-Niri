@@ -441,6 +441,7 @@ class SettingsWidget {
 
         intValueChanged('overview_min_windows_per_row_spin', 'overview-min-windows-per-row');
         booleanStateChanged('show-focus-mode-icon');
+        booleanStateChanged('show-open-position-icon');
         booleanStateChanged('disable-topbar-styling', true);
         // disabled since opposite of gnome-pill
         // booleanSetState('show-workspace-indicator');
