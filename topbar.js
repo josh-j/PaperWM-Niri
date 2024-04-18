@@ -440,7 +440,7 @@ export const FocusButton = GObject.registerClass(
             return this;
         }
 
-        _onClicked(actor, event) {
+        _onClicked(_actor, event) {
             if (Tiling.inPreview !== Tiling.PreviewMode.NONE || Main.overview.visible) {
                 return Clutter.EVENT_PROPAGATE;
             }
@@ -476,11 +476,6 @@ export const OpenPositionIcon = GObject.registerClass(
                     signals.connect(gsettings, 'changed::open-window-position', (_settings, _key) => {
                         const mode = Settings.prefs.open_window_position;
                         this.setMode(mode);
-                    });
-
-                    // let's set out click function for this icon here
-                    this.setClickFunction(() => {
-                        switchToNextOpenPositionMode();
                     });
                 },
                 mode => {
@@ -567,12 +562,12 @@ export const OpenPositionButton = GObject.registerClass(
             super._init(0.0, 'OpenPosition');
 
             this._icon = new OpenPositionIcon({
-                style_class: 'system-status-icon focus-mode-button',
-            }, this, -10);
+                style_class: 'system-status-icon open-position-icon',
+            }, { parent: this, x_point: -10 });
 
             this.setPositionMode(Settings.prefs.open_window_position);
             this.add_child(this._icon);
-            this.connect('event', this._onClicked.bind(this));
+            this.connect('button-press-event', this._onClicked.bind(this));
         }
 
         /**
@@ -587,6 +582,7 @@ export const OpenPositionButton = GObject.registerClass(
         }
 
         _onClicked(_actor, _event) {
+            switchToNextOpenPositionMode();
             return Clutter.EVENT_PROPAGATE;
         }
     }
