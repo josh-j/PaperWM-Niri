@@ -271,6 +271,12 @@ class SettingsWidget {
             }
         });
 
+        // plug up options
+        booleanStateChanged('open-window-position-option-right');
+        booleanStateChanged('open-window-position-option-left');
+        booleanStateChanged('open-window-position-option-start');
+        booleanStateChanged('open-window-position-option-end');
+
         const scratchOverview = this.builder.get_object('scratch-in-overview');
         if (this._settings.get_boolean('only-scratch-in-overview'))
             scratchOverview.set_active_id('only');

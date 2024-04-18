@@ -26,7 +26,28 @@ export let panelBox = Main.layoutManager.panelBox;
 
 export let menu, focusButton, openPositionButton;
 let openPrefs, screenSignals, signals, gsettings;
+let activeOpenWindowPositions;
+
 export function enable (extension) {
+    activeOpenWindowPositions = [
+        {
+            mode: Settings.OpenWindowPositions.RIGHT,
+            active: () => Settings.prefs.open_window_position_option_right,
+        },
+        {
+            mode: Settings.OpenWindowPositions.LEFT,
+            active: () => Settings.prefs.open_window_position_option_left,
+        },
+        {
+            mode: Settings.OpenWindowPositions.START,
+            active: () => Settings.prefs.open_window_position_option_start,
+        },
+        {
+            mode: Settings.OpenWindowPositions.END,
+            active: () => Settings.prefs.open_window_position_option_end,
+        },
+    ];
+
     openPrefs = () => extension.openPreferences();
     gsettings = extension.getSettings();
 
@@ -107,6 +128,7 @@ export function disable() {
     focusButton = null;
     openPositionButton.destroy();
     openPositionButton = null;
+    activeOpenWindowPositions = null;
     menu.destroy();
     menu = null;
     Main.panel.statusArea.activities.show();
@@ -458,7 +480,7 @@ export const OpenPositionIcon = GObject.registerClass(
 
                     // let's set out click function for this icon here
                     this.setClickFunction(() => {
-                        switchToOpenPositionMode();
+                        switchToNextOpenPositionMode();
                     });
                 },
                 mode => {
@@ -514,12 +536,25 @@ Current position: <b>${mode}</b>`);
  * Switches to the next focus mode for a space.
  * @param {Space} space
  */
-export function switchToOpenPositionMode() {
-    const numModes = Object.keys(Settings.OpenWindowPositions).length;
-    // for currMode we switch to 1-based to use it validly in remainder operation
-    const currMode = Object.values(Settings.OpenWindowPositions)
-        .indexOf(Settings.prefs.open_window_position) + 1;
-    const nextMode = currMode % numModes;
+export function switchToNextOpenPositionMode() {
+    const activeModes = activeOpenWindowPositions
+        .filter(m => m.active())
+        .map(m => m.mode);
+
+    // if activeModes are empty, do nothing
+    if (activeModes.length <= 0) {
+        return;
+    }
+
+    const currMode = activeModes.indexOf(Settings.prefs.open_window_position) + 1;
+    // if current mode is -1, then set the mode to the first option
+    let nextMode;
+    if (currMode < 0) {
+        nextMode = activeModes[0];
+    }
+    else {
+        nextMode = currMode % activeModes.length;
+    }
 
     // simply need to set gsettings and mode will be set and updated
     gsettings.set_int('open-window-position', nextMode);

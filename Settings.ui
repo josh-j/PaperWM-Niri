@@ -1716,7 +1716,7 @@ shortcut.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="open-window-position-right">
+                                          <object class="GtkSwitch" id="open-window-position-option-right">
                                             <layout>
                                               <property name="column">1</property>
                                               <property name="row">0</property>
@@ -1736,7 +1736,7 @@ shortcut.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="open-window-position-left">
+                                          <object class="GtkSwitch" id="open-window-position-option-left">
                                             <layout>
                                               <property name="column">1</property>
                                               <property name="row">1</property>
@@ -1756,7 +1756,7 @@ shortcut.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="open-window-position-start">
+                                          <object class="GtkSwitch" id="open-window-position-option-start">
                                             <layout>
                                               <property name="column">1</property>
                                               <property name="row">2</property>
@@ -1776,7 +1776,7 @@ shortcut.
                                           </object>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="open-window-position-end">
+                                          <object class="GtkSwitch" id="open-window-position-option-end">
                                             <layout>
                                               <property name="column">1</property>
                                               <property name="row">3</property>
