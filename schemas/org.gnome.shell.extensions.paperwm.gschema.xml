@@ -167,6 +167,11 @@
       <summary>Switch between Window Focus Modes (e.g. default, center)</summary>
     </key>
 
+    <key type="as" name="switch-open-window-position">
+      <default><![CDATA[['<Super><Shift>w']]]></default>
+      <summary>Switch between positions for creating windows (e.g. right, left)</summary>
+    </key>
+
     <key type="as" name="switch-next">
       <default><![CDATA[['<Super>period']]]></default>
       <summary>Switch to the next window</summary>
