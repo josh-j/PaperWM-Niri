@@ -455,6 +455,11 @@ export const OpenPositionIcon = GObject.registerClass(
                         const mode = Settings.prefs.open_window_position;
                         this.setMode(mode);
                     });
+
+                    // let's set out click function for this icon here
+                    this.setClickFunction(() => {
+                        switchToOpenPositionMode();
+                    });
                 },
                 mode => {
                     mode = mode ?? Settings.OpenWindowPositions.RIGHT;
@@ -482,7 +487,7 @@ export const OpenPositionIcon = GObject.registerClass(
                     const markup = mode => {
                         this.tooltip.clutter_text
                             .set_markup(
-                                `    <i>Open Window Position</i>
+                                ` <i>Open Window Position</i>
 Current position: <b>${mode}</b>`);
                     };
                     switch (this.mode) {
@@ -504,6 +509,21 @@ Current position: <b>${mode}</b>`);
         }
     }
 );
+
+/**
+ * Switches to the next focus mode for a space.
+ * @param {Space} space
+ */
+export function switchToOpenPositionMode() {
+    const numModes = Object.keys(Settings.OpenWindowPositions).length;
+    // for currMode we switch to 1-based to use it validly in remainder operation
+    const currMode = Object.values(Settings.OpenWindowPositions)
+        .indexOf(Settings.prefs.open_window_position) + 1;
+    const nextMode = currMode % numModes;
+
+    // simply need to set gsettings and mode will be set and updated
+    gsettings.set_int('open-window-position', nextMode);
+}
 
 export const OpenPositionButton = GObject.registerClass(
     class OpenPositionButton extends panelMenu.Button {
