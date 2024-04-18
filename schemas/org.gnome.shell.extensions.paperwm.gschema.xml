@@ -509,6 +509,18 @@
         <default>0</default>
         <summary>Sets the position to open a new window (e.g right of current window). RIGHT: 0, LEFT: 1, START: 2, END: 3</summary>
     </key>
+    <key type="b" name="open-window-position-option-right">
+        <default>true</default>
+    </key>
+    <key type="b" name="open-window-position-option-left">
+        <default>true</default>
+    </key>
+        <key type="b" name="open-window-position-option-start">
+        <default>false</default>
+    </key>
+        <key type="b" name="open-window-position-option-end">
+        <default>false</default>
+    </key>
 
     <key type="b" name="disable-topbar-styling">
         <default>false</default>
