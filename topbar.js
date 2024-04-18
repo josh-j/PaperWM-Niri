@@ -546,14 +546,15 @@ export function switchToNextOpenPositionMode() {
         return;
     }
 
-    const currMode = activeModes.indexOf(Settings.prefs.open_window_position) + 1;
+    const currIndex = activeModes.indexOf(Settings.prefs.open_window_position);
     // if current mode is -1, then set the mode to the first option
     let nextMode;
-    if (currMode < 0) {
+    if (currIndex < 0) {
+        console.log(`couldn't find`);
         nextMode = activeModes[0];
     }
     else {
-        nextMode = currMode % activeModes.length;
+        nextMode = activeModes[(currIndex + 1) % activeModes.length];
     }
 
     // simply need to set gsettings and mode will be set and updated
@@ -569,7 +570,7 @@ export const OpenPositionButton = GObject.registerClass(
                 style_class: 'system-status-icon focus-mode-button',
             }, this, -10);
 
-            this.setPositionMode();
+            this.setPositionMode(Settings.prefs.open_window_position);
             this.add_child(this._icon);
             this.connect('event', this._onClicked.bind(this));
         }
