@@ -6,8 +6,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {
     Settings, Utils, Tiling, Navigator,
-    App, Scratch, LiveAltTab,
-    Topbar
+    App, Scratch, LiveAltTab, Topbar
 } from './imports.js';
 
 const Seat = Clutter.get_default_backend().get_default_seat();

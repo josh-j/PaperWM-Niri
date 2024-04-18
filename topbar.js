@@ -533,8 +533,7 @@ Current position: <b>${mode}</b>`);
 );
 
 /**
- * Switches to the next focus mode for a space.
- * @param {Space} space
+ * Switches to the next position for opening new windows.
  */
 export function switchToNextOpenPositionMode() {
     const activeModes = activeOpenWindowPositions
