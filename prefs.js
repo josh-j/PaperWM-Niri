@@ -3,9 +3,7 @@ import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 import Gtk from 'gi://Gtk';
 
-import {
-    ExtensionPreferences
-} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import * as Settings from './settings.js';
 import { WorkspaceSettings } from './workspace.js';
@@ -66,12 +64,12 @@ class SettingsWidget {
             this.builder.get_object('keybindings_page'),
             this.builder.get_object('winprops_page'),
             this.builder.get_object('advanced_page'),
+            this.builder.get_object('about_page'),
         ];
 
         pages.forEach(page => prefsWindow.add(page));
         prefsWindow.set_visible_page(pages[selectedPage]);
 
-        this.aboutButton = this.builder.get_object('about_button');
         this._backgroundFilter = new Gtk.FileFilter();
         this._backgroundFilter.add_pixbuf_formats();
 
@@ -146,6 +144,7 @@ class SettingsWidget {
         };
 
         // General
+        intValueChanged('selection_size_spin', 'selection-border-size');
         intValueChanged('window_gap_spin', 'window-gap');
         intValueChanged('hmargin_spinner', 'horizontal-margin');
         intValueChanged('top_margin_spinner', 'vertical-margin');
@@ -272,6 +271,12 @@ class SettingsWidget {
             }
         });
 
+        // plug up options
+        booleanStateChanged('open-window-position-option-right');
+        booleanStateChanged('open-window-position-option-left');
+        booleanStateChanged('open-window-position-option-start');
+        booleanStateChanged('open-window-position-option-end');
+
         const scratchOverview = this.builder.get_object('scratch-in-overview');
         if (this._settings.get_boolean('only-scratch-in-overview'))
             scratchOverview.set_active_id('only');
@@ -377,7 +382,7 @@ class SettingsWidget {
         let winprops = this._settings.get_value('winprops').deep_unpack()
             .map(p => JSON.parse(p));
         // sort a little nicer
-        let valueFn = wp =>  {
+        let valueFn = wp => {
             if (wp.wm_class) {
                 return wp.wm_class;
             }
@@ -419,6 +424,7 @@ class SettingsWidget {
             {
                 'default': 0,
                 'center': 1,
+                'edge': 2,
             },
             'default',
             0);
@@ -435,15 +441,122 @@ class SettingsWidget {
 
         intValueChanged('overview_min_windows_per_row_spin', 'overview-min-windows-per-row');
         booleanStateChanged('show-focus-mode-icon');
+        booleanStateChanged('show-open-position-icon');
         booleanStateChanged('disable-topbar-styling', true);
         // disabled since opposite of gnome-pill
         // booleanSetState('show-workspace-indicator');
         percentValueChanged('maximize-width-percent', 'maximize-width-percent');
 
         // About
-        let versionLabel = this.builder.get_object('extension_version');
-        let version = this.extension.metadata.version?.toString() ?? '?';
-        versionLabel.set_text(version);
+        // build version information
+        const text = `
+        Distribution: ${GLib.get_os_info('NAME') ?? 'UNKNOWN'} ${GLib.get_os_info('VERSION') ?? ""}
+        GNOME Shell: ${this._getGnomeVersion()}\
+        ${this._getLastDisplayServer()}
+        PaperWM version: ${this.extension.metadata['version-name'] ?? 'UNKNOWN'}\
+        ${this._getExtensions()}
+        `.split('\n')
+        .map(v => v.trim())
+        .join('\n').trim();
+
+        const buffer = new Gtk.TextBuffer();
+        buffer.set_text(text, -1);
+
+        const clipboard = Gdk.Display.get_default()?.get_clipboard();
+        if (clipboard) {
+            const copyToClipboard = this.builder.get_object('about_version_copy_button');
+            copyToClipboard.connect('clicked', () => {
+                clipboard.set_content(Gdk.ContentProvider.new_for_value(text));
+            });
+        }
+
+        // set text to buffer
+        const aboutVersionView = this.builder.get_object('about_version_textView');
+        aboutVersionView.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);
+        aboutVersionView.set_buffer(buffer);
+    }
+
+    /**
+     * Returns the current detected Gnome shell version.
+     * @returns String
+     */
+    _getGnomeVersion() {
+        try {
+            const reply = Gio.DBus.session.call_sync(
+                'org.gnome.Shell',
+                '/org/gnome/Shell',
+                'org.freedesktop.DBus.Properties',
+                'Get',
+                new GLib.Variant('(ss)', [
+                    'org.gnome.Shell',
+                    'ShellVersion',
+                ]),
+                null,
+                Gio.DBusCallFlags.NONE,
+                -1,
+                null);
+
+            const [version] = reply.deep_unpack();
+            return version.deep_unpack();
+        } catch (error) {
+            console.error(error);
+            return 'UNKNOWN';
+        }
+    }
+
+    /**
+     * Returns the last used display server (Wayland / X11)
+     * @returns String
+     */
+    _getLastDisplayServer() {
+        const ds = this._settings.get_string('last-used-display-server');
+        if (ds.length > 0) {
+            return `\nDisplay server: ${ds}`;
+        }
+        else {
+            return "";
+        }
+    }
+
+    /**
+     * Returns a formatted list of currently active extensions.
+     * @returns String
+     */
+    _getExtensions() {
+        try {
+            const reply = Gio.DBus.session.call_sync(
+                'org.gnome.Shell',
+                '/org/gnome/Shell',
+                'org.gnome.Shell.Extensions',
+                'ListExtensions',
+                null,
+                new GLib.VariantType('(a{sa{sv}})'),
+                Gio.DBusCallFlags.NONE,
+                -1,
+                null
+            );
+
+            const [ext] = reply.deep_unpack();
+            const extensions = Object.keys(ext).map(
+                k => {
+                    return {
+                        uuid: k,
+                        active: ext[k].state.deep_unpack() === 1, // state 1 = active
+                    };
+                }
+            )
+                .filter(v => v.active === true)
+                .map(v => `- ${v.uuid}`)
+                .join("\n");
+
+            if (extensions.length <= 0) {
+                return '';
+            }
+            return `\nEnabled extensions:\n${extensions}`;
+        } catch (error) {
+            console.error(error);
+            return '\nEnabled extensions: UNKNOWN';
+        }
     }
 
     range(n) {
