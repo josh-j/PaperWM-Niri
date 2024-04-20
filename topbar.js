@@ -5,6 +5,7 @@ import GObject from 'gi://GObject';
 import Graphene from 'gi://Graphene';
 import Meta from 'gi://Meta';
 import St from 'gi://St';
+import Pango from 'gi://Pango';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as panelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
@@ -322,6 +323,9 @@ const BaseIcon = GObject.registerClass(
                 this._updateTooltipPosition(this.tooltip_x_point);
                 this.updateTooltipText();
                 tt.show();
+
+                // alignment needs to be set after actor is shown
+                tt.clutter_text.set_line_alignment(Pango.Alignment.CENTER);
             });
             this.tooltip_parent.connect('leave-event', (_icon, _event) => {
                 if (!this.has_pointer) {
@@ -363,7 +367,7 @@ const BaseIcon = GObject.registerClass(
          * Returns a nicely formatted keybind string from PaperWM
          * @param {String} key
          */
-        getKeybindString(key, maxCharsLength = 0) {
+        getKeybindString(key) {
             // get first keybind
             try {
                 let kb = ksettings.get_strv(key)[0]
@@ -375,22 +379,7 @@ const BaseIcon = GObject.registerClass(
                 if (kb.length === 0) {
                     return '';
                 }
-
-                // return formatted string
-                let prependSpace = '';
-                // calculate prepend whitespace
-                switch (true) {
-                case kb.length < maxCharsLength: {
-                    const whitespace = (maxCharsLength - kb.length) / 2;
-                    prependSpace = new Array(Math.round(whitespace) + 1).join(' ');
-                    break;
-                }
-                default:
-                    prependSpace = '';
-                    break;
-                }
-
-                return `\n${prependSpace}<i>(${kb})</i>`;
+                return `\n<i>(${kb})</i>`;
             } catch (error) {
                 return '';
             }
@@ -433,11 +422,10 @@ export const FocusIcon = GObject.registerClass(
                 },
                 () => {
                     const markup = (color, mode) => {
-                        this.tooltip.clutter_text
-                            .set_markup(
-                                `    <i>Window focus mode</i>
+                        const ct = this.tooltip.clutter_text;
+                        ct.set_markup(`<i>Window focus mode</i>
 Current mode: <span foreground="${color}"><b>${mode}</b></span>\
-${this.getKeybindString('switch-focus-mode', 28)}`);
+${this.getKeybindString('switch-focus-mode')}`);
                     };
                     switch (this.mode) {
                     case Tiling.FocusModes.DEFAULT:
@@ -548,11 +536,10 @@ export const OpenPositionIcon = GObject.registerClass(
                 },
                 () => {
                     const markup = mode => {
-                        this.tooltip.clutter_text
-                            .set_markup(
-                                ` <i>Open Window Position</i>
+                        const ct = this.tooltip.clutter_text;
+                        ct.set_markup(`<i>Open Window Position</i>
 Current position: <b>${mode}</b>\
-${this.getKeybindString('switch-open-window-position', 26)}`);
+${this.getKeybindString('switch-open-window-position')}`);
                     };
                     switch (this.mode) {
                     case Settings.OpenWindowPositions.LEFT:
