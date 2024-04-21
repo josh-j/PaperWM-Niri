@@ -108,6 +108,23 @@
         <summary>Switch to the below monitor</summary>
     </key>
 
+    <key type="as" name="move-space-monitor-right">
+        <default><![CDATA[['<Ctrl><Alt><Shift>Right']]]></default>
+        <summary>Move workspace to monitor on the right</summary>
+    </key>
+    <key type="as" name="move-space-monitor-left">
+        <default><![CDATA[['<Ctrl><Alt><Shift>Left']]]></default>
+        <summary>Move workspace to monitor on the left</summary>
+    </key>
+    <key type="as" name="move-space-monitor-above">
+        <default><![CDATA[['<Ctrl><Alt><Shift>Up']]]></default>
+        <summary>Move workspace to monitor above</summary>
+    </key>
+    <key type="as" name="move-space-monitor-below">
+        <default><![CDATA[['<Ctrl><Alt><Shift>Down']]]></default>
+        <summary>Move workspace to monitor below</summary>
+    </key>
+
     <key type="as" name="swap-monitor-right">
         <default><![CDATA[['<Super><Alt>Right']]]></default>
         <summary>Swap workspace with monitor to the right</summary>
@@ -148,6 +165,11 @@
     <key type="as" name="switch-focus-mode">
       <default><![CDATA[['<Super><Shift>c']]]></default>
       <summary>Switch between Window Focus Modes (e.g. default, center)</summary>
+    </key>
+
+    <key type="as" name="switch-open-window-position">
+      <default><![CDATA[['<Super><Shift>w']]]></default>
+      <summary>Switch between positions for creating windows (e.g. right, left)</summary>
     </key>
 
     <key type="as" name="switch-next">
@@ -353,6 +375,10 @@
   </schema>
 
   <schema id="org.gnome.shell.extensions.paperwm" path="/org/gnome/shell/extensions/paperwm/">
+    <key type="s" name="last-used-display-server">
+        <default>''</default>
+        <summary>Saves the last display server used for PaperWM (Wayland / X11)</summary>
+    </key>
 
     <!-- backup settings (used for restore) -->
     <key type="s" name="restore-keybinds">
@@ -394,6 +420,11 @@
     <key type="i" name="window-gap">
       <default>20</default>
       <summary>Minimum gap between windows</summary>
+    </key>
+
+    <key type="i" name="selection-border-size">
+      <default>10</default>
+      <summary>Sets the selected/focused window border size (px)</summary>
     </key>
 
     <key type="d" name="minimap-scale">
@@ -476,12 +507,24 @@
 
     <key type="i" name="default-focus-mode">
         <default>0</default>
-        <summary>Set the default focus mode. 0:DEFAULT 1:CENTER</summary>
+        <summary>Set the default focus mode. 0:DEFAULT 1:CENTER 2:EDGE</summary>
     </key>
 
     <key type="i" name="open-window-position">
         <default>0</default>
         <summary>Sets the position to open a new window (e.g right of current window). RIGHT: 0, LEFT: 1, START: 2, END: 3</summary>
+    </key>
+    <key type="b" name="open-window-position-option-right">
+        <default>true</default>
+    </key>
+    <key type="b" name="open-window-position-option-left">
+        <default>true</default>
+    </key>
+        <key type="b" name="open-window-position-option-start">
+        <default>false</default>
+    </key>
+        <key type="b" name="open-window-position-option-end">
+        <default>false</default>
     </key>
 
     <key type="b" name="disable-topbar-styling">
@@ -502,6 +545,11 @@
     <key type="b" name="show-focus-mode-icon">
         <default>true</default>
         <summary>Show the focus mode icon in the topbar</summary>
+    </key>
+
+    <key type="b" name="show-open-position-icon">
+        <default>true</default>
+        <summary>Show the open window position icon</summary>
     </key>
 
     <key type="d" name="animation-time">

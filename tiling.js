@@ -34,7 +34,7 @@ export const PreviewMode = { NONE: 0, STACK: 1, SEQUENTIAL: 2 }; // export
 export let inPreview = PreviewMode.NONE; // export
 
 // DEFAULT mode is normal/original PaperWM window focus behaviour
-export const FocusModes = { DEFAULT: 0, CENTER: 1 }; // export
+export const FocusModes = { DEFAULT: 0, CENTER: 1, EDGE: 2 }; // export
 
 export const CycleWindowSizesDirection = { FORWARD: 0, BACKWARDS: 1 };
 
@@ -109,28 +109,29 @@ export function enable(extension) {
     signals = new Utils.Signals();
     grabSignals = new Utils.Signals();
 
-    let setVerticalMargin = () => {
-        let vMargin = gsettings.get_int('vertical-margin');
-        let gap = gsettings.get_int('window-gap');
-        Settings.prefs.vertical_margin = Math.max(Math.round(gap / 2), vMargin);
-    };
-    setVerticalMargin();
-
     // setup actions on gap changes
-    let onWindowGapChanged = () => {
-        setVerticalMargin();
+    let marginsGapChanged = () => {
         Utils.timeout_remove(timerId);
         timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
             spaces.mru().forEach(space => {
-                space.layout();
+                space.layout(true, {
+                    callback: () => {
+                        const selected = spaces.activeSpace?.selectedWindow;
+                        allocateClone(selected);
+                    },
+                });
             });
             timerId = null;
             return false; // on return false destroys timeout
         });
     };
-    gsettings.connect('changed::vertical-margin', onWindowGapChanged);
-    gsettings.connect('changed::vertical-margin-bottom', onWindowGapChanged);
-    gsettings.connect('changed::window-gap', onWindowGapChanged);
+    gsettings.connect('changed::vertical-margin', marginsGapChanged);
+    gsettings.connect('changed::vertical-margin-bottom', marginsGapChanged);
+    gsettings.connect('changed::window-gap', marginsGapChanged);
+    gsettings.connect('changed::selection-border-size', () => {
+        const selected = spaces.activeSpace?.selectedWindow;
+        allocateClone(selected);
+    });
 
     backgroundGroup = Main.layoutManager._backgroundGroup;
 
@@ -343,6 +344,9 @@ export class Space extends Array {
         let workspace = this.workspace;
         let prevSpace = saveState.getPrevSpaceByUUID(this.uuid);
         console.info(`restore by uuid: ${this.uuid}, prevSpace name: ${prevSpace?.name}`);
+
+        // get previous focus mode (if exists)
+        const focusMode = prevSpace?.focusMode;
         this.addAll(prevSpace);
         saveState.prevSpaces.delete(workspace);
         this._populated = true;
@@ -351,8 +355,8 @@ export class Space extends Array {
         this.windowPositionBarBackdrop.height = Topbar.panelBox.height;
         this.setSpaceTopbarElementsVisible();
 
-        // apply default focus mode
-        setFocusMode(getDefaultFocusMode(), this);
+        // restore focus mode (or fallback to default)
+        setFocusMode(focusMode ?? getDefaultFocusMode(), this);
 
         this.getWindows().forEach(w => {
             animateWindow(w);
@@ -367,10 +371,18 @@ export class Space extends Array {
             if (!spaces.isActiveSpace(this)) {
                 return;
             }
-            // warp pointer to monitor that is active
-            Utils.warpPointerToMonitor(this.monitor);
+
+            // check if after hiding the mouse is on another monitor
+            const monitor = Utils.monitorAtCurrentPoint();
+            const space = spaces.monitors.get(monitor);
+
+            // if space is different, activate that one
+            if (this !== space) {
+                space?.activateWithFocus(space?.selectedWindow, false, false);
+            }
+
             Utils.later_add(Meta.LaterType.IDLE, () => {
-                this.moveDone(() => {
+                space.moveDone(() => {
                     ensureViewport(display.focus_window, this, {
                         moveto: true,
                         force: true,
@@ -2039,14 +2051,14 @@ export const Spaces = class Spaces extends Map {
         });
 
         this.signals.connect(display, 'window-created',
-            (display, metaWindow, user_data) => this.window_created(metaWindow));
+            (display, metaWindow, _user_data) => this.window_created(metaWindow));
 
         this.signals.connect(display, 'grab-op-begin', (display, mw, type) => grabBegin(mw, type));
         this.signals.connect(display, 'grab-op-end', (display, mw, type) => grabEnd(mw, type));
 
 
         this.signals.connect(global.window_manager, 'switch-workspace',
-            (wm, from, to, direction) => this.switchWorkspace(wm, from, to));
+            (wm, from, to, _direction) => this.switchWorkspace(wm, from, to));
 
         this.signals.connect(this.overrideSettings, 'changed::workspaces-only-on-primary', () => {
             displayConfig.upgradeGnomeMonitors(() => this.monitorsChanged());
@@ -2274,7 +2286,7 @@ export const Spaces = class Spaces extends Map {
         this.signals = null;
 
         // remove spaces
-        for (let [workspace, space] of this) {
+        for (let [, space] of this) {
             this.removeSpace(space);
         }
 
@@ -2300,7 +2312,7 @@ export const Spaces = class Spaces extends Map {
         }
 
         let nextUnusedWorkspaceIndex = nWorkspaces;
-        for (let [workspace, space] of this) {
+        for (let [, space] of this) {
             if (workspaces[space.workspace] !== true) {
                 this.removeSpace(space);
 
@@ -2317,6 +2329,20 @@ export const Spaces = class Spaces extends Map {
             space.settings.set_int('index', workspace.index());
             Meta.prefs_change_workspace_name(workspace.index(), space.name);
         }
+    }
+
+    /**
+     * Return true if there are less-than-or-equal-to spaces than monitors.
+     */
+    lteSpacesThanMonitors(onFalseCallback) {
+        const cb = onFalseCallback ?? function(_nSpaces, _nMonitors) {};
+        const nSpaces = [...this].length;
+        const nMonitors = Main.layoutManager.monitors.length;
+
+        if (nSpaces <= nMonitors) {
+            cb(nSpaces, nMonitors);
+        }
+        return nSpaces <= nMonitors;
     }
 
     switchMonitor(direction, move, warp = true) {
@@ -2360,11 +2386,90 @@ export const Spaces = class Spaces extends Map {
         }
     }
 
-    swapMonitor(direction, backDirection) {
+    moveToMonitor(direction, backDirection) {
         const monitor = focusMonitor();
         const i = display.get_monitor_neighbor_index(monitor.index, direction);
         if (i === -1)
             return;
+
+        if (this.lteSpacesThanMonitors(
+            (s, m) => Main.notify(
+                `PaperWM (cannot move workspace)`,
+                `You need at least ${m + 1} workspaces to complete this operation.`
+            )
+        )) {
+            return;
+        }
+
+        // check how many spaces are on this monitor
+        const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
+        // if last space on this monitor, then swap
+        if (numSpaces <= 1) {
+            this.swapMonitor(direction, backDirection);
+            return;
+        }
+
+        let navFinish = () => Navigator.getNavigator().finish();
+        // action on current monitor
+        this.selectStackSpace(Meta.MotionDirection.DOWN);
+        navFinish();
+        // switch to target monitor and action mru
+        this.switchMonitor(direction, false, true);
+        this.selectStackSpace(Meta.MotionDirection.DOWN);
+        navFinish();
+
+        // /**
+        //  * Fullscreen monitor workaround.
+        //  * see https://github.com/paperwm/PaperWM/issues/638
+        //  */
+        // this.forEach(space => {
+        //     space.getWindows().filter(w => w.fullscreen).forEach(w => {
+        //         animateWindow(w);
+        //         w.unmake_fullscreen();
+        //         w.make_fullscreen();
+        //         showWindow(w);
+        //     });
+        // });
+
+        // ensure after swapping that the space elements are shown correctly
+        this.setSpaceTopbarElementsVisible(true, { force: true });
+    }
+
+    swapMonitor(direction, backDirection, options = {}) {
+        const checkIfLast = options.checkIfLast ?? true;
+        const warpIfLast = options.warpIfLast ?? true;
+
+        const monitor = focusMonitor();
+        const i = display.get_monitor_neighbor_index(monitor.index, direction);
+        if (i === -1)
+            return;
+
+        if (this.lteSpacesThanMonitors(
+            (s, m) => Main.notify(
+                `PaperWM (cannot swap workspaces)`,
+                `You need at least ${m + 1} workspaces to complete this operation.`
+            )
+        )) {
+            return;
+        }
+
+        if (checkIfLast) {
+            // check how many spaces are on this monitor
+            const numSpaces = [...this].filter(([_monitor, space]) => space?.monitor === monitor).length;
+            // if last space on this monitor, then swap
+            if (numSpaces <= 1) {
+                // focus other monitor for a switchback
+                this.switchMonitor(direction, false, false);
+                this.swapMonitor(backDirection, direction, {
+                    checkIfLast: false,
+                    warpIfLast: false,
+                });
+
+                // now switch monitor with warp since we back-flipped
+                this.switchMonitor(direction, false, true);
+                return;
+            }
+        }
 
         let navFinish = () => Navigator.getNavigator().finish();
         // action on current monitor
@@ -2379,20 +2484,20 @@ export const Spaces = class Spaces extends Map {
         this.selectStackSpace(Meta.MotionDirection.DOWN);
         navFinish();
         // final switch with warp
-        this.switchMonitor(direction);
+        this.switchMonitor(direction, false, warpIfLast);
 
-        /**
-         * Fullscreen monitor workaround.
-         * see https://github.com/paperwm/PaperWM/issues/638
-         */
-        this.forEach(space => {
-            space.getWindows().filter(w => w.fullscreen).forEach(w => {
-                animateWindow(w);
-                w.unmake_fullscreen();
-                w.make_fullscreen();
-                showWindow(w);
-            });
-        });
+        // /**
+        //  * Fullscreen monitor workaround.
+        //  * see https://github.com/paperwm/PaperWM/issues/638
+        //  */
+        // this.forEach(space => {
+        //     space.getWindows().filter(w => w.fullscreen).forEach(w => {
+        //         animateWindow(w);
+        //         w.unmake_fullscreen();
+        //         w.make_fullscreen();
+        //         showWindow(w);
+        //     });
+        // });
 
         // ensure after swapping that the space elements are shown correctly
         this.setSpaceTopbarElementsVisible(true, { force: true });
@@ -2472,11 +2577,18 @@ export const Spaces = class Spaces extends Map {
         let out = [];
         for (let i = 0; i < nWorkspaces; i++) {
             let space = this.spaceOf(workspaceManager.get_workspace_by_index(i));
-            if (space.monitor === monitor ||
-                (space.length === 0 && this.monitors.get(space.monitor) !== space)) {
-                // include workspace if it is the current one
-                // or if it is empty and not active on another monitor
+
+            if (space.monitor === monitor) {
                 out.push(space);
+                continue;
+            }
+
+            // include workspace if it is the current one
+            // or if it is empty and not active on another monitor
+            if (space.length === 0 &&
+                this.monitors.get(space.monitor) !== space) {
+                out.push(space);
+                continue;
             }
         }
         return out;
@@ -2840,7 +2952,7 @@ export const Spaces = class Spaces extends Map {
         }
 
         let visible = new Map();
-        for (let [monitor, space] of this.monitors) {
+        for (let [, space] of this.monitors) {
             visible.set(space, true);
         }
 
@@ -3227,11 +3339,18 @@ export function allocateClone(metaWindow) {
         let selection = metaWindow.clone.first_child;
         let vMax = metaWindow.maximized_vertically;
         let hMax = metaWindow.maximized_horizontally;
-        let protrusion = Math.round(Settings.prefs.window_gap / 2);
+
+        const protrusion = Math.min(
+            Settings.prefs.selection_border_size,
+            Settings.prefs.vertical_margin,
+            Settings.prefs.window_gap
+        );
+
         selection.x = hMax ? 0 : -protrusion;
         selection.y = vMax ? 0 : -protrusion;
-        selection.set_size(frame.width + (hMax ? 0 : Settings.prefs.window_gap),
-            frame.height + (vMax ? 0 : Settings.prefs.window_gap));
+        selection.set_size(
+            frame.width + (hMax ? 0 : protrusion * 2),
+            frame.height + (vMax ? 0 : protrusion * 2));
     }
 }
 
@@ -3799,11 +3918,21 @@ export function ensuredX(meta_window, space) {
     let min = workArea.x;
     let max = min + workArea.width;
 
-    if (space.focusMode == FocusModes.CENTER) {
+    if (space.focusMode === FocusModes.CENTER) {
         // window switching should centre focus
         x = workArea.x + Math.round(workArea.width / 2 - frame.width / 2);
     } else if (meta_window.fullscreen) {
         x = 0;
+    } else if (space.focusMode === FocusModes.EDGE) {
+        // Align to the closest edge, with special cases for
+        // only (center), first (left), and last (right) windows
+        if (index === 0 && space.length === 1)
+            x = min + Math.round((workArea.width - frame.width) / 2);
+        else if (index === 0 || (Math.abs(x - min) < Math.abs(x + frame.width - max) &&
+                                 index !== space.length - 1))
+            x = min + Settings.prefs.horizontal_margin;
+        else
+            x = max - Settings.prefs.horizontal_margin - frame.width;
     } else if (frame.width > workArea.width * 0.9 - 2 * (Settings.prefs.horizontal_margin + Settings.prefs.window_gap)) {
         // Consider the window to be wide and center it
         x = min + Math.round((workArea.width - frame.width) / 2);
@@ -4538,7 +4667,8 @@ export function setFocusMode(mode, space) {
     const workArea = space.workArea();
     const selectedWin = space.selectedWindow;
     // if centre also center selectedWindow
-    if (mode === FocusModes.CENTER) {
+    switch (mode) {
+    case FocusModes.CENTER:
         if (selectedWin) {
             // check it closer to min or max of workArea
             const frame = selectedWin.get_frame_rect();
@@ -4551,6 +4681,11 @@ export function setFocusMode(mode, space) {
             }
             centerWindowHorizontally(selectedWin);
         }
+        break;
+    default:
+        // for other modes run a `layout` call to action the mode
+        space.layout();
+        break;
     }
 
     // if normal and has saved x position from previous
@@ -4595,7 +4730,7 @@ export function fitProportionally(values, targetSum) {
     let weights = values.map(v => v / sum);
 
     let fitted = Lib.zip(values, weights).map(
-        ([h, w]) => Math.round(targetSum * w)
+        ([_h, w]) => Math.round(targetSum * w)
     );
     let r = targetSum - Lib.sum(fitted);
     fitted[0] += r;
