@@ -3,6 +3,7 @@
 import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
 import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 import St from 'gi://St';
@@ -11,11 +12,12 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Workspace from 'resource:///org/gnome/shell/ui/workspace.js';
 import * as WorkspaceThumbnail from 'resource:///org/gnome/shell/ui/workspaceThumbnail.js';
 import * as WorkspaceAnimation from 'resource:///org/gnome/shell/ui/workspaceAnimation.js';
+import * as WorkspacesView from 'resource:///org/gnome/shell/ui/workspacesView.js';
 import * as AltTab from 'resource:///org/gnome/shell/ui/altTab.js';
 import * as WindowManager from 'resource:///org/gnome/shell/ui/windowManager.js';
 import * as WindowPreview from 'resource:///org/gnome/shell/ui/windowPreview.js';
 import * as Screenshot from 'resource:///org/gnome/shell/ui/screenshot.js';
-import { TransientSignalHolder } from 'resource:///org/gnome/shell/misc/signalTracker.js';
+
 
 import { Utils, Tiling, Scratch, Settings, OverviewLayout } from './imports.js';
 
@@ -302,16 +304,16 @@ export function setupOverrides() {
 
         return false;
     };
-    registerOverridePrototype(Workspace.Workspace, '_isMyWindow', function(window) {
-        if (checkScratch(window, this.metaWorkspace)) {
-            return true;
-        }
+    // registerOverridePrototype(Workspace.Workspace, '_isMyWindow', function(window) {
+    //     if (checkScratch(window, this.metaWorkspace)) {
+    //         return true;
+    //     }
 
-        const space = Tiling.spaces.spaceOf(this.metaWorkspace);
-        const onSpace = space.indexOf(window) >= 0;
-        const onMonitor = this._monitor === space.monitor;
-        return onSpace && onMonitor;
-    });
+    //     const space = Tiling.spaces.spaceOf(this.metaWorkspace);
+    //     const onSpace = space.indexOf(window) >= 0;
+    //     const onMonitor = this._monitor === space.monitor;
+    //     return onSpace && onMonitor;
+    // });
     registerOverridePrototype(WorkspaceThumbnail.WorkspaceThumbnail, '_isMyWindow', function(actor) {
         const window = actor.meta_window;
         if (checkScratch(window, this.metaWorkspace)) {
@@ -453,77 +455,77 @@ export function setupOverrides() {
         saved.call(this, instantly);
     });
 
-    // registerOverridePrototype(WorkspaceThumbnail.WorkspaceThumbnail, '_isMyWindow', function(actor) {
-    //     const win = actor.meta_window;
-    //     const workspace = Tiling.spaces.spaceOfWindow(win).workspace;
-    //     return win.located_on_workspace(workspace);
+    // registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_updateWorkspacesViews', function() {
+    //     for (let i = 0; i < this._workspacesViews.length; i++)
+    //         this._workspacesViews[i].destroy();
+
+    //     this._primaryIndex = Main.layoutManager.primaryIndex;
+    //     this._workspacesViews = [];
+    //     let monitors = Main.layoutManager.monitors;
+    //     for (let i = 0; i < monitors.length; i++) {
+    //         let view;
+    //         if (i === this._primaryIndex) {
+    //             view = new WorkspacesView.WorkspacesView(i,
+    //                 this._controls,
+    //                 this._scrollAdjustment,
+    //                 this._fitModeAdjustment,
+    //                 this._overviewAdjustment);
+
+    //             view.visible = this._primaryVisible;
+    //             this.bind_property('opacity', view, 'opacity', GObject.BindingFlags.SYNC_CREATE);
+    //             this.add_child(view);
+    //         } else {
+    //             view = new WorkspacesView.SecondaryMonitorDisplay(i,
+    //                 this._controls,
+    //                 this._scrollAdjustment,
+    //                 this._fitModeAdjustment,
+    //                 this._overviewAdjustment);
+    //             Main.layoutManager.overviewGroup.add_child(view);
+    //         }
+
+    //         this._workspacesViews.push(view);
+    //     }
     // });
 
-    // registerOverridePrototype(WorkspaceThumbnail.ThumbnailsBox, '_createThumbnails', function() {
-    //     if (this._thumbnails.length > 0)
-    //         return;
+    // registerOverridePrototype(WorkspacesView.WorkspacesView, '_updateVisibility', function() {
+    //     let workspaceManager = global.workspace_manager;
+    //     let active = workspaceManager.get_active_workspace_index();
 
-    //     const { workspaceManager } = global;
-    //     this._transientSignalHolder = new TransientSignalHolder(this);
-    //     workspaceManager.connectObject(
-    //         'notify::n-workspaces', this._workspacesChanged.bind(this),
-    //         'active-workspace-changed', () => this._updateIndicator(),
-    //         'workspaces-reordered', () => {
-    //             this._thumbnails.sort((a, b) => {
-    //                 return a.metaWorkspace.index() - b.metaWorkspace.index();
-    //             });
-    //             this.queue_relayout();
-    //         }, this._transientSignalHolder);
-    //     Main.overview.connectObject('windows-restacked',
-    //         this._syncStacking.bind(this), this._transientSignalHolder);
+    //     const fitMode = this._fitModeAdjustment.value;
+    //     const singleFitMode = fitMode === WorkspacesView.FitMode.SINGLE;
 
-    //     this._targetScale = 0;
-    //     this._scale = 0;
-    //     this._pendingScaleUpdate = false;
-    //     this._unqueueUpdateStates();
+    //     for (let w = 0; w < this._workspaces.length; w++) {
+    //         let workspace = this._workspaces[w];
 
-    //     this._stateCounts = {};
-    //     for (let key in WorkspaceThumbnail.ThumbnailState)
-    //         this._stateCounts[WorkspaceThumbnail.ThumbnailState[key]] = 0;
-
-    //     this.addThumbnails(0, workspaceManager.n_workspaces);
-
-    //     this._updateShouldShow();
+    //         if (this._animating || this._gestureActive || !singleFitMode)
+    //             workspace.show();
+    //         else
+    //             workspace.visible = Math.abs(w - active) <= 1;
+    //     }
     // });
 
-    registerOverridePrototype(WorkspaceThumbnail.ThumbnailsBox, 'addThumbnails', function(start, count) {
-        let workspaceManager = global.workspace_manager;
+    registerOverridePrototype(WorkspacesView.SecondaryMonitorDisplay, '_updateWorkspacesView', function() {
+        if (this._workspacesView)
+            this._workspacesView.destroy();
 
-        for (let k = start; k < start + 1; k++) {
-            let metaWorkspace = workspaceManager.get_workspace_by_index(k);
-            // let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace, this._monitorIndex);
-            let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace, 0);
-            thumbnail.setPorthole(
-                this._porthole.x, this._porthole.y,
-                this._porthole.width, this._porthole.height);
-            this._thumbnails.push(thumbnail);
-            this.add_child(thumbnail);
+        // if (this._settings.get_boolean('workspaces-only-on-primary')) {
+        //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
+        //         this._monitorIndex,
+        //         this._overviewAdjustment);
+        // } else {
+        //     this._workspacesView = new WorkspacesView.WorkspacesView(
+        //         this._monitorIndex,
+        //         this._controls,
+        //         this._scrollAdjustment,
+        //         this._fitModeAdjustment,
+        //         this._overviewAdjustment);
+        // }
 
-            if (this._shouldShow && start > 0 && this._spliceIndex === -1) {
-                // not the initial fill, and not splicing via DND
-                thumbnail.state = ThumbnailState.NEW;
-                thumbnail.slide_position = 1; // start slid out
-                thumbnail.collapse_fraction = 1; // start fully collapsed
-                this._haveNewThumbnails = true;
-            } else {
-                thumbnail.state = WorkspaceThumbnail.ThumbnailState.NORMAL;
-            }
+        this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
+            this._monitorIndex,
+            this._overviewAdjustment);
 
-            this._stateCounts[thumbnail.state]++;
-        }
-
-        this._queueUpdateStates();
-
-        // The thumbnails indicator actually needs to be on top of the thumbnails
-        this.set_child_above_sibling(this._indicator, null);
-
-        // Clear the splice index, we got the message
-        this._spliceIndex = -1;
+        this.add_child(this._workspacesView);
     });
 }
 
