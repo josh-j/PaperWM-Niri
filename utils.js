@@ -232,7 +232,10 @@ export function monitorAtCurrentPoint() {
 /**
  * Warps pointer to the center of a monitor.
  */
-export function warpPointerToMonitor(monitor, center = false) {
+export function warpPointerToMonitor(monitor, params = { center: false, ripple: true }) {
+    const center = params?.center ?? false;
+    const ripple = params?.ripple ?? true;
+
     // no need to warp if already on this monitor
     let currMonitor = monitorAtCurrentPoint();
     if (currMonitor === monitor) {
@@ -243,8 +246,10 @@ export function warpPointerToMonitor(monitor, center = false) {
     if (center) {
         x -= monitor.x;
         y -= monitor.y;
-        warpPointer(monitor.x + Math.floor(monitor.width / 2),
-            monitor.y + Math.floor(monitor.height / 2));
+        warpPointer(
+            monitor.x + Math.floor(monitor.width / 2),
+            monitor.y + Math.floor(monitor.height / 2),
+            ripple);
         return;
     }
 
@@ -252,7 +257,8 @@ export function warpPointerToMonitor(monitor, center = false) {
     let proportionalY = (y - currMonitor.y) / currMonitor.height;
     warpPointer(
         monitor.x + Math.floor(proportionalX * monitor.width),
-        monitor.y + Math.floor(proportionalY * monitor.height)
+        monitor.y + Math.floor(proportionalY * monitor.height),
+        ripple
     );
 }
 
