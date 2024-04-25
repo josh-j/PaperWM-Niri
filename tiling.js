@@ -4228,7 +4228,7 @@ export function focus_handler(metaWindow) {
     let space = spaces.spaceOfWindow(metaWindow);
 
     // if window is on another monitor then warp pointer there
-    if (spaces.activeSpace?.monitor !== space.monitor) {
+    if (Utils.monitorAtCurrentPoint() !== space.monitor) {
         Utils.warpPointerToMonitor(space.monitor);
     }
 
