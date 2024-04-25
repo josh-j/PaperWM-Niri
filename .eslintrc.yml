@@ -259,6 +259,7 @@ globals:
   ARGV: readonly
   Debugger: readonly
   GIRepositoryGType: readonly
+  global: readonly
   globalThis: readonly
   imports: readonly
   Intl: readonly

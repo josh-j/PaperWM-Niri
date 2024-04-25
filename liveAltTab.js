@@ -41,10 +41,10 @@ export const LiveAltTab = GObject.registerClass(
         }
 
         _getWindowList(reverse) {
-            let tabList = Utils.getGlobal().display.get_tab_list(
+            let tabList = global.display.get_tab_list(
                 Meta.TabList.NORMAL_ALL,
                 switcherSettings.get_boolean('current-workspace-only')
-                    ? Utils.getGlobal().workspace_manager.get_active_workspace() : null)
+                    ? global.workspace_manager.get_active_workspace() : null)
                 .filter(w => !Scratch.isScratchWindow(w));
 
             let scratch = Scratch.getScratchWindows();
@@ -52,7 +52,7 @@ export const LiveAltTab = GObject.registerClass(
             if (this.scratchOnly) {
                 return reverse ? scratch.reverse() : scratch;
             }
-            else if (Scratch.isScratchWindow(Utils.getGlobal().display.focus_window)) {
+            else if (Scratch.isScratchWindow(global.display.focus_window)) {
                 // Access scratch windows in mru order with shift-super-tab
                 return scratch.concat(reverse ? tabList.reverse() : tabList);
             } else {
@@ -73,7 +73,7 @@ export const LiveAltTab = GObject.registerClass(
             // this.space.cloneContainer.add_effect(this.blur);
             this.space.setSelectionInactive();
 
-            Main.uiGroup.insert_child_above(fog, Utils.getGlobal().window_group);
+            Main.uiGroup.insert_child_above(fog, global.window_group);
             Easer.addEase(fog, {
                 time: Settings.prefs.animation_time,
                 opacity: 100,

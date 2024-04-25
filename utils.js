@@ -12,7 +12,7 @@ import * as Config from 'resource:///org/gnome/shell/misc/config.js';
 
 import { Lib } from './imports.js';
 
-const Display = getGlobal().display;
+const Display = global.display;
 export let version = Config.PACKAGE_VERSION.split('.').map(Number);
 
 let warpRipple;
@@ -20,22 +20,12 @@ let warpRipple;
 let signals, touchCoords;
 let inTouch = false;
 
-/**
- * Convenience function to get global.  Avoids linter flagging
- * references to global as no-undef
- * @returns global
- */
-export function getGlobal() {
-    // eslint-disable-next-line no-undef
-    return global;
-}
-
 export function enable() {
     warpRipple = new Ripples.Ripples(0.5, 0.5, 'ripple-pointer-location');
     warpRipple.addTo(Main.uiGroup);
 
     signals = new Signals();
-    signals.connect(getGlobal().stage, "captured-event", (actor, event) => {
+    signals.connect(global.stage, "captured-event", (actor, event) => {
         switch (event.type()) {
         case Clutter.EventType.TOUCH_BEGIN:
         case Clutter.EventType.TOUCH_UPDATE:
@@ -154,7 +144,7 @@ export function toggleWindowBoxes(metaWindow) {
         boxes.push(makeFrameBox(actor, "yellow"));
     }
 
-    boxes.forEach(box => getGlobal().stage.add_child(box));
+    boxes.forEach(box => global.stage.add_child(box));
 
     metaWindow._paperDebugBoxes = boxes;
     return boxes;
@@ -206,7 +196,7 @@ export function getPointerCoords() {
     if (inTouch) {
         return touchCoords;
     } else {
-        return getGlobal().get_pointer();
+        return global.get_pointer();
     }
 }
 
@@ -242,7 +232,7 @@ export function warpPointerToMonitor(monitor, params = { center: false, ripple: 
         return;
     }
 
-    let [x, y] = getGlobal().get_pointer();
+    let [x, y] = global.get_pointer();
     if (center) {
         x -= monitor.x;
         y -= monitor.y;
@@ -278,7 +268,7 @@ export function warpPointer(x, y, ripple = true) {
  * Return current modifiers state (or'ed Clutter.ModifierType.*)
  */
 export function getModiferState() {
-    let [, , mods] = getGlobal().get_pointer();
+    let [, , mods] = global.get_pointer();
     return mods;
 }
 
@@ -396,7 +386,7 @@ export function actor_reparent(actor, newParent) {
  * Backwards compatible later_add function.
  */
 export function later_add(...args) {
-    getGlobal().compositor.get_laters().add(...args);
+    global.compositor.get_laters().add(...args);
 }
 
 /**
@@ -601,7 +591,7 @@ export class DisplayConfig {
     }
 
     get monitorManager() {
-        return getGlobal().backend.get_monitor_manager();
+        return global.backend.get_monitor_manager();
     }
 
     get gnomeMonitors() {
