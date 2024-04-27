@@ -190,66 +190,6 @@ When the tiling is active <kbd>Super</kbd><kbd>Shift</kbd><kbd>Tab</kbd> selects
 | <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                  | Attach/detach active window into scratch layer |
 | <kbd>Super</kbd><kbd>Escape</kbd>                                                                 | Toggle the most recent scratch window |
 
-## User configuration & development ##
-
-You can supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
-
-You can reload the `user.css` by disabling (turning off) PaperWM and then re-enabling PaperWM (turning on), e.g via `Extensions` app, or by running `Main.loadTheme()` in looking glass (i.e. <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd>). Note that the latter approach will reload all other .css files (e.g. from other extensions) and `user.css` needs to already be loaded for this to work. So after initially creating the file you'll need to disable then enable PaperWM (or restart Gnome).
-
-### Using PaperWM extension settings (UI) to modify settings
-PaperWM provides an extension settings UI to modify many of PaperWM's more prevalent settings.  This is available in the `gnome-extensions` application.
-
-### Using dconf-editor to modify settings
-You can also use `dconf-editor` to view and modify all PaperWM user settings.  You can view all settings by executing the following command from a terminal:
-
-```shell
-GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/paperwm@paperwm.github.com/schemas dconf-editor /org/gnome/shell/extensions/paperwm/
-```
-
-### PaperWM user-configurable settings _not_ available in settings UI
-
-Below is a list of user-configurable settings that are not exposed in the PaperWM settings UI.  These can be modified via [`dconf-editor`](#using-dconf-editor-to-modify-settings).
-
-Setting | Description | Input Type | Default value
---------|-------------|------------|--------------
-<code>default&#8209;background</code>| Sets the (default) background used for PaperWM workspaces.  If set will use this background instead of colors defined in `workspace-colors`. | _absolute path_ | _empty_
-
-_Note: you can override this for individual workspaces in the settings UI._
-
-__Example:__
-```
-dconf write /org/gnome/shell/extensions/paperwm/default-background '"/home/user/Wallpaper/mars-sunset-2k.jpg"'
-```
-
-Setting | Description | Input Type | Default value
---------|-------------|------------|--------------
-<code>workspace&#8209;colors</code>  | Sets the workspace background color palette. | _String array of colors_ | `['#314E6C', '#565248', '#445632', '#663822', '#494066',   '#826647', '#4B6983', '#807D74', '#5D7555', '#884631', '#625B81', '#B39169', '#7590AE', '#BAB5AB', '#83A67F', '#C1665A', '#887FA3', '#E0C39E']`
-
-### Setting window specific properties
-
-It's possible to set window properties using simple rules that will be applied when placing new windows. Properties can applied to windows identified by their `wm_class` or `title`.  The following properties are currently supported:
-
-Property              | Input type                          | Input example | Description
-----------------------|-------------------------------------|------------------|------------------
-`scratch_layer`       | Boolean                             | `true`, `false`  | if `true` window will be placed on the scratch layer.
-`preferredWidth`      | String value with `%` or `px` unit         | `"50%"`, `"450px"`    | resizes the window width to the preferred width when it's created. </br>_Note<sup>1</sup>: property not applicable to windows on scratch layer._
-
-Window properties can be added using the `Winprops` tab of the PaperWM extension settings:
-
-https://user-images.githubusercontent.com/30424662/211422647-79e64d56-5dbb-4054-b9a6-32bf3194b636.mp4
-
-The `wm_class` or `title` of a window can be found by using looking glass: <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd> Go to the "Windows" section at the top right and find the window. X11 users can also use the `xprop` command line tool (`title` is referred as `WM_NAME` in `xprop`). The match of `wm_class` and `title` are with an OR condition; and in addition to a plain string matching, a constructed [`RegExp()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp) can be used to utilise regex matching.  For example, e.g. `/.*terminal.*/i` would match on any value that contains the word "terminal" (case-insensitive).
-
-### Setting a default window property rule
-
-You can use the functionality defined in the [setting window specific properities](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
-
-You do this by using the special "match all" operator `*` as an input for `wm_class` or `title`.  The below image shows setting a default `Preferred width` value of `50%`.
-
-<img alt="Setting default window property rule" src="media/default-star-winprop.png" width="560px">
-
-This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
-
 ## Touchpad Gestures  ###
 
 PaperWM implements the following touchpad gestures by default:
@@ -316,7 +256,7 @@ Options for all these settings are provided in PaperWM settings:
 
 https://github.com/paperwm/PaperWM/assets/30424662/4e4aa415-d047-44cb-b87a-d7e08493ecbd
 
-## Managing multiple windows at once (`take` window(s) functionality)
+## Managing multiple windows at once
 
 PaperWM provides functionality to move, reorder, and close multiple windows at once.  These "multi-window" operations are initialised with the `Take the window, dropping it when finished navigating` keybind (default <kbd>Super</kbd><kbd>T</kbd>).
 
@@ -333,6 +273,68 @@ https://github.com/paperwm/PaperWM/assets/30424662/e6596de2-f5f7-46af-b447-044f1
 _Reordring "taken" windows and selectively dropping them:
 
 https://github.com/paperwm/PaperWM/assets/30424662/c7c50471-f352-4693-a936-2e711189f933
+
+## User configuration & development ##
+
+You can supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
+
+You can reload the `user.css` by disabling (turning off) PaperWM and then re-enabling PaperWM (turning on), e.g via `Extensions` app, or by running `Main.loadTheme()` in looking glass (i.e. <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd>). Note that the latter approach will reload all other .css files (e.g. from other extensions) and `user.css` needs to already be loaded for this to work. So after initially creating the file you'll need to disable then enable PaperWM (or restart Gnome).
+
+### Using PaperWM extension settings (UI) to modify settings
+PaperWM provides an extension settings UI to modify many of PaperWM's more prevalent settings.  This is available in the `gnome-extensions` application.
+
+### Using dconf-editor to modify settings
+You can also use `dconf-editor` to view and modify all PaperWM user settings.  You can view all settings by executing the following command from a terminal:
+
+```shell
+GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/paperwm@paperwm.github.com/schemas dconf-editor /org/gnome/shell/extensions/paperwm/
+```
+
+### PaperWM user-configurable settings _not_ available in settings UI
+
+Below is a list of user-configurable settings that are not exposed in the PaperWM settings UI.  These can be modified via [`dconf-editor`](#using-dconf-editor-to-modify-settings).
+
+Setting | Description | Input Type | Default value
+--------|-------------|------------|--------------
+<code>default&#8209;background</code>| Sets the (default) background used for PaperWM workspaces.  If set will use this background instead of colors defined in `workspace-colors`. | _absolute path_ | _empty_
+
+_Note: you can override this for individual workspaces in the settings UI._
+
+__Example:__
+```
+dconf write /org/gnome/shell/extensions/paperwm/default-background '"/home/user/Wallpaper/mars-sunset-2k.jpg"'
+```
+
+Setting | Description | Input Type | Default value
+--------|-------------|------------|--------------
+<code>workspace&#8209;colors</code>  | Sets the workspace background color palette. | _String array of colors_ | `['#314E6C', '#565248', '#445632', '#663822', '#494066',   '#826647', '#4B6983', '#807D74', '#5D7555', '#884631', '#625B81', '#B39169', '#7590AE', '#BAB5AB', '#83A67F', '#C1665A', '#887FA3', '#E0C39E']`
+
+### Setting window specific properties
+
+It's possible to set window properties using simple rules that will be applied when placing new windows. Properties can applied to windows identified by their `wm_class` or `title`.  The following properties are currently supported:
+
+Property              | Input type                          | Input example | Description
+----------------------|-------------------------------------|------------------|------------------
+`scratch_layer`       | Boolean                             | `true`, `false`  | if `true` window will be placed on the scratch layer.
+`preferredWidth`      | String value with `%` or `px` unit         | `"50%"`, `"450px"`    | resizes the window width to the preferred width when it's created. </br>_Note<sup>1</sup>: property not applicable to windows on scratch layer._
+
+Window properties can be added using the `Winprops` tab of the PaperWM extension settings:
+
+https://user-images.githubusercontent.com/30424662/211422647-79e64d56-5dbb-4054-b9a6-32bf3194b636.mp4
+
+The `wm_class` or `title` of a window can be found by using looking glass: <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd> Go to the "Windows" section at the top right and find the window. X11 users can also use the `xprop` command line tool (`title` is referred as `WM_NAME` in `xprop`). The match of `wm_class` and `title` are with an OR condition; and in addition to a plain string matching, a constructed [`RegExp()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp) can be used to utilise regex matching.  For example, e.g. `/.*terminal.*/i` would match on any value that contains the word "terminal" (case-insensitive).
+
+### Setting a default window property rule
+
+You can use the functionality defined in the [setting window specific properities](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
+
+You do this by using the special "match all" operator `*` as an input for `wm_class` or `title`.  The below image shows setting a default `Preferred width` value of `50%`.
+
+<img alt="Setting default window property rule" src="media/default-star-winprop.png" width="560px">
+
+This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
+
+
 
 ## Gnome TopBar opacity / styling ##
 
