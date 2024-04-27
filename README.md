@@ -96,7 +96,7 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes #TODO |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows #TODO |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd> | Move the current window to the left or right |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd>      | Move the current window to the left or right |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Down</kbd>    | Move the current window up or down |
 | <kbd>Super</kbd><kbd>I</kbd>                                                                      | Absorb the window to the right into the active column |
@@ -114,6 +114,23 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Alt</kbd><kbd>R</kbd>                                        | Resize the window (cycles backwards through useful heights) |
 | <kbd>Super</kbd><kbd>t</kbd>                                                                      | #TODO Take window(s) dropping when finished navigating |
 
+| Default `workspace` Keybindings (all keybindings can be changed in PaperWM extension settings)    | |
+| ------                                                                                            | ------- |
+| <kbd>Super</kbd><kbd>\`</kbd>                                                                     | Switch to previously active workspace |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                     | Switch to previously active workspace (backwards order) |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                      | Move active window to previously active workspace |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                      | Move active window to previously active workspace (backwards order) |
+| <kbd>Super</kbd><kbd>PageUp</kbd>                                                                 | Switch to workspace above |
+| <kbd>Super</kbd><kbd>PageDown</kbd>                                                               | Switch to workspace below |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageUp</kbd>                                                  | Move active window one workspace up |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageDown</kbd>                                                | Move active window one workspace down |
+
+| Default `monitor` Keybindings (all keybindings can be changed in PaperWM extension settings)    | |
+| ------                                                                                            | ------- |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Right</kbd>                                                  | Switch to the right monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Left</kbd>                                                   | Switch to the left monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Up</kbd>                                                     | Switch to the above monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Down</kbd>                                                   | Switch to the below monitor |
 
 
 ### The workspace stack & monitors ###
