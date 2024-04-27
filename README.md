@@ -130,11 +130,9 @@ Alternatively you can change these keybindings to "Switch to workspace below/abo
 
 The workspace name is shown in the top left corner replacing the `Activities` button adding a few enhancements. Scrolling on the name will let you browse the workspace stack just like <kbd>Super</kbd><kbd>Above_Tab</kbd>. Left clicking on the name opens Gnome overview, while right clicking the name lets you access and change the workspace name.
 
-> If you prefer to use another workspace indicator (or prefer none at all), you can hide this workspace name element from Gnome topbar by executing the following command from a terminal:
+> If you prefer to use Gnome workspace "pill", you can replace the workspace name element, and enable the Gnome pill from the `General` section of PaperWM preferences:
 >
-> ```
-> dconf write /org/gnome/shell/extensions/paperwm/show-workspace-indicator false
-> ```
+> <img alt="Using the Gnome pill" src="media/gnome-pill-option.png" width="560px">
 
 Swiping down on the trackpad vertically with three fingers will initiate the workspace stack, and then allow you navigate the workspace stack with 3-finger vertical swipes (only available in Wayland).  See the [Touchpad Gestures](#touchpad-gestures) section for more information on gesture support in PaperWM.
 
@@ -244,6 +242,32 @@ Users may also prefer to hide the focus mode icon.  You can do so from the `Avan
 
 <img alt="Enable TopBar Styling" src="media/topbar-styling.png" width="560px">
 
+## Setting window specific properties
+
+It's possible to set window properties using simple rules that will be applied when placing new windows. Properties can applied to windows identified by their `wm_class` or `title`.  The following properties are currently supported:
+
+Property              | Input type                          | Input example | Description
+----------------------|-------------------------------------|------------------|------------------
+`scratch_layer`       | Boolean                             | `true`, `false`  | if `true` window will be placed on the scratch layer.
+`preferredWidth`      | String value with `%` or `px` unit         | `"50%"`, `"450px"`    | resizes the window width to the preferred width when it's created. </br>_Note<sup>1</sup>: property not applicable to windows on scratch layer._
+
+Window properties can be added using the `Winprops` tab of the PaperWM extension settings:
+
+https://user-images.githubusercontent.com/30424662/211422647-79e64d56-5dbb-4054-b9a6-32bf3194b636.mp4
+
+The `wm_class` or `title` of a window can be found by using looking glass: <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd> Go to the "Windows" section at the top right and find the window. X11 users can also use the `xprop` command line tool (`title` is referred as `WM_NAME` in `xprop`). The match of `wm_class` and `title` are with an OR condition; and in addition to a plain string matching, a constructed [`RegExp()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp) can be used to utilise regex matching.  For example, e.g. `/.*terminal.*/i` would match on any value that contains the word "terminal" (case-insensitive).
+
+### Setting a default window property rule
+
+You can use the functionality defined in the [setting window specific properities](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
+
+You do this by using the special "match all" operator `*` as an input for `wm_class` or `title`.  The below image shows setting a default `Preferred width` value of `50%`.
+
+<img alt="Setting default window property rule" src="media/default-star-winprop.png" width="560px">
+
+This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
+
+
 ## Window insertion position for new windows
 
 By default PaperWM inserts new windows to the right of the currently active window.  This behaviour can be changed via PaperWM settings, or with the `Open Window Position` button/icon (which is to the right of the focus mode icon):
@@ -308,33 +332,6 @@ dconf write /org/gnome/shell/extensions/paperwm/default-background '"/home/user/
 Setting | Description | Input Type | Default value
 --------|-------------|------------|--------------
 <code>workspace&#8209;colors</code>  | Sets the workspace background color palette. | _String array of colors_ | `['#314E6C', '#565248', '#445632', '#663822', '#494066',   '#826647', '#4B6983', '#807D74', '#5D7555', '#884631', '#625B81', '#B39169', '#7590AE', '#BAB5AB', '#83A67F', '#C1665A', '#887FA3', '#E0C39E']`
-
-### Setting window specific properties
-
-It's possible to set window properties using simple rules that will be applied when placing new windows. Properties can applied to windows identified by their `wm_class` or `title`.  The following properties are currently supported:
-
-Property              | Input type                          | Input example | Description
-----------------------|-------------------------------------|------------------|------------------
-`scratch_layer`       | Boolean                             | `true`, `false`  | if `true` window will be placed on the scratch layer.
-`preferredWidth`      | String value with `%` or `px` unit         | `"50%"`, `"450px"`    | resizes the window width to the preferred width when it's created. </br>_Note<sup>1</sup>: property not applicable to windows on scratch layer._
-
-Window properties can be added using the `Winprops` tab of the PaperWM extension settings:
-
-https://user-images.githubusercontent.com/30424662/211422647-79e64d56-5dbb-4054-b9a6-32bf3194b636.mp4
-
-The `wm_class` or `title` of a window can be found by using looking glass: <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd> Go to the "Windows" section at the top right and find the window. X11 users can also use the `xprop` command line tool (`title` is referred as `WM_NAME` in `xprop`). The match of `wm_class` and `title` are with an OR condition; and in addition to a plain string matching, a constructed [`RegExp()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp) can be used to utilise regex matching.  For example, e.g. `/.*terminal.*/i` would match on any value that contains the word "terminal" (case-insensitive).
-
-### Setting a default window property rule
-
-You can use the functionality defined in the [setting window specific properities](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
-
-You do this by using the special "match all" operator `*` as an input for `wm_class` or `title`.  The below image shows setting a default `Preferred width` value of `50%`.
-
-<img alt="Setting default window property rule" src="media/default-star-winprop.png" width="560px">
-
-This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
-
-
 
 ## Gnome TopBar opacity / styling ##
 
