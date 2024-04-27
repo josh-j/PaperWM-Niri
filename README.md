@@ -114,42 +114,6 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Alt</kbd><kbd>R</kbd>                                        | Resize the window (cycles backwards through useful heights) |
 | <kbd>Super</kbd><kbd>t</kbd>                                                                      | #TODO Take window(s) dropping when finished navigating |
 
-| Default `workspace` Keybindings (can be changed in PaperWM extension settings)                    | |
-| ------                                                                                            | ------- |
-| <kbd>Super</kbd><kbd>\`</kbd>                                                                     | Switch to previously active workspace |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                     | Switch to previously active workspace (backwards order) |
-| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                      | Move active window to previously active workspace |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                      | Move active window to previously active workspace (backwards order) |
-| <kbd>Super</kbd><kbd>PageUp</kbd>                                                                 | Switch to workspace above |
-| <kbd>Super</kbd><kbd>PageDown</kbd>                                                               | Switch to workspace below |
-| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageUp</kbd>                                                  | Move active window one workspace up |
-| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageDown</kbd>                                                | Move active window one workspace down |
-
-| Default `monitor` Keybindings (can be changed in PaperWM extension settings)                      | |
-| ------                                                                                            | ------- |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Right</kbd>                                                  | Switch to the right monitor |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Left</kbd>                                                   | Switch to the left monitor |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Up</kbd>                                                     | Switch to the above monitor |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Down</kbd>                                                   | Switch to the below monitor |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                     | Move workspace to monitor on the right |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                      | Move workspace to monitor on the left |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                        | Move workspace to monitor above |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                      | Move workspace to monitor below |
-| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                                    | Swap workspace with monitor to the right |
-| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                                     | Swap workspace with monitor to the left |
-| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                                       | Swap workspace with monitor above |
-| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                                     | Swap workspace with monitor below |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Right</kbd>                                   | Move active window to the right monitor |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Left</kbd>                                    | Move active window to the left monitor |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Up</kbd>                                      | Move active window to the above monitor |
-| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Down</kbd>                                    | Move active window to the below monitor |
-
-| Default `scratch layer` Keybindings (can be changed in PaperWM extension settings)                | |
-| ------                                                                                            | ------- |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                 | Toggles the floating scratch layer |
-| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                  | Attach/detach active window into scratch layer |
-| <kbd>Super</kbd><kbd>Escape</kbd>                                                                 | Toggle the most recent scratch window |
-
 ### The workspace stack & monitors ###
 
 Pressing <kbd>Super</kbd><kbd>Above_Tab</kbd> will slide the active workspace down revealing the stack as shown in the above screenshot. You can then flip through the most recently used workspaces with repeated <kbd>Above_Tab</kbd> presses while holding <kbd>Super</kbd> down. <kbd>Above_Tab</kbd> is the key above <kbd>Tab</kbd> (<kbd>\`</kbd> in a US qwerty layout). Like alt-tab <kbd>Shift</kbd> is added to move in reverse order:
@@ -176,23 +140,36 @@ Swiping down on the trackpad vertically with three fingers will initiate the wor
 
 There's a single scrollable tiling per workspace. Adding another monitor simply makes it possible to have another workspace visible. The workspace stack is shared among all the monitors, windows being resized vertically as necessary when workspace is displayed on another monitor.
 
-PaperWM currently works best using the workspaces span monitors preference, this can be turned on with Gnome Tweaks under Workspaces. If you want to use workspaces only on primary you need to place the secondary monitor either below or above the primary (with the best result having it below).
+| Default `workspace` Keybindings (can be changed in PaperWM extension settings)                    | |
+| ------                                                                                            | ------- |
+| <kbd>Super</kbd><kbd>\`</kbd>                                                                     | Switch to previously active workspace |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                     | Switch to previously active workspace (backwards order) |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                      | Move active window to previously active workspace |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>\`</kbd>                                      | Move active window to previously active workspace (backwards order) |
+| <kbd>Super</kbd><kbd>PageUp</kbd>                                                                 | Switch to workspace above |
+| <kbd>Super</kbd><kbd>PageDown</kbd>                                                               | Switch to workspace below |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageUp</kbd>                                                  | Move active window one workspace up |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageDown</kbd>                                                | Move active window one workspace down |
 
-| Workspace Keybindings                                                  |                                                                                   |
-| ------                                                                 | -------                                                                           |
-| <kbd>Super</kbd><kbd>Above_Tab</kbd>                                   | Cycle through the most recently used workspaces                                   |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Above_Tab</kbd>                   | Cycle backwards through the most recently used workspaces                         |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Above_Tab</kbd>                    | Cycle through the most recently used, taking the active window with you           |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>Above_Tab</kbd>    | Cycle backwards through the most recently used, taking the active window with you |
-| <kbd>Super</kbd><kbd>Page_Down</kbd>/<kbd>Page_Up</kbd>                | Cycle sequentially through workspaces (from current monitor only)                 |
-| *no default keybinding*                                                | Cycle sequentially through workspaces (from all monitors)                         |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Page_Down</kbd>/<kbd>Page_Up</kbd> | Cycle sequentially through workspaces, taking the active window with you          |
 
-
-| Monitor Keybindings                                                 |                                            |
-| ------                                                              | -------                                    |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Arrow_key</kbd>                | Select neighbouring monitor                |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Arrow_key</kbd> | Move active window to neighbouring monitor |
+| Default `monitor` Keybindings (can be changed in PaperWM extension settings)                      | |
+| ------                                                                                            | ------- |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Right</kbd>                                                  | Switch to the right monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Left</kbd>                                                   | Switch to the left monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Up</kbd>                                                     | Switch to the above monitor |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Down</kbd>                                                   | Switch to the below monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                     | Move workspace to monitor on the right |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                      | Move workspace to monitor on the left |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                        | Move workspace to monitor above |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                      | Move workspace to monitor below |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                                    | Swap workspace with monitor to the right |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                                     | Swap workspace with monitor to the left |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                                       | Swap workspace with monitor above |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                                     | Swap workspace with monitor below |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Right</kbd>                                   | Move active window to the right monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Left</kbd>                                    | Move active window to the left monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Up</kbd>                                      | Move active window to the above monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Down</kbd>                                    | Move active window to the below monitor |
 
 ### Scratch layer ###
 
