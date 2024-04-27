@@ -81,29 +81,39 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 
 <kbd>Alt</kbd><kbd>Tab</kbd> is of course also available.
 
-| Keybindings (all keybindings can be changed in PaperWM extension settings)                                                                                      |                                                             |
-| ------                                                                                            | -------                                                     |
-| <kbd>Super</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>.</kbd>                                      | Activate the next or previous window                        |
-| <kbd>Super</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Right</kbd>                               | Activate the window to the left or right                    |
-| <kbd>Super</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Down</kbd>                                  | Activate the window above or below                          |
-| <kbd>Super</kbd><kbd>Home</kbd> or <kbd>Super</kbd><kbd>End</kbd>                                 | Activate the first or last window                           |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right                |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right                |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Down</kbd>    | Move the current window up or down                          |
-| <kbd>Super</kbd><kbd>t</kbd>                                                                      | Take the window, placing it when finished navigating        |
-| <kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Alt</kbd><kbd>Tab</kbd>                                    | Cycle through the most recently used windows                |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Tab</kbd> or <kbd>Alt</kbd><kbd>Shift</kbd><kbd>Tab</kbd>    | Cycle backwards through the most recently used windows      |
-| <kbd>Super</kbd><kbd>C</kbd>                                                                      | Center the active window horizontally                       |
-| <kbd>Super</kbd><kbd>R</kbd>                                                                      | Resize the window (cycles through useful widths)            |
+| Default `window` Keybindings (all keybindings can be changed in PaperWM extension settings)       | |
+| ------                                                                                            | ------- |
+| <kbd>Super</kbd><kbd>Return</kbd> or <kbd>Super</kbd><kbd>N</kbd>                                 | Open a new windows (of the current application) |
+| <kbd>Super</kbd><kbd>Backspace</kbd>                                                              | Close the active window |
+| <kbd>Super</kbd><kbd>.</kbd> or <kbd>Super</kbd><kbd>,</kbd>                                      | Switch to the next or previous window |
+| <kbd>Super</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Right</kbd>                               | Activate the window to the left or right |
+| <kbd>Super</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Down</kbd>                                  | Activate the window above or below |
+| <kbd>Super</kbd><kbd>Home</kbd> or <kbd>Super</kbd><kbd>End</kbd>                                 | Activate the first or last window |
+| <kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Alt</kbd><kbd>Tab</kbd>                                    | Cycle through previously active windows |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Shift</kbd><kbd>Alt</kbd><kbd>Tab</kbd>    | Cycle through previously active windows (backward order) |
+| <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                                       | Cycle through previously active #TODO scratch windows | 
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                       | Cycle through previously active scratch windows (backward order) |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes #TODO |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows #TODO |
+| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd> | Move the current window to the left or right |
+| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right |
+| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Down</kbd>    | Move the current window up or down |
+| <kbd>Super</kbd><kbd>I</kbd>                                                                      | Absorb the window to the right into the active column |
+| <kbd>Super</kbd><kbd>O</kbd>                                                                      | Expel the bottom window out to the right |
+| <kbd>Super</kbd><kbd>C</kbd>                                                                      | Center windows horizontally |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>F</kbd>                                                      | Toggle fullscreen |
+| <kbd>Super</kbd><kbd>F</kbd>                                                                      | Maximize the width of a window |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>+</kbd>                                                      | Increment window height (scratch or vertically tiled windows) |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>-</kbd>                                                      | Decrement window height (scratch or vertically tiled windows) |
+| <kbd>Super</kbd><kbd>+</kbd>                                                                      | Increment window width |
+| <kbd>Super</kbd><kbd>-</kbd>                                                                      | Decrement window width |
+| <kbd>Super</kbd><kbd>R</kbd>                                                                      | Resize the window (cycles through useful widths) |
 | <kbd>Super</kbd><kbd>Alt</kbd><kbd>R</kbd>                                                        | Resize the window (cycles backwards through useful widths)  |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>R</kbd>                                                      | Resize the window (cycles through useful heights)           |
+| <kbd>Super</kbd><kbd>Shift</kbd><kbd>R</kbd>                                                      | Resize the window (cycles through useful heights) |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Alt</kbd><kbd>R</kbd>                                        | Resize the window (cycles backwards through useful heights) |
-| <kbd>Super</kbd><kbd>F</kbd>                                                                      | Maximize the width of a window                              |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>F</kbd>                                                      | Toggle fullscreen                                           |
-| <kbd>Super</kbd><kbd>Return</kbd> or <kbd>Super</kbd><kbd>N</kbd>                                 | Create a new window from the active application             |
-| <kbd>Super</kbd><kbd>Backspace</kbd>                                                              | Close the active window                                     |
-| <kbd>Super</kbd><kbd>I</kbd>                                                                      | Absorb the window to the right into the active column       |
-| <kbd>Super</kbd><kbd>O</kbd>                                                                      | Expel the bottom window out to the right                    |
+| <kbd>Super</kbd><kbd>t</kbd>                                                                      | #TODO Take window(s) dropping when finished navigating |
+
 
 
 ### The workspace stack & monitors ###
