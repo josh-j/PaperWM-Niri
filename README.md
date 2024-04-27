@@ -112,7 +112,7 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Alt</kbd><kbd>R</kbd>                                                        | Resize the window (cycles backwards through useful widths)  |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>R</kbd>                                                      | Resize the window (cycles through useful heights) |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Alt</kbd><kbd>R</kbd>                                        | Resize the window (cycles backwards through useful heights) |
-| <kbd>Super</kbd><kbd>t</kbd>                                                                      | #TODO Take window(s) dropping when finished navigating |
+| <kbd>Super</kbd><kbd>t</kbd>                                                                      | Take window(s) dropping when finished navigating |
 
 ### The workspace stack & monitors ###
 
@@ -250,7 +250,7 @@ You do this by using the special "match all" operator `*` as an input for `wm_cl
 
 This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
 
-### Touchpad Gestures  ###
+## Touchpad Gestures  ###
 
 PaperWM implements the following touchpad gestures by default:
 
@@ -315,6 +315,24 @@ There are several `positions` available for selection.  Namely, `right`, `left`,
 Options for all these settings are provided in PaperWM settings:
 
 https://github.com/paperwm/PaperWM/assets/30424662/4e4aa415-d047-44cb-b87a-d7e08493ecbd
+
+## Managing multiple windows at once (`take` window(s) functionality)
+
+PaperWM provides functionality to move, reorder, and close multiple windows at once.  These "multi-window" operations are initialised with the `Take the window, dropping it when finished navigating` keybind (default <kbd>Super</kbd><kbd>T</kbd>).
+
+This allows you to `take` multiple windows and temporarily store them in the bottom-right corner of the workspace.  The following operations are available while there are one or more windows "taken":
+
+_Selectively take/drop windows (pressing `spacebar` to drop the latest taken window):_
+
+https://github.com/paperwm/PaperWM/assets/30424662/f736adea-d5ba-4c9d-aca0-2f63322c08cb
+
+_Selecting all windows across spaces to close at once (pressing `q`):_
+
+https://github.com/paperwm/PaperWM/assets/30424662/e6596de2-f5f7-46af-b447-044f17f326f9
+
+_Reordring "taken" windows and selectively dropping them:
+
+https://github.com/paperwm/PaperWM/assets/30424662/c7c50471-f352-4693-a936-2e711189f933
 
 ## Gnome TopBar opacity / styling ##
 
