@@ -71,7 +71,7 @@ Window management and navigation is based around the three following concepts.
 
 ![The window tiling with the minimap shown](https://github.com/paperwm/media/blob/master/tiling.png)
 
-New windows are automatically tiled to the right of the active window (see #TODO for dynamically changing the position of new windwos), taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
+New windows are automatically tiled to the right of the active window (see [here](#window-insertion-position-for-new-windows) for dynamically changing the insertion position of new windows), taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
 
 Activating a window will ensure it's fully visible, scrolling the tiling if necessary. By default, pressing <kbd>Super</kbd><kbd>.</kbd> activates the window to the right. <kbd>Super</kbd><kbd>,</kbd> activates the window to the left. On a US keyboard these keys are intuitively marked by <kbd><</kbd> and <kbd>></kbd>, they are also ordered the same way on almost all keyboard layouts. Navigating around windows brings up the minimap as can be seen in the above screenshot. The minimap will stay visible as long as <kbd>Super</kbd> is continually being pressed.
 
@@ -91,10 +91,10 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Home</kbd> or <kbd>Super</kbd><kbd>End</kbd>                                 | Activate the first or last window |
 | <kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Alt</kbd><kbd>Tab</kbd>                                    | Cycle through previously active windows |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Shift</kbd><kbd>Alt</kbd><kbd>Tab</kbd>    | Cycle through previously active windows (backward order) |
-| <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                                       | Cycle through previously active #TODO scratch windows | 
+| <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                                       | Cycle through previously active scratch windows | 
 | <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                       | Cycle through previously active scratch windows (backward order) |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes #TODO |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows #TODO |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd>      | Move the current window to the left or right |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right |
@@ -303,6 +303,18 @@ _Note: changing this setting during a PaperWM session will set all spaces to the
 Users may also prefer to hide the focus mode icon.  You can do so from the `Avanced` tab in PaperWM extension settings:
 
 <img alt="Enable TopBar Styling" src="media/topbar-styling.png" width="560px">
+
+## Window insertion position for new windows
+
+By default PaperWM inserts new windows to the right of the currently active window.  This behaviour can be changed via PaperWM settings, or with the `Open Window Position` button/icon (which is to the right of the focus mode icon):
+
+![Focus mode button](media/open-position-button.png)
+
+There are several `positions` available for selection.  Namely, `right`, `left`, `start`, `end`.  The former two will insert windows at the start or end of tiled windows container.
+
+Options for all these settings are provided in PaperWM settings:
+
+https://github.com/paperwm/PaperWM/assets/30424662/4e4aa415-d047-44cb-b87a-d7e08493ecbd
 
 ## Gnome TopBar opacity / styling ##
 
