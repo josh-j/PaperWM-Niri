@@ -232,7 +232,7 @@ Focus modes can be toggled by user-settable keybinding (default is `Super`+`Shif
 
 The default focus mode is the standard PaperWM focus mode (i.e. not centered).  This can be changed according to preference by changing the `Default focus mode` setting PaperWM settings.  
 
-<img alt="Default focus mode" src="media/hide-focus-mode-icon.png" width="560px">
+<img alt="Default focus mode" src="media/default-focus-mode.png" width="560px">
 
 _Note: changing this setting during a PaperWM session will set all spaces to the new default focus mode._
 
@@ -240,7 +240,7 @@ _Note: changing this setting during a PaperWM session will set all spaces to the
 
 Users may also prefer to hide the focus mode icon.  You can do so from the `Avanced` tab in PaperWM extension settings:
 
-<img alt="Enable TopBar Styling" src="media/topbar-styling.png" width="560px">
+<img alt="Hiding the focus mode icon" src="media/hide-focus-mode-icon.png" width="560px">
 
 ## Setting window specific properties
 
