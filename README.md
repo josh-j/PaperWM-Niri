@@ -4,9 +4,9 @@
 
 PaperWM is a [Gnome Shell](https://wiki.gnome.org/Projects/GnomeShell) extension which provides scrollable tiling of windows and per monitor workspaces. It's inspired by paper notebooks and tiling window managers.
 
-Can be installed on Gnome Shells from 3.28 to 46 on X11 and wayland.
+PaperWM aims to support currently supported Gnome shells (currently Gnome 45 & Gnome 46).  Older versions of PaperWM can generally installed on older Gnome Shells.
 
-_While PaperWM can be installed on a wide range of Gnome versions, new features aren't generally backported to previous versions.  Fixes may be backported on request (please submit a [new issue](https://github.com/paperwm/PaperWM/issues/new/choose) if you've identified a recent fix that should be backported and you can help with testing)._
+New features and fixes aren't generally backported to older PaperWM versions that run on previous Gnome versions.  Pull requests for fixes to older PaperWM versions will be accepted if the submitter can help test and update documentation etc.
 
 While technically an [extension](https://wiki.gnome.org/Projects/GnomeShell/Extensions) it's to a large extent built on top of the Gnome desktop rather than merely extending it.
 
@@ -14,27 +14,26 @@ Have questions or comments?  Please ask on our [Github Discussions](https://gith
 
 ## Installation
 
-### Install via [extensions.gnome.org](https://extensions.gnome.org/extension/6099/paperwm/)
+### Install via [extensions.gnome.org](https://extensions.gnome.org/extension/6099/paperwm/) (recommended)
 
 [<img alt="Intall it on extensions.gnome.org" src="media/get-it-on-ego.svg" width="150px">](https://extensions.gnome.org/extension/6099/paperwm/)
 
 ### Install via Source
 
-Clone the repo and check out the branch supporting the Gnome Shell version you're running.
+Clone the repo and check out the branch for the Gnome Shell version you're running:
 
 - 45-46 (currently developed/supported): https://github.com/paperwm/PaperWM/tree/release
 - 42-44: https://github.com/paperwm/PaperWM/tree/gnome-44
 - 40-41: https://github.com/paperwm/PaperWM/tree/gnome-40
 - 3.28-3.38: https://github.com/paperwm/PaperWM/tree/gnome-3.38
 
-
-Then run the [`install.sh`](https://github.com/paperwm/PaperWM/blob/release/install.sh) script
+then run the [`install.sh`](https://github.com/paperwm/PaperWM/blob/release/install.sh) script
 from the repository. The installer will create a link to the repo in
 `~/.local/share/gnome-shell/extensions`. It will then ask if you want to enable PaperWM.
 ```bash
 ./install.sh # install, load and enable paperwm
 ```
-> #### ➡️ You will need to restart Gnome shell after installing PaperWM, e.g. logout then login, or restart in place with an `alt-F2` and entering `r` (X11 only).
+> #### ➡️ You'll need to restart Gnome shell after installing PaperWM, e.g. logout then login, or restart in place with an `alt-F2` and entering `r` (X11 only).
 >
 > After logging back in, you can then enable PaperWM via the `Extensions` application, or by running the following command from the command-line:
 >
@@ -44,7 +43,7 @@ from the repository. The installer will create a link to the repo in
 
 > if you have run into issues, delete any older `paperwm@...` symlinks from `~/.local/share/gnome-shell/extensions` and re-run the `install.sh` script.
 
-### Uninstall PaperWM
+#### Uninstall PaperWM (if installed via source)
 To uninstall simply run `./uninstall.sh`.
 
 Running the extension will automatically install a user config file as described in [User configuration & development](#user-configuration--development).
@@ -54,17 +53,17 @@ Users are enouraged to submit [issues](https://github.com/paperwm/PaperWM/issues
 
 > #### ➡️ Please ensure pull requests are based off, and submitted to, [develop](https://github.com/paperwm/PaperWM/tree/develop) branch.
 > 
-> Pull requests submitted to the `release` branch will not be accepted (but don't worry, if you accidentally submit a PR to the `release` branch we won't be mad, and will just ask you to change it).
+> Pull requests submitted to the `release` branch will not be accepted (but don't worry, if you accidentally submit a PR to the `release` branch, the target branch will automatically be changed to `develop` branch).
 
 ## Usage ##
 
-Most functionality is available using a mouse, eg. activating a window at the edge of the monitor by clicking on it. In wayland its possible to navigate with 3-finger swipes on the trackpad. But the primary focus is making an environment which works well with a keyboard.
+Most functionality is available using a mouse, eg. activating a window at the edge of the monitor by clicking on it. Wayland support gestures (See the [Touchpad Gestures](#touchpad-gestures) section). PaperWM is designed to work work well with keyboard + mouse, trackpads etc.
 
 Most keybindings start with the <kbd>Super</kbd> modifier (by default), which is usually the Windows key, or on mac keyboards it's the Command key. It's possible to modify the keyboard layout so that <kbd>Super</kbd> is switched with <kbd>Alt</kbd> making all the keybindings easier to reach. This can be done through Gnome Tweaks under `Keybard & Mouse` ⟶ `Additional Layout Options` ⟶ `Alt/Win key behavior` ⟶ `Left Alt is swapped with Left Win`.
 
 Most keybindings will grab the keyboard while <kbd>Super</kbd> is held down, only switching focus when <kbd>Super</kbd> is released. <kbd>Escape</kbd> will abort the navigation taking you back to the previously active window.
 
-Adding <kbd>Ctrl</kbd> to a keybinding will take the current window with you when navigating.
+All PaperWM keybinds can be changed (and disabled) via PaperWM extension settings.
 
 Window management and navigation is based around the three following concepts.
 
@@ -72,9 +71,9 @@ Window management and navigation is based around the three following concepts.
 
 ![The window tiling with the minimap shown](https://github.com/paperwm/media/blob/master/tiling.png)
 
-New windows are automatically tiled to the right of the active window, taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
+New windows are automatically tiled to the right of the active window (see #TODO for dynamically changing the position of new windwos), taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
 
-Activating a window will ensure it's fully visible, scrolling the tiling if necessary. Pressing <kbd>Super</kbd><kbd>.</kbd> activates the window to the right. <kbd>Super</kbd><kbd>,</kbd> activates the window to the left. On a US keyboard these keys are intuitively marked by <kbd><</kbd> and <kbd>></kbd>, they are also ordered the same way on almost all keyboard layouts. Navigating around windows brings up the minimap as can be seen in the above screenshot. The minimap will stay visible as long as <kbd>Super</kbd> is continually being pressed.
+Activating a window will ensure it's fully visible, scrolling the tiling if necessary. By default, pressing <kbd>Super</kbd><kbd>.</kbd> activates the window to the right. <kbd>Super</kbd><kbd>,</kbd> activates the window to the left. On a US keyboard these keys are intuitively marked by <kbd><</kbd> and <kbd>></kbd>, they are also ordered the same way on almost all keyboard layouts. Navigating around windows brings up the minimap as can be seen in the above screenshot. The minimap will stay visible as long as <kbd>Super</kbd> is continually being pressed.
 
 Pressing <kbd>Super</kbd><kbd>I</kbd> will move the window to the right below the active window, tiling them vertically in a column. <kbd>Super</kbd><kbd>O</kbd> will do the opposite, pushing the bottom window out of the current column.
 
@@ -82,9 +81,7 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 
 <kbd>Alt</kbd><kbd>Tab</kbd> is of course also available.
 
-PaperWM doesn't handle attached modal dialogs very well, so it's best to turn it off in Gnome Tweaks (under Windows).
-
-| Keybindings                                                                                       |                                                             |
+| Keybindings (all keybindings can be changed in PaperWM extension settings)                                                                                      |                                                             |
 | ------                                                                                            | -------                                                     |
 | <kbd>Super</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>.</kbd>                                      | Activate the next or previous window                        |
 | <kbd>Super</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Right</kbd>                               | Activate the window to the left or right                    |
