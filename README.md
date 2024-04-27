@@ -131,6 +131,19 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Left</kbd>                                                   | Switch to the left monitor |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Up</kbd>                                                     | Switch to the above monitor |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Down</kbd>                                                   | Switch to the below monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                     | Move workspace to monitor on the right |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                      | Move workspace to monitor on the left |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                        | Move workspace to monitor above |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                      | Move workspace to monitor below |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Right</kbd>                                                    | Swap workspace with monitor to the right |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Left</kbd>                                                     | Swap workspace with monitor to the left |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Up</kbd>                                                       | Swap workspace with monitor above |
+| <kbd>Super</kbd><kbd>Alt</kbd><kbd>Down</kbd>                                                     | Swap workspace with monitor below |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Right</kbd>                                   | Move active window to the right monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Left</kbd>                                    | Move active window to the left monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Up</kbd>                                      | Move active window to the above monitor |
+| <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Down</kbd>                                    | Move active window to the below monitor |
+
 
 
 ### The workspace stack & monitors ###
