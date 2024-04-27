@@ -184,37 +184,23 @@ When the tiling is active <kbd>Super</kbd><kbd>Shift</kbd><kbd>Tab</kbd> selects
 
 <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Escape</kbd> will move a tiled window into the scratch layer or alternatively tile an already floating window. This functionality can also be accessed through the window context menu (<kbd>Alt</kbd><kbd>Space</kbd>).
 
-| Keybindings                                       |                                                                  |
-| ------                                            | -------                                                          |
-| <kbd>Super</kbd><kbd>Escape</kbd>                 | Toggle between showing and hiding the most recent scratch window |
-| <kbd>Super</kbd><kbd>Shift</kbd><kbd>Escape</kbd> | Toggle between showing and hiding the scratch windows            |
-| <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Escape</kbd>  | Toggle between floating and tiling the current window            |
-| <kbd>Super</kbd><kbd>Tab</kbd>                    | Cycle through the most recently used scratch windows             |
-| <kbd>Super</kbd><kbd>H</kbd>                      | Minimize the current window                                      |
+| Default `scratch layer` Keybindings (can be changed in PaperWM extension settings)                | |
+| ------                                                                                            | ------- |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                 | Toggles the floating scratch layer |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                  | Attach/detach active window into scratch layer |
+| <kbd>Super</kbd><kbd>Escape</kbd>                                                                 | Toggle the most recent scratch window |
 
 ## User configuration & development ##
 
-> ### ⚠️ Gnome 45 removed the ability to add external module files to the search path of extensions.  Hence, modifications to PaperWM via `user.js` is [not currently available in Gnome 45](https://github.com/paperwm/PaperWM/issues/576#issuecomment-1721315729).
->
-> `user.js` functionality is still available in PaperWM for previous Gnome shell versions.
-
-A default user configuration, `user.js`, is created in `~/.config/paperwm/` with three functions `init`, `enable` and `disable`. `init` will run only once on startup, `enable` and `disable` will be run whenever extensions are being told to disable and enable themselves.
-
-You can also supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
+You can supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm@paperwm-redux.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
 
 You can reload the `user.css` by disabling (turning off) PaperWM and then re-enabling PaperWM (turning on), e.g via `Extensions` app, or by running `Main.loadTheme()` in looking glass (i.e. <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd>). Note that the latter approach will reload all other .css files (e.g. from other extensions) and `user.css` needs to already be loaded for this to work. So after initially creating the file you'll need to disable then enable PaperWM (or restart Gnome).
-
-We also made an emacs package, [gnome-shell-mode](https://github.com/paperwm/gnome-shell-mode), to make hacking on the config and writing extensions a more pleasant experience. To support this out of the box we also install a `metadata.json` so gnome-shell-mode will pick up the correct file context, giving you completion and interactive evaluation ala. looking glass straight in emacs.
-
-Pressing <kbd>Super</kbd><kbd>Insert</kbd> will assign the active window to a global variable `metaWindow`, its [window actor](https://developer.gnome.org/meta/stable/MetaWindowActor.html) to `actor`, its [workspace](https://developer.gnome.org/meta/stable/MetaWorkspace.html) to `workspace` and its PaperWM style workspace to `space`. This makes it easy to inspect state and test things out.
 
 ### Using PaperWM extension settings (UI) to modify settings
 PaperWM provides an extension settings UI to modify many of PaperWM's more prevalent settings.  This is available in the `gnome-extensions` application.
 
-_Note: not all PaperWM user-configurable settings are available in the settings UI._
-
 ### Using dconf-editor to modify settings
-You can use `dconf-editor` to view and modify all PaperWM user settings.  You can view all settings by executing the following command from a terminal:
+You can also use `dconf-editor` to view and modify all PaperWM user settings.  You can view all settings by executing the following command from a terminal:
 
 ```shell
 GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/paperwm@paperwm.github.com/schemas dconf-editor /org/gnome/shell/extensions/paperwm/
@@ -223,10 +209,6 @@ GSETTINGS_SCHEMA_DIR=$HOME/.local/share/gnome-shell/extensions/paperwm@paperwm.g
 ### PaperWM user-configurable settings _not_ available in settings UI
 
 Below is a list of user-configurable settings that are not exposed in the PaperWM settings UI.  These can be modified via [`dconf-editor`](#using-dconf-editor-to-modify-settings).
-
-_Note: experimental, incomplete or deprecated settings may not be listed below._
-
-<details><summary> <h4>Click to expand and see user-configurable properties</h3> </summary>
 
 Setting | Description | Input Type | Default value
 --------|-------------|------------|--------------
@@ -242,8 +224,6 @@ dconf write /org/gnome/shell/extensions/paperwm/default-background '"/home/user/
 Setting | Description | Input Type | Default value
 --------|-------------|------------|--------------
 <code>workspace&#8209;colors</code>  | Sets the workspace background color palette. | _String array of colors_ | `['#314E6C', '#565248', '#445632', '#663822', '#494066',   '#826647', '#4B6983', '#807D74', '#5D7555', '#884631', '#625B81', '#B39169', '#7590AE', '#BAB5AB', '#83A67F', '#C1665A', '#887FA3', '#E0C39E']`
-
-</details>
 
 ### Setting window specific properties
 
@@ -269,68 +249,6 @@ You do this by using the special "match all" operator `*` as an input for `wm_cl
 <img alt="Setting default window property rule" src="media/default-star-winprop.png" width="560px">
 
 This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
-
-### New Window Handlers
-
-> #### ⚠️ Gnome 45 removed the ability to add external module files to the search path of extensions.  Hence, the below `user.js` functionality is not currently available in Gnome 45.
-
-If opening a new application window with <kbd>Super</kbd><kbd>Return</kbd> isn't doing exactly what you want, you can create custom functions to suit your needs. For example, you might want new emacs windows to open the current buffer by default, or have new terminals inherit the current directory.  To implement this, you can modify `user.js` as below (see [User configuration & development](#user-configuration--development) section):
-
-```javascript
-// -*- mode: gnome-shell -*-
-const Extension = imports.misc.extensionUtils.getCurrentExtension();
-const App = Extension.imports.app;
-
-function enable() {
-    App.customHandlers['emacs.desktop'] =
-        () => imports.misc.util.spawn(['emacsclient', '--eval', '(make-frame)']);
-    App.customHandlers['org.gnome.Terminal.desktop'] =
-        (metaWindow, app) => app.action_group.activate_action(
-          "win.new-terminal",
-          new imports.gi.GLib.Variant("(ss)", ["window", "current"]));
-}
-```
-
-The app id of a window can be looked up like this:
-
-```javascript
-let Shell = imports.gi.Shell;
-let Tracker = Shell.WindowTracker.get_default();
-let app = Tracker.get_window_app(metaWindow);
-app.get_id();
-```
-
-Available application actions can be listed like this:
-```javascript
-app.action_group.list_actions();
-```
-
-### Keybindings
-
-Due to limitations in the mutter keybinding API we need to steal some built in Gnome Shell actions by default. Eg. the builtin action `switch-group` with the default <kbd>Super</kbd><kbd>Above_Tab</kbd> keybinding is overridden to cycle through recently used workspaces. If an overridden action has several keybindings they will unfortunately all activate the override, so for instance because <kbd>Alt</kbd><kbd>Above_Tab</kbd> is also bound to `switch-group` it will be overridden by default. If you want to avoid this, eg. you want <kbd>Alt</kbd><kbd>Tab</kbd> and <kbd>Alt</kbd><kbd>Above_Tab</kbd> to use the builtin behavior simply remove the conflicts (ie. <kbd>Super</kbd><kbd>Tab</kbd> and <kbd>Super</kbd><kbd>Above_Tab</kbd> and their <kbd>Shift</kbd> variants) from `/org/gnome/desktop/wm/keybindings/switch-group` (no restarts required).
-
-#### User defined keybindings
-
-> #### ⚠️ Gnome 45 removed the ability to add external module files to the search path of extensions.  Hence, the below `user.js` and `examples/keybindings.js` functionality is not currently available in Gnome 45.
-
-`Extension.imports.keybindings.bindkey(keystr, name, handler, options)`
-
-Option              | Values              | Meaning
---------------------|---------------------|------------------------------------
-`activeInNavigator` | `true`, **`false`** | The keybinding is active when the minimap/navigator is open
-`opensMinimap`    | `true`, **`false`** | The minimap will open when the keybinding is invoked
-
-```javascript
-let Keybindings = Extension.imports.keybindings;
-Keybindings.bindkey("<Super>j", "my-favorite-width",
-                    (metaWindow) => {
-                        let f = metaWindow.get_frame_rect();
-                        metaWindow.move_resize_frame(true, f.x, f.y, 500, f.h);
-                    },
-                    { activeInNavigator: true });
-```
-
-See `examples/keybindings.js` for more examples.
 
 ### Touchpad Gestures  ###
 
@@ -360,7 +278,7 @@ You can style both the coloured position bar and the dimmed "position bar backdr
 
 _Note: PaperWM overrides the default Gnome Top Bar style to be completely transparent so that the dimmed `window-position-bar-backdrop` and `window-position-bar` elements are visible._
 
-## Window Focus Mode ##
+## Window Focus Modes ##
 
 [#482](https://github.com/paperwm/PaperWM/pull/482) added the concept of `window focus modes` to PaperWM.  A `focus mode` controls how windows are "focused".  The following modes are currently available:
 
@@ -376,17 +294,15 @@ Focus modes can be toggled by user-settable keybinding (default is `Super`+`Shif
 
 The default focus mode is the standard PaperWM focus mode (i.e. not centered).  This can be changed according to preference by changing the `Default focus mode` setting PaperWM settings.  
 
-<img alt="Default focus mode" src="media/default-focus-mode.png" width="560px">
+<img alt="Default focus mode" src="media/hide-focus-mode-icon.png" width="560px">
 
 _Note: changing this setting during a PaperWM session will set all spaces to the new default focus mode._
 
 ### Hiding the focus mode icon
 
-Users may also prefer to hide the focus mode icon.  You can do so by executing the following command in a terminal:
+Users may also prefer to hide the focus mode icon.  You can do so from the `Avanced` tab in PaperWM extension settings:
 
-```
-dconf write /org/gnome/shell/extensions/paperwm/show-focus-mode-icon false
-```
+<img alt="Enable TopBar Styling" src="media/topbar-styling.png" width="560px">
 
 ## Gnome TopBar opacity / styling ##
 
@@ -397,16 +313,6 @@ Users can disable PaperWM's ability to change TopBar styling from PaperWM settin
 <img alt="Enable TopBar Styling" src="media/topbar-styling.png" width="560px">
 
 _Note: several PaperWM specific features are dependent on changing the Gnome TopBar to function correctly.  If you choose to disable PaperWM's ability to change the TopBar styles (with the setting above), you may also want to disable the [Window Position Bar](#window-position-bar-colored-bar-segment-in-top-bar)_.
-
-## Fixed Window Size ##
-
-See the [Winprops](#setting-window-specific-properities) section for a way to set the default _width_ of windows identified by their `wm_class` window property.
-
-Currently it is not possible to have a default fixed window height.  Please check the following issues for progress / info:
-
-* https://github.com/paperwm/PaperWM/issues/304
-* https://github.com/paperwm/PaperWM/pull/189
-* https://github.com/paperwm/PaperWM/issues/311
 
 ## Recommended Gnome Shell Settings ##
 
