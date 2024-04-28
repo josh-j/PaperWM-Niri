@@ -8,7 +8,7 @@ While technically an [extension](https://extensions.gnome.org/about/) it's to a 
 
 PaperWM aims to continually support [current stable](https://release.gnome.org/calendar/#branches) Gnome shell versions (currently Gnome 45 & Gnome 46).  Older versions of PaperWM can generally be installed on older Gnome Shell versions (see [Install via Source](#install-via-source) for more information on targeting an older/EOL Gnome version).
 
-New features and fixes aren't generally backported to older PaperWM versions that run on previous Gnome versions.  Pull requests for fixes to older PaperWM versions will be accepted if the submitter can help test and update related documentation.
+New features and fixes aren't generally backported to older Gnome shell versions.  [Pull requests](https://github.com/paperwm/PaperWM/pulls) for fixes to older PaperWM versions (that run on previous Gnome versions) will be accepted if the submitter can help test and update related documentation.
 
 Have questions or comments?  Please ask on our [Github Discussions](https://github.com/paperwm/PaperWM/discussions) board.
 
