@@ -194,7 +194,7 @@ PaperWM implements the following touchpad gestures by default:
 
 Gesture                       | Action              
 ------------------------------|------------------------------------------------------
-three-finger swipe up         | Gnome Overview #setting-window-specific-properties
+three-finger swipe up         | Gnome Overview
 three-finger swipe down       | PaperWM workspace stack view (see [here](#the-workspace-stack--monitors))
 three-finger swipe left/right | Moves tiling viewport (windows) left / right
 
