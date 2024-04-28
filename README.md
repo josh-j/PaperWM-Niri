@@ -4,11 +4,11 @@
 
 PaperWM is a [Gnome Shell](https://www.gnome.org/) extension which provides scrollable tiling of windows and per monitor workspaces. It's inspired by paper notebooks and tiling window managers.
 
-PaperWM aims to support currently supported Gnome shells (currently Gnome 45 & Gnome 46).  Older versions of PaperWM can generally installed on older Gnome Shells.
-
-New features and fixes aren't generally backported to older PaperWM versions that run on previous Gnome versions.  Pull requests for fixes to older PaperWM versions will be accepted if the submitter can help test and update documentation etc.
-
 While technically an [extension](https://extensions.gnome.org/about/) it's to a large extent built on top of the Gnome desktop rather than merely extending it.
+
+PaperWM aims to continually support [current stable](https://release.gnome.org/calendar/#branches) Gnome shell versions (currently Gnome 45 & Gnome 46).  Older versions of PaperWM can generally be installed on older Gnome Shell versions (see [Install via Source](#install-via-source) for more information on targeting an older/EOL Gnome version).
+
+New features and fixes aren't generally backported to older PaperWM versions that run on previous Gnome versions.  Pull requests for fixes to older PaperWM versions will be accepted if the submitter can help test and update related documentation.
 
 Have questions or comments?  Please ask on our [Github Discussions](https://github.com/paperwm/PaperWM/discussions) board.
 
