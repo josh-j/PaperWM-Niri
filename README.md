@@ -81,7 +81,7 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 
 <kbd>Alt</kbd><kbd>Tab</kbd> is of course also available.
 
-| Default `window` Keybindings (can be changed in PaperWM extension settings)                       | |
+| Default `window` Keybindings                                                                      | _Can be changed in PaperWM extension settings_ | 
 | ------                                                                                            | ------- |
 | <kbd>Super</kbd><kbd>Return</kbd> or <kbd>Super</kbd><kbd>N</kbd>                                 | Open a new windows (of the current application) |
 | <kbd>Super</kbd><kbd>Backspace</kbd>                                                              | Close the active window |
@@ -138,7 +138,7 @@ Swiping down on the trackpad vertically with three fingers will initiate the wor
 
 There's a single scrollable tiling per workspace. Adding another monitor simply makes it possible to have another workspace visible. The workspace stack is shared among all the monitors, windows being resized vertically as necessary when workspace is displayed on another monitor.
 
-| Default `workspace` Keybindings (can be changed in PaperWM extension settings)                    | |
+| `workspace` keybindings                                                                           | _Can be changed in PaperWM extension settings_ | 
 | ------                                                                                            | ------- |
 | <kbd>Super</kbd><kbd>\`</kbd>                                                                     | Switch to previously active workspace |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>\`</kbd>                                                     | Switch to previously active workspace (backwards order) |
@@ -150,7 +150,7 @@ There's a single scrollable tiling per workspace. Adding another monitor simply 
 | <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageDown</kbd>                                                | Move active window one workspace down |
 
 
-| Default `monitor` Keybindings (can be changed in PaperWM extension settings)                      | |
+| `monitor` keybindings                                                                             | _Can be changed in PaperWM extension settings_ | 
 | ------                                                                                            | ------- |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Right</kbd>                                                  | Switch to the right monitor |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Left</kbd>                                                   | Switch to the left monitor |
@@ -182,7 +182,7 @@ When the tiling is active <kbd>Super</kbd><kbd>Shift</kbd><kbd>Tab</kbd> selects
 
 <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Escape</kbd> will move a tiled window into the scratch layer or alternatively tile an already floating window. This functionality can also be accessed through the window context menu (<kbd>Alt</kbd><kbd>Space</kbd>).
 
-| Default `scratch layer` Keybindings (can be changed in PaperWM extension settings)                | |
+| `scratch` keybindings                                                                             | _Can be changed in PaperWM extension settings_ | 
 | ------                                                                                            | ------- |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                 | Toggles the floating scratch layer |
 | <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>Escape</kbd>                                                  | Attach/detach active window into scratch layer |
