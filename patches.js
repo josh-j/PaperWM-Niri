@@ -487,46 +487,54 @@ export function setupOverrides() {
     //     }
     // });
 
-    // registerOverridePrototype(WorkspacesView.WorkspacesView, '_updateVisibility', function() {
-    //     let workspaceManager = global.workspace_manager;
-    //     let active = workspaceManager.get_active_workspace_index();
+    registerOverridePrototype(WorkspacesView.WorkspacesView, '_updateVisibility', function() {
+        let workspaceManager = global.workspace_manager;
+        let active = workspaceManager.get_active_workspace_index();
+        const isPrimary = Main.layoutManager.primaryIndex === this._monitorIndex;
 
-    //     const fitMode = this._fitModeAdjustment.value;
-    //     const singleFitMode = fitMode === WorkspacesView.FitMode.SINGLE;
+        const fitMode = this._fitModeAdjustment.value;
+        const singleFitMode = fitMode === WorkspacesView.FitMode.SINGLE;
 
-    //     for (let w = 0; w < this._workspaces.length; w++) {
-    //         let workspace = this._workspaces[w];
+        for (let w = 0; w < this._workspaces.length; w++) {
+            let workspace = this._workspaces[w];
 
-    //         if (this._animating || this._gestureActive || !singleFitMode)
-    //             workspace.show();
-    //         else
-    //             workspace.visible = Math.abs(w - active) <= 1;
-    //     }
-    // });
+            global.ddd = workspace;
+            console.log(`workspace index ${workspace.metaWorkspace.index()}`);
+            if (!isPrimary && workspace.metaWorkspace.index() === 0) {
+                workspace.visible = false;
+                continue;
+            }
 
-    registerOverridePrototype(WorkspacesView.SecondaryMonitorDisplay, '_updateWorkspacesView', function() {
-        if (this._workspacesView)
-            this._workspacesView.destroy();
-
-        // if (this._settings.get_boolean('workspaces-only-on-primary')) {
-        //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
-        //         this._monitorIndex,
-        //         this._overviewAdjustment);
-        // } else {
-        //     this._workspacesView = new WorkspacesView.WorkspacesView(
-        //         this._monitorIndex,
-        //         this._controls,
-        //         this._scrollAdjustment,
-        //         this._fitModeAdjustment,
-        //         this._overviewAdjustment);
-        // }
-
-        this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
-            this._monitorIndex,
-            this._overviewAdjustment);
-
-        this.add_child(this._workspacesView);
+            if (this._animating || this._gestureActive || !singleFitMode)
+                workspace.show();
+            else
+                workspace.visible = Math.abs(w - active) <= 1;
+        }
     });
+
+    // registerOverridePrototype(WorkspacesView.SecondaryMonitorDisplay, '_updateWorkspacesView', function() {
+    //     if (this._workspacesView)
+    //         this._workspacesView.destroy();
+
+    //     // if (this._settings.get_boolean('workspaces-only-on-primary')) {
+    //     //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
+    //     //         this._monitorIndex,
+    //     //         this._overviewAdjustment);
+    //     // } else {
+    //     //     this._workspacesView = new WorkspacesView.WorkspacesView(
+    //     //         this._monitorIndex,
+    //     //         this._controls,
+    //     //         this._scrollAdjustment,
+    //     //         this._fitModeAdjustment,
+    //     //         this._overviewAdjustment);
+    //     // }
+
+    //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
+    //         this._monitorIndex,
+    //         this._overviewAdjustment);
+
+    //     this.add_child(this._workspacesView);
+    // });
 }
 
 /**
