@@ -272,11 +272,11 @@ This special operator is at a lower precedence, so more specific properties that
 
 By default PaperWM inserts new windows to the right of the currently active window.  This behaviour can be changed via PaperWM settings, or with the `Open Window Position` button/icon (which is to the right of the focus mode icon):
 
-![Focus mode button](media/open-position-button.png)
+![Open positions button](media/open-position-button.png)
 
 There are several `positions` available for selection.  Namely, `right`, `left`, `start`, `end`.  The former two will insert windows at the start or end of tiled windows container.
 
-Options for all these settings are provided in PaperWM settings:
+Options for these settings, as well as settings to enable/disable specific positions in the `Open Window Position` buttong, are provided in PaperWM settings:
 
 https://github.com/paperwm/PaperWM/assets/30424662/4e4aa415-d047-44cb-b87a-d7e08493ecbd
 
@@ -294,7 +294,7 @@ _Selecting all windows across spaces to close at once (pressing `q`):_
 
 https://github.com/paperwm/PaperWM/assets/30424662/e6596de2-f5f7-46af-b447-044f17f326f9
 
-_Reordring "taken" windows and selectively dropping them:
+_Reordring "taken" windows and selectively dropping them:_
 
 https://github.com/paperwm/PaperWM/assets/30424662/c7c50471-f352-4693-a936-2e711189f933
 
