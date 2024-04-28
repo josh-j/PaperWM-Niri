@@ -23,9 +23,9 @@ Have questions or comments?  Please ask on our [Github Discussions](https://gith
 Clone the repo and check out the branch for the Gnome Shell version you're running:
 
 - 45-46 (currently developed/supported): https://github.com/paperwm/PaperWM/tree/release
-- 42-44: https://github.com/paperwm/PaperWM/tree/gnome-44
-- 40-41: https://github.com/paperwm/PaperWM/tree/gnome-40
-- 3.28-3.38: https://github.com/paperwm/PaperWM/tree/gnome-3.38
+- 42-44 ([EOL](https://release.gnome.org/calendar/#releases)): https://github.com/paperwm/PaperWM/tree/gnome-44
+- 40-41 ([EOL](https://release.gnome.org/calendar/#releases)): https://github.com/paperwm/PaperWM/tree/gnome-40
+- 3.28-3.38 ([EOL](https://release.gnome.org/calendar/#releases)): https://github.com/paperwm/PaperWM/tree/gnome-3.38
 
 then run the [`install.sh`](https://github.com/paperwm/PaperWM/blob/release/install.sh) script
 from the repository. The installer will create a link to the repo in
@@ -274,7 +274,7 @@ By default PaperWM inserts new windows to the right of the currently active wind
 
 ![Open positions button](media/open-position-button.png)
 
-There are several `positions` available for selection.  Namely, `right`, `left`, `start`, `end`.  The former two will insert windows at the start or end of tiled windows container.
+There are several `positions` available for selection.  Namely, `right`, `left`, `start`, `end`.  The latter two will insert windows at the start or end of tiled windows container.
 
 Options for these settings, as well as settings to enable/disable specific positions in the `Open Window Position` buttong, are provided in PaperWM settings:
 
