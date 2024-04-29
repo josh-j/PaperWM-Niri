@@ -516,6 +516,173 @@ export function setupOverrides() {
                 workspace.visible = Math.abs(w - active) <= 1;
         }
     });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesView, '_onScrollAdjustmentChanged', function() {
+        if (!this.has_allocation())
+            return;
+
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        const adj = this._scrollAdjustment;
+        const allowSwitch =
+        adj.get_transition('value') === null && !this._gestureActive;
+
+        let workspaceManager = global.workspace_manager;
+        let active = workspaceManager.get_active_workspace_index();
+        let current = Math.round(adj.value);
+
+        if (allowSwitch && active !== current) {
+            if (!this._workspaces[current]) {
+            // The current workspace was destroyed. This could happen
+            // when you are on the last empty workspace, and consolidate
+            // windows using the thumbnail bar.
+            // In that case, the intended behavior is to stay on the empty
+            // workspace, which is the last one, so pick it.
+                current = this._workspaces.length - 1;
+            }
+
+            let metaWorkspace = this._workspaces[current].metaWorkspace;
+            metaWorkspace.activate(global.get_current_time());
+        }
+
+        this._updateWorkspacesState();
+        this.queue_relayout();
+    });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesView, '_scrollToActive', function() {
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        const { workspaceManager } = global;
+        const active = workspaceManager.get_active_workspace_index();
+
+        this._animating = true;
+        this._updateVisibility();
+
+        this._scrollAdjustment.remove_transition('value');
+        this._scrollAdjustment.ease(active, {
+            duration: 250, // WORKSPACE_SWITCH_TIME
+            mode: Clutter.AnimationMode.EASE_OUT_CUBIC,
+            onComplete: () => {
+                this._animating = false;
+                this._updateVisibility();
+            },
+        });
+    });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_activeWorkspaceChanged', function(_wm, _from, to, _direction) {
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        if (this._gestureActive)
+            return;
+
+        this._scrollAdjustment.ease(to, {
+            mode: Clutter.AnimationMode.EASE_OUT_CUBIC,
+            duration: 250, // WORKSPACE_SWITCH_TIME
+        });
+    });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_switchWorkspaceBegin', function(tracker, monitor) {
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        if (this._workspacesOnlyOnPrimary && monitor !== this._primaryIndex)
+            return;
+
+        let workspaceManager = global.workspace_manager;
+        let adjustment = this._scrollAdjustment;
+        if (this._gestureActive)
+            adjustment.remove_transition('value');
+
+        const distance = global.workspace_manager.layout_rows === -1
+            ? this.height : this.width;
+
+        for (let i = 0; i < this._workspacesViews.length; i++)
+            this._workspacesViews[i].startTouchGesture();
+
+        let progress = adjustment.value / adjustment.page_size;
+        let points = Array.from(
+            { length: workspaceManager.n_workspaces }, (v, i) => i);
+
+        tracker.confirmSwipe(distance, points, progress, Math.round(progress));
+
+        this._gestureActive = true;
+    });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_switchWorkspaceUpdate', function(tracker, progress) {
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        let adjustment = this._scrollAdjustment;
+        adjustment.value = progress * adjustment.page_size;
+    });
+
+    registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_switchWorkspaceEnd', function(tracker, duration, endProgress) {
+        if (Utils.monitorAtCurrentPoint().index !== this._monitorIndex) {
+            return;
+        }
+
+        let workspaceManager = global.workspace_manager;
+        let newWs = workspaceManager.get_workspace_by_index(endProgress);
+
+        this._scrollAdjustment.ease(endProgress, {
+            mode: Clutter.AnimationMode.EASE_OUT_CUBIC,
+            duration,
+            onComplete: () => {
+                if (!newWs.active)
+                    newWs.activate(global.get_current_time());
+                this._endTouchGesture();
+            },
+        });
+    });
+
+
+    // registerOverridePrototype(WorkspaceThumbnail.ThumbnailsBox, 'addThumbnails', function(start, count) {
+    //     let workspaceManager = global.workspace_manager;
+
+    //     for (let k = start; k < start + count; k++) {
+    //         let metaWorkspace = workspaceManager.get_workspace_by_index(k);
+
+    //         const space = Tiling.spaces.spaceOf(metaWorkspace);
+    //         if (space.monitor.index !== this._monitorIndex) {
+    //             continue;
+    //         }
+
+    //         let thumbnail = new WorkspaceThumbnail.WorkspaceThumbnail(metaWorkspace, this._monitorIndex);
+    //         thumbnail.setPorthole(
+    //             this._porthole.x, this._porthole.y,
+    //             this._porthole.width, this._porthole.height);
+    //         this._thumbnails.push(thumbnail);
+    //         this.add_child(thumbnail);
+
+    //         if (this._shouldShow && start > 0 && this._spliceIndex === -1) {
+    //             // not the initial fill, and not splicing via DND
+    //             thumbnail.state = ThumbnailState.NEW;
+    //             thumbnail.slide_position = 1; // start slid out
+    //             thumbnail.collapse_fraction = 1; // start fully collapsed
+    //             this._haveNewThumbnails = true;
+    //         } else {
+    //             thumbnail.state = WorkspaceThumbnail.ThumbnailState.NORMAL;
+    //         }
+
+    //         this._stateCounts[thumbnail.state]++;
+    //     }
+
+    //     this._queueUpdateStates();
+
+    //     // The thumbnails indicator actually needs to be on top of the thumbnails
+    //     this.set_child_above_sibling(this._indicator, null);
+
+    //     // Clear the splice index, we got the message
+    //     this._spliceIndex = -1;
+    // });
 }
 
 /**
