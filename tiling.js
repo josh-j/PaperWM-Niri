@@ -2264,7 +2264,7 @@ export const Spaces = class Spaces extends Map {
     }
 
     _updateMonitor() {
-        let monitorSpaces = this._getOrderedSpaces(this.selectedSpace.monitor);
+        let monitorSpaces = this.getOrderedSpaces(this.selectedSpace.monitor);
         let currentMonitor = this.selectedSpace.monitor;
         monitorSpaces.forEach((space, _i) => {
             space.setMonitor(currentMonitor);
@@ -2588,7 +2588,7 @@ export const Spaces = class Spaces extends Map {
         });
     }
 
-    _getOrderedSpaces(monitor) {
+    getOrderedSpaces(monitor) {
         let nWorkspaces = workspaceManager.n_workspaces;
         let out = [];
         for (let i = 0; i < nWorkspaces; i++) {
@@ -2610,7 +2610,7 @@ export const Spaces = class Spaces extends Map {
         return out;
     }
 
-    _getOrderedSpacesFromAllMonitors(monitor) {
+    getOrderedSpacesFromAllMonitors(monitor) {
         let nWorkspaces = workspaceManager.n_workspaces;
         let out = [];
         for (let i = 0; i < nWorkspaces; i++) {
@@ -2629,7 +2629,7 @@ export const Spaces = class Spaces extends Map {
         Topbar.fixTopBar();
 
         toSpace = toSpace || this.selectedSpace;
-        let monitorSpaces = this._getOrderedSpaces(toSpace.monitor);
+        let monitorSpaces = this.getOrderedSpaces(toSpace.monitor);
 
         let currentMonitor = toSpace.monitor;
         this.selectedSpace = toSpace;
@@ -2701,9 +2701,9 @@ export const Spaces = class Spaces extends Map {
         let currentSpace = this.activeSpace;
         let monitorSpaces;
         if (fromAllMonitors) {
-            monitorSpaces = this._getOrderedSpacesFromAllMonitors(currentSpace.monitor);
+            monitorSpaces = this.getOrderedSpacesFromAllMonitors(currentSpace.monitor);
         } else {
-            monitorSpaces = this._getOrderedSpaces(currentSpace.monitor);
+            monitorSpaces = this.getOrderedSpaces(currentSpace.monitor);
         }
 
         let from = monitorSpaces.indexOf(this.selectedSpace);

@@ -455,42 +455,48 @@ export function setupOverrides() {
         saved.call(this, instantly);
     });
 
-    // registerOverridePrototype(WorkspacesView.WorkspacesDisplay, '_updateWorkspacesViews', function() {
-    //     for (let i = 0; i < this._workspacesViews.length; i++)
-    //         this._workspacesViews[i].destroy();
+    // registerOverridePrototype(WorkspacesView.WorkspacesView, '_updateWorkspaces', function() {
+    //     let workspaceManager = global.workspace_manager;
+    //     let newNumWorkspaces = workspaceManager.n_workspaces;
 
-    //     this._primaryIndex = Main.layoutManager.primaryIndex;
-    //     this._workspacesViews = [];
-    //     let monitors = Main.layoutManager.monitors;
-    //     for (let i = 0; i < monitors.length; i++) {
-    //         let view;
-    //         if (i === this._primaryIndex) {
-    //             view = new WorkspacesView.WorkspacesView(i,
-    //                 this._controls,
-    //                 this._scrollAdjustment,
-    //                 this._fitModeAdjustment,
-    //                 this._overviewAdjustment);
+    //     for (let j = 0; j < newNumWorkspaces; j++) {
+    //         let metaWorkspace = workspaceManager.get_workspace_by_index(j);
+    //         let workspace;
 
-    //             view.visible = this._primaryVisible;
-    //             this.bind_property('opacity', view, 'opacity', GObject.BindingFlags.SYNC_CREATE);
-    //             this.add_child(view);
-    //         } else {
-    //             view = new WorkspacesView.SecondaryMonitorDisplay(i,
-    //                 this._controls,
-    //                 this._scrollAdjustment,
-    //                 this._fitModeAdjustment,
+    //         if (j >= this._workspaces.length) { /* added */
+    //             workspace = new Workspace.Workspace(
+    //                 metaWorkspace,
+    //                 this._monitorIndex,
     //                 this._overviewAdjustment);
-    //             Main.layoutManager.overviewGroup.add_child(view);
+    //             this.add_child(workspace);
+    //             this._workspaces[j] = workspace;
+    //         } else  {
+    //             workspace = this._workspaces[j];
+
+    //             if (workspace.metaWorkspace !== metaWorkspace) { /* removed */
+    //                 workspace.destroy();
+    //                 this._workspaces.splice(j, 1);
+    //             } /* else kept */
     //         }
-
-    //         this._workspacesViews.push(view);
     //     }
+
+    //     for (let j = this._workspaces.length - 1; j >= newNumWorkspaces; j--) {
+    //         this._workspaces[j].destroy();
+    //         this._workspaces.splice(j, 1);
+    //     }
+
+    //     this._workspaces = this._workspaces.filter(w => {
+    //         const space = Tiling.spaces.spaceOf(w.metaWorkspace);
+    //         return space.monitor.index === this._monitorIndex;
+    //     });
+
+    //     this._updateWorkspacesState();
+    //     this._updateVisibility();
     // });
 
     registerOverridePrototype(WorkspacesView.WorkspacesView, '_updateVisibility', function() {
-        let workspaceManager = global.workspace_manager;
-        let active = workspaceManager.get_active_workspace_index();
-        const isPrimary = Main.layoutManager.primaryIndex === this._monitorIndex;
+        const workspaceManager = global.workspace_manager;
+        const active = workspaceManager.get_active_workspace_index();
 
         const fitMode = this._fitModeAdjustment.value;
         const singleFitMode = fitMode === WorkspacesView.FitMode.SINGLE;
@@ -498,9 +504,8 @@ export function setupOverrides() {
         for (let w = 0; w < this._workspaces.length; w++) {
             let workspace = this._workspaces[w];
 
-            global.ddd = workspace;
-            console.log(`workspace index ${workspace.metaWorkspace.index()}`);
-            if (!isPrimary && workspace.metaWorkspace.index() === 0) {
+            const space = Tiling.spaces.spaceOf(workspace.metaWorkspace);
+            if (space.monitor.index !== this._monitorIndex) {
                 workspace.visible = false;
                 continue;
             }
@@ -511,30 +516,6 @@ export function setupOverrides() {
                 workspace.visible = Math.abs(w - active) <= 1;
         }
     });
-
-    // registerOverridePrototype(WorkspacesView.SecondaryMonitorDisplay, '_updateWorkspacesView', function() {
-    //     if (this._workspacesView)
-    //         this._workspacesView.destroy();
-
-    //     // if (this._settings.get_boolean('workspaces-only-on-primary')) {
-    //     //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
-    //     //         this._monitorIndex,
-    //     //         this._overviewAdjustment);
-    //     // } else {
-    //     //     this._workspacesView = new WorkspacesView.WorkspacesView(
-    //     //         this._monitorIndex,
-    //     //         this._controls,
-    //     //         this._scrollAdjustment,
-    //     //         this._fitModeAdjustment,
-    //     //         this._overviewAdjustment);
-    //     // }
-
-    //     this._workspacesView = new WorkspacesView.ExtraWorkspaceView(
-    //         this._monitorIndex,
-    //         this._overviewAdjustment);
-
-    //     this.add_child(this._workspacesView);
-    // });
 }
 
 /**
