@@ -173,8 +173,8 @@ export class StackOverlay {
         });
 
         // Uncomment to debug the overlays
-        // overlay.background_color = Clutter.color_from_string('green')[1];
-        // overlay.opacity = 100;
+        overlay.background_color = Clutter.color_from_string('green')[1];
+        overlay.opacity = 100;
 
         this.monitor = monitor;
         let panelBox = Main.layoutManager.panelBox;
@@ -184,7 +184,11 @@ export class StackOverlay {
 
         this.signals = new Utils.Signals();
 
+        // preview timeouts
         this.triggerPreviewTimeout = null;
+        this.showPreviewTimeout = null;
+        this.activatePreviewTimeout = null;
+
         this.signals.connect(overlay, 'button-press-event', () => {
             if (!Settings.prefs.edge_preview_click_enable) {
                 return;
@@ -194,19 +198,7 @@ export class StackOverlay {
                 return;
             }
 
-            Main.activateWindow(this.target);
-            // remove/cleanup the previous preview
-            this.removePreview();
-
-            // if pointer is still at edge (within 2px), trigger preview
-            this.triggerPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
-                if (this._pointerIsAtEdge()) {
-                    this.triggerPreview.bind(this)();
-                }
-
-                this.triggerPreviewTimeout = null;
-                return false; // on return false destroys timeout
-            });
+            this._activateTarget();
         });
 
         this.signals.connect(overlay, 'enter-event', this.triggerPreview.bind(this));
@@ -217,6 +209,25 @@ export class StackOverlay {
 
         this.overlay = overlay;
         this.setTarget(null);
+    }
+
+    _activateTarget() {
+        Main.activateWindow(this.target);
+        // remove/cleanup the previous preview
+        this.removePreview();
+
+        // if pointer is still at edge (within 2px), trigger preview
+        this.triggerPreviewTimeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            (Settings.prefs.animation_time * 1000) + 50,
+            () => {
+                if (this._pointerIsAtEdge()) {
+                    this.triggerPreview.bind(this)();
+                }
+
+                this.triggerPreviewTimeout = null;
+                return false; // on return false destroys timeout
+            });
     }
 
     /**
@@ -233,7 +244,7 @@ export class StackOverlay {
     }
 
     triggerPreview() {
-        if (this._previewId)
+        if (this.showPreviewTimeout)
             return;
         if (!this.target)
             return;
@@ -248,18 +259,31 @@ export class StackOverlay {
             }
         });
 
-        this._previewId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+        this.showPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             this.removePreview();
             this.showPreview();
-            this._previewId = null;
+            this.showPreviewTimeout = null;
+
+            // activate preview on timeout
+            if (Settings.prefs.edge_preview_timeout_enable) {
+                this.activatePreviewTimeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT,
+                    Settings.prefs.edge_preview_timeout, () => {
+                        // check if still at edge
+                        if (this._pointerIsAtEdge()) {
+                            this._activateTarget();
+                        }
+                    });
+            }
+
             return false; // on return false destroys timeout
         });
     }
 
     removePreview() {
-        if (this._previewId) {
-            Utils.timeout_remove(this._previewId);
-            this._previewId = null;
+        if (this.showPreviewTimeout) {
+            Utils.timeout_remove(this.showPreviewTimeout);
+            this.showPreviewTimeout = null;
         }
 
         if (this.clone) {
@@ -381,9 +405,16 @@ export class StackOverlay {
         Utils.timeout_remove(this.triggerPreviewTimeout);
         this.triggerPreviewTimeout = null;
 
+        Utils.timeout_remove(this.showPreviewTimeout);
+        this.showPreviewTimeout = null;
+
+        Utils.timeout_remove(this.activatePreviewTimeout);
+        this.activatePreviewTimeout = null;
+
         this.signals.destroy();
         this.signals = null;
         this.removePreview();
+
         Main.layoutManager.untrackChrome(this.overlay);
         this.overlay.destroy();
     }

@@ -48,6 +48,8 @@ export function enable(extension) {
         'minimap-scale',
         'edge-preview-scale',
         'edge-preview-click-enable',
+        'edge-preview-timeout-enable',
+        'edge-preview-timeout',
         'window-switcher-preview-scale',
         'winprops',
         'show-workspace-indicator',
