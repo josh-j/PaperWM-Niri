@@ -244,6 +244,9 @@ export class StackOverlay {
     }
 
     triggerPreview() {
+        if (Settings.prefs.edge_preview_scale <= 0) {
+            return;
+        }
         if (this.showPreviewTimeout)
             return;
         if (!this.target)
