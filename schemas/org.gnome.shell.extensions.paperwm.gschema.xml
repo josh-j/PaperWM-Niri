@@ -238,6 +238,14 @@
         <default><![CDATA[[]]]></default>
         <summary>Switch to the below window (no monitor boundary)</summary>
     </key>
+    <key type="as" name="switch-up-or-else-workspace">
+        <default><![CDATA[['']]]></default>
+        <summary>Switch to the above window (no workspace boundary)</summary>
+    </key>
+    <key type="as" name="switch-down-or-else-workspace">
+        <default><![CDATA[['']]]></default>
+        <summary>Switch to the below window (no workspace boundary)</summary>
+    </key>
 
     <key type="as" name="switch-first">
         <default><![CDATA[['<Super>Home']]]></default>
