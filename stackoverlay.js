@@ -7,7 +7,7 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PointerWatcher from 'resource:///org/gnome/shell/ui/pointerWatcher.js';
 
-import { Settings, Utils, Tiling, Navigator, Grab, Scratch } from './imports.js';
+import { Settings, Utils, Tiling, Grab, Scratch } from './imports.js';
 
 /*
   The stack overlay decorates the top stacked window with its icon and
@@ -44,7 +44,7 @@ import { Settings, Utils, Tiling, Navigator, Grab, Scratch } from './imports.js'
 */
 
 let pointerWatch;
-export function enable(extension) {
+export function enable(_extension) {
 
 }
 
@@ -193,7 +193,7 @@ export class StackOverlay {
             this.removePreview();
             this.triggerPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
                 // if pointer is still at edge (within 2px), trigger preview
-                let [x, y, mask] = global.get_pointer();
+                let [x] = global.get_pointer();
                 if (x <= 2 || x >= this.monitor.width - 2) {
                     this.triggerPreview.bind(this)();
                 }
@@ -255,7 +255,7 @@ export class StackOverlay {
      * Shows the window preview in from the side it was triggered on.
      */
     showPreview() {
-        let [x, y, mask] = global.get_pointer();
+        let [x, y] = global.get_pointer();
         let actor = this.target.get_compositor_private();
         let clone = new Clutter.Clone({ source: actor });
         this.clone = clone;

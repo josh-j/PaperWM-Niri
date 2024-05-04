@@ -442,6 +442,21 @@
       <summary>Scale of window previews at tiling edge. Scale is percent of actual window size.</summary>
     </key>
 
+    <key type="b" name="edge-preview-click-enable">
+      <default>false</default>
+      <summary>Enables activating edge preview with click</summary>
+    </key>
+
+    <key type="b" name="edge-preview-timeout-enable">
+      <default>false</default>
+      <summary>Enables activating edge preview with a timeout</summary>
+    </key>
+
+    <key type="i" name="edge-preview-timeout">
+      <default>200</default>
+      <summary>Timeout (ms) before activating the edge preview</summary>
+    </key>
+
     <key type="d" name="window-switcher-preview-scale">
       <default>0.15</default>
       <summary>Scale of window switch previewse.  Scale is percent of actual window size</summary>
