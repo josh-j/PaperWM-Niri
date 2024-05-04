@@ -236,8 +236,17 @@ export class StackOverlay {
      */
     _pointerIsAtEdge() {
         const [x] = global.get_pointer();
-        if (x <= 2 || x >= this.monitor.width - 2) {
-            return true;
+        switch (this._direction) {
+        case Meta.MotionDirection.LEFT:
+            if (x <= 2) {
+                return true;
+            }
+            break;
+        case Meta.MotionDirection.RIGHT:
+            if (x >= this.monitor.width - 2) {
+                return true;
+            }
+            break;
         }
 
         return false;
