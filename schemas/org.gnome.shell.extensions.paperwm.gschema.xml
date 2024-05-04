@@ -437,6 +437,11 @@
       <summary>Sets the opacity of the non-selected windows during minimap navigation.</summary>
     </key>
 
+    <key type="b" name="edge-preview-enable">
+      <default>true</default>
+      <summary>Enables tiling edge window previews</summary>
+    </key>
+
     <key type="d" name="edge-preview-scale">
       <default>0.15</default>
       <summary>Scale of window previews at tiling edge. Scale is percent of actual window size.</summary>

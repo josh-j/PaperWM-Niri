@@ -46,6 +46,7 @@ export function enable(extension) {
         'cycle-height-steps',
         'maximize-width-percent',
         'minimap-scale',
+        'edge-preview-enable',
         'edge-preview-scale',
         'edge-preview-click-enable',
         'edge-preview-timeout-enable',

@@ -173,8 +173,8 @@ export class StackOverlay {
         });
 
         // Uncomment to debug the overlays
-        overlay.background_color = Clutter.color_from_string('green')[1];
-        overlay.opacity = 100;
+        // overlay.background_color = Clutter.color_from_string('green')[1];
+        // overlay.opacity = 100;
 
         this.monitor = monitor;
         let panelBox = Main.layoutManager.panelBox;
@@ -190,11 +190,11 @@ export class StackOverlay {
         this.activatePreviewTimeout = null;
 
         this.signals.connect(overlay, 'button-press-event', () => {
-            if (!Settings.prefs.edge_preview_click_enable) {
+            if (!Settings.prefs.edge_preview_enable) {
                 return;
             }
 
-            if (Settings.prefs.edge_preview_scale <= 0) {
+            if (!Settings.prefs.edge_preview_click_enable) {
                 return;
             }
 
@@ -244,13 +244,17 @@ export class StackOverlay {
     }
 
     triggerPreview() {
-        if (Settings.prefs.edge_preview_scale <= 0) {
+        if (!Settings.prefs.edge_preview_enable) {
             return;
         }
-        if (this.showPreviewTimeout)
+
+        if (this.showPreviewTimeout) {
             return;
-        if (!this.target)
+        }
+
+        if (!this.target) {
             return;
+        }
 
         // create pointerwatcher to ensure preview is removed
         previewPointerWatcher?.remove();
