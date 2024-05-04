@@ -186,7 +186,8 @@ export class StackOverlay {
 
         this.triggerPreviewTimeout = null;
         this.signals.connect(overlay, 'button-press-event', () => {
-            if (Settings.prefs.edge_preview_scale > 0) {
+            if (Settings.prefs.edge_preview_scale > 0 &&
+                Settings.prefs.edge_preview_click_enable) {
                 Main.activateWindow(this.target);
             }
             // remove/cleanup the previous preview

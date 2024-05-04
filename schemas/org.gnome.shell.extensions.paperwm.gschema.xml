@@ -443,7 +443,7 @@
     </key>
 
     <key type="b" name="edge-preview-click-enable">
-      <default>false</default>
+      <default>true</default>
       <summary>Enables activating edge preview with click</summary>
     </key>
 
