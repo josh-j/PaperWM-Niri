@@ -186,14 +186,20 @@ export class StackOverlay {
 
         this.triggerPreviewTimeout = null;
         this.signals.connect(overlay, 'button-press-event', () => {
-            if (Settings.prefs.edge_preview_scale > 0 &&
-                Settings.prefs.edge_preview_click_enable) {
-                Main.activateWindow(this.target);
+            if (!Settings.prefs.edge_preview_click_enable) {
+                return;
             }
+
+            if (Settings.prefs.edge_preview_scale <= 0) {
+                return;
+            }
+
+            Main.activateWindow(this.target);
             // remove/cleanup the previous preview
             this.removePreview();
+
+            // if pointer is still at edge (within 2px), trigger preview
             this.triggerPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
-                // if pointer is still at edge (within 2px), trigger preview
                 let [x] = global.get_pointer();
                 if (x <= 2 || x >= this.monitor.width - 2) {
                     this.triggerPreview.bind(this)();
@@ -214,7 +220,7 @@ export class StackOverlay {
     }
 
     triggerPreview() {
-        if ("_previewId" in this)
+        if (this._previewId)
             return;
         if (!this.target)
             return;
@@ -225,25 +231,12 @@ export class StackOverlay {
             this._previewId = null;
             return false; // on return false destroys timeout
         });
-
-        // uncomment to remove the preview after a timeout
-        /*
-        this._removeId = Mainloop.timeout_add_seconds(2, () => {
-            this.removePreview();
-            this._removeId = null;
-            return false; // on return false destroys timeout
-        });
-        */
     }
 
     removePreview() {
-        if ("_previewId" in this) {
+        if (this._previewId) {
             Utils.timeout_remove(this._previewId);
-            delete this._previewId;
-        }
-        if ("_removeId" in this) {
-            Utils.timeout_remove(this._removeId);
-            delete this._removeId;
+            this._previewId = null;
         }
 
         if (this.clone) {
