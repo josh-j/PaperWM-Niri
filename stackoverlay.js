@@ -43,7 +43,7 @@ import { Settings, Utils, Tiling, Grab, Scratch } from './imports.js';
   restack loops)
 */
 
-let pointerWatch;
+let pointerWatch, previewPointerWatcher;
 export function enable(_extension) {
 
 }
@@ -200,10 +200,10 @@ export class StackOverlay {
 
             // if pointer is still at edge (within 2px), trigger preview
             this.triggerPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
-                let [x] = global.get_pointer();
-                if (x <= 2 || x >= this.monitor.width - 2) {
+                if (this._pointerIsAtEdge()) {
                     this.triggerPreview.bind(this)();
                 }
+
                 this.triggerPreviewTimeout = null;
                 return false; // on return false destroys timeout
             });
@@ -219,13 +219,36 @@ export class StackOverlay {
         this.setTarget(null);
     }
 
+    /**
+     * Returns true if pointer x position is at monitor edge.
+     * @returns Boolean
+     */
+    _pointerIsAtEdge() {
+        const [x] = global.get_pointer();
+        if (x <= 2 || x >= this.monitor.width - 2) {
+            return true;
+        }
+
+        return false;
+    }
+
     triggerPreview() {
         if (this._previewId)
             return;
         if (!this.target)
             return;
+
+        // create pointerwatcher to ensure preview is removed
+        previewPointerWatcher?.remove();
+        previewPointerWatcher = PointerWatcher.getPointerWatcher().addWatch(200, () => {
+            if (!this._pointerIsAtEdge()) {
+                this.removePreview();
+                previewPointerWatcher?.remove();
+                previewPointerWatcher = null;
+            }
+        });
+
         this._previewId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-            delete this._previewId;
             this.removePreview();
             this.showPreview();
             this._previewId = null;
