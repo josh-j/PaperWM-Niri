@@ -45,10 +45,31 @@ import { Settings, Utils, Tiling, Grab, Scratch } from './imports.js';
 
 let pointerWatch, previewPointerWatcher;
 export function enable(_extension) {
+    previewPointerWatcher = PointerWatcher.getPointerWatcher().addWatch(200, () => {
+        const monitor = Utils.monitorAtCurrentPoint();
+        let stackOverlay;
+        // check if pointer is at an edge
+        const [x] = global.get_pointer();
+        if (x <= 2) {
+            stackOverlay = monitor.clickOverlay.left;
+        }
+        else if (x >= monitor.width - 2) {
+            stackOverlay = monitor.clickOverlay.right;
+        }
+        else {
+            monitor.clickOverlay.left.removePreview();
+            monitor.clickOverlay.right.removePreview();
+            return;
+        }
 
+        // trigger preview logic
+        stackOverlay.triggerPreview();
+    });
 }
 
 export function disable() {
+    previewPointerWatcher?.remove();
+    previewPointerWatcher = null;
     disableMultimonitorSupport();
 }
 
@@ -201,8 +222,8 @@ export class StackOverlay {
             this._activateTarget();
         });
 
-        this.signals.connect(overlay, 'enter-event', this.triggerPreview.bind(this));
-        this.signals.connect(overlay, 'leave-event', this.removePreview.bind(this));
+        // this.signals.connect(overlay, 'enter-event', this.triggerPreview.bind(this));
+        // this.signals.connect(overlay, 'leave-event', this.removePreview.bind(this));
 
         global.window_group.add_child(overlay);
         Main.layoutManager.trackChrome(overlay);
@@ -265,15 +286,15 @@ export class StackOverlay {
             return;
         }
 
-        // create pointerwatcher to ensure preview is removed
-        previewPointerWatcher?.remove();
-        previewPointerWatcher = PointerWatcher.getPointerWatcher().addWatch(200, () => {
-            if (!this._pointerIsAtEdge()) {
-                this.removePreview();
-                previewPointerWatcher?.remove();
-                previewPointerWatcher = null;
-            }
-        });
+        // // create pointerwatcher to ensure preview is removed
+        // previewPointerWatcher?.remove();
+        // previewPointerWatcher = PointerWatcher.getPointerWatcher().addWatch(200, () => {
+        //     if (!this._pointerIsAtEdge()) {
+        //         this.removePreview();
+        //         previewPointerWatcher?.remove();
+        //         previewPointerWatcher = null;
+        //     }
+        // });
 
         this.showPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             this.removePreview();
@@ -302,10 +323,8 @@ export class StackOverlay {
             this.showPreviewTimeout = null;
         }
 
-        if (this.clone) {
-            this.clone.destroy();
-            this.clone = null;
-        }
+        this.clone?.destroy();
+        this.clone = null;
     }
 
     /**
