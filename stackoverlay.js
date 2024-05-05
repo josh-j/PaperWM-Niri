@@ -165,6 +165,8 @@ export class ClickOverlay {
 
 export class StackOverlay {
     constructor(direction, monitor) {
+        this.SHOW_DELAY = 100;
+
         this._direction = direction;
 
         let overlay = new Clutter.Actor({
@@ -275,7 +277,7 @@ export class StackOverlay {
             }
         });
 
-        this.showPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+        this.showPreviewTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, this.SHOW_DELAY, () => {
             this.removePreview();
             this.showPreview();
             this.showPreviewTimeout = null;
@@ -312,6 +314,23 @@ export class StackOverlay {
      * Shows the window preview in from the side it was triggered on.
      */
     showPreview() {
+        // only show if have valid scale
+        const scale = Settings.prefs.edge_preview_scale;
+        if (scale <= 0) {
+            return;
+        }
+
+        // if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY is
+        /**
+         * if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY is lte
+         * than timeout, then won't see the preview anyway).
+         */
+        if (Settings.prefs.edge_preview_timeout_enable &&
+            Settings.prefs.edge_preview_timeout <= this.SHOW_DELAY
+        ) {
+            return;
+        }
+
         let [x, y] = global.get_pointer();
         let actor = this.target.get_compositor_private();
         let clone = new Clutter.Clone({ source: actor });
@@ -322,7 +341,6 @@ export class StackOverlay {
         Tiling.animateWindow(this.target);
 
         // set clone parameters
-        const scale = Settings.prefs.edge_preview_scale;
         clone.opacity = 255 * 0.95;
 
         clone.set_scale(scale, scale);
