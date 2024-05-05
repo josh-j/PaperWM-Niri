@@ -244,6 +244,7 @@ class SettingsWidget {
         booleanStateChanged('edge-preview-click-enable');
         booleanStateChanged('edge-preview-timeout-enable');
         intValueChanged('edge_preview_timeout_scale', 'edge-preview-timeout');
+        booleanStateChanged('edge-preview-timeout-continual');
 
         const openWindowPosition = this.builder.get_object('open-window-position');
         const owpos = this._settings.get_int('open-window-position');

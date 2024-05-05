@@ -1553,7 +1553,7 @@
                               <object class="GtkLabel">
                                 <property name="focusable">False</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">Hover (timeout) to activate edge window</property>
+                                <property name="label" translatable="yes">Hover to activate edge window</property>
                                 <property name="use_markup">1</property>
                                 <property name="xalign">0</property>
                                 <layout>
@@ -1581,7 +1581,7 @@
                         <child>
                           <object class="GtkGrid">
                             <property name="focusable">False</property>
-                            <property name="tooltip_text" translatable="yes">Sets the timeout before activating window (ms)</property>
+                            <property name="tooltip_text" translatable="yes">Sets the timeout before activating window (milliseconds)</property>
                             <property name="margin_start">12</property>
                             <property name="margin_end">12</property>
                             <property name="margin_top">6</property>
@@ -1591,7 +1591,7 @@
                               <object class="GtkLabel">
                                 <property name="focusable">False</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">Hover timeout (ms)</property>
+                                <property name="label" translatable="yes">Hover timeout (milliseconds)</property>
                                 <property name="use_markup">1</property>
                                 <property name="xalign">0</property>
                                 <layout>
@@ -1618,7 +1618,44 @@
                         </child>
                       </object>
                     </child>
-
+                    <child>
+                      <object class="GtkListBoxRow">
+                        <property name="activatable">False</property>
+                        <property name="focusable">False</property>
+                        <child>
+                          <object class="GtkGrid">
+                            <property name="focusable">False</property>
+                            <property name="tooltip_text" translatable="yes">Enables the continual activation of windows if pointer is still at edge of monitor</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">6</property>
+                            <property name="margin_bottom">6</property>
+                            <property name="column_spacing">32</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="focusable">False</property>
+                                <property name="hexpand">1</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Continual &lt;/i&gt; edge window activation on hover</property>
+                                <property name="use_markup">1</property>
+                                <property name="xalign">0</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSwitch" id="edge-preview-timeout-continual">
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                 </child>               
                 <child>

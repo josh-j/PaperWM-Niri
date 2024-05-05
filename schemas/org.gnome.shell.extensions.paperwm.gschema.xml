@@ -458,7 +458,7 @@
     </key>
 
     <key type="i" name="edge-preview-timeout">
-      <default>500</default>
+      <default>800</default>
       <summary>Timeout (ms) before activating the edge preview</summary>
     </key>
 
