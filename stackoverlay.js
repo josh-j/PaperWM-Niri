@@ -203,8 +203,8 @@ export class StackOverlay {
             this._activateTarget();
         });
 
-        this.signals.connect(overlay, 'enter-event', this.triggerPreview.bind(this));
-        this.signals.connect(overlay, 'leave-event', this.removePreview.bind(this));
+        this.signals.connect(overlay, 'enter-event', () => this.triggerPreview());
+        this.signals.connect(overlay, 'leave-event', () => this.removePreview());
 
         global.window_group.add_child(overlay);
         Main.layoutManager.trackChrome(overlay);
@@ -224,7 +224,7 @@ export class StackOverlay {
             (Settings.prefs.animation_time * 1000) + 50,
             () => {
                 if (this._pointerIsAtEdge()) {
-                    this.triggerPreview.bind(this)();
+                    this.triggerPreview(true);
                 }
 
                 this.triggerPreviewTimeout = null;
@@ -254,7 +254,12 @@ export class StackOverlay {
         return false;
     }
 
-    triggerPreview() {
+    /**
+     * Triggers edge window preview.
+     * @param {Boolean} postActivatePreview: true if an auto preview after previous activation
+     * @returns
+     */
+    triggerPreview(postActivatePreview = false) {
         if (!Settings.prefs.edge_preview_enable) {
             return;
         }
@@ -284,6 +289,13 @@ export class StackOverlay {
 
             // activate preview on timeout
             if (Settings.prefs.edge_preview_timeout_enable) {
+                console.log(postActivatePreview);
+                // if no continual activation
+                if (postActivatePreview &&
+                    !Settings.prefs.edge_preview_timeout_continual) {
+                    return;
+                }
+
                 this.activatePreviewTimeout = GLib.timeout_add(
                     GLib.PRIORITY_DEFAULT,
                     Settings.prefs.edge_preview_timeout, () => {

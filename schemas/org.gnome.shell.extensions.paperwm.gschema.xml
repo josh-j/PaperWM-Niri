@@ -462,6 +462,11 @@
       <summary>Timeout (ms) before activating the edge preview</summary>
     </key>
 
+    <key type="b" name="edge-preview-timeout-continual">
+      <default>false</default>
+      <summary>Enables the continual activation of windows if pointer is at edge of monitor</summary>
+    </key>
+
     <key type="d" name="window-switcher-preview-scale">
       <default>0.15</default>
       <summary>Scale of window switch previewse.  Scale is percent of actual window size</summary>
