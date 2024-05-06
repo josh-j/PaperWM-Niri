@@ -198,27 +198,27 @@
     </key>
 
     <key type="as" name="switch-next-loop">
-      <default><![CDATA[['']]]></default>
+      <default><![CDATA[[]]]></default>
       <summary>Switch to the next window (with wrap-around)</summary>
     </key>
     <key type="as" name="switch-previous-loop">
-      <default><![CDATA[['']]]></default>
+      <default><![CDATA[[]]]></default>
       <summary>Switch to the previous window (with wrap-around)</summary>
     </key>
     <key type="as" name="switch-right-loop">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the right window (with wrap-around)</summary>
     </key>
     <key type="as" name="switch-left-loop">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the left window (with wrap-around)</summary>
     </key>
     <key type="as" name="switch-up-loop">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the window above (with wrap-around)</summary>
     </key>
     <key type="as" name="switch-down-loop">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the window below (with wrap-around)</summary>
     </key>
 
@@ -239,11 +239,11 @@
         <summary>Switch to the below window (no monitor boundary)</summary>
     </key>
     <key type="as" name="switch-up-or-else-workspace">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the above window (no workspace boundary)</summary>
     </key>
     <key type="as" name="switch-down-or-else-workspace">
-        <default><![CDATA[['']]]></default>
+        <default><![CDATA[[]]]></default>
         <summary>Switch to the below window (no workspace boundary)</summary>
     </key>
 
