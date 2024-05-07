@@ -289,10 +289,24 @@ export class StackOverlay {
 
             // activate preview on timeout
             if (Settings.prefs.edge_preview_timeout_enable) {
-                console.log(postActivatePreview);
                 // if no continual activation
                 if (postActivatePreview &&
                     !Settings.prefs.edge_preview_timeout_continual) {
+                    // push pointer back
+                    let [, py] = global.get_pointer();
+                    let x;
+                    if (this._direction === Meta.MotionDirection.LEFT) {
+                        x = this.monitor.x + 3;
+                    }
+                    else {
+                        x = this.monitor.x + this.monitor.width - 3;
+                    }
+                    Utils.warpPointer(
+                        x,
+                        py,
+                        false
+                    );
+                    this.showPreview();
                     return;
                 }
 
