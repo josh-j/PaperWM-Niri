@@ -240,7 +240,7 @@
     </key>
     <key type="as" name="switch-up-or-else-workspace">
         <default><![CDATA[[]]]></default>
-        <summary>Switch window or workspace above</summary>
+        <summary>Switch to window or workspace above</summary>
     </key>
     <key type="as" name="switch-down-or-else-workspace">
         <default><![CDATA[[]]]></default>

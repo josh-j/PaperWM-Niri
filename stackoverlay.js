@@ -353,7 +353,6 @@ export class StackOverlay {
             return;
         }
 
-        // if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY is
         /**
          * if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY is lte
          * than timeout, then won't see the preview anyway).
