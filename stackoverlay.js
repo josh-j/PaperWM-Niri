@@ -49,6 +49,8 @@ export function enable(_extension) {
 }
 
 export function disable() {
+    previewPointerWatcher?.remove();
+    previewPointerWatcher = null;
     disableMultimonitorSupport();
 }
 
