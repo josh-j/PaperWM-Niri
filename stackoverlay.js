@@ -292,21 +292,28 @@ export class StackOverlay {
                 // if no continual activation
                 if (postActivatePreview &&
                     !Settings.prefs.edge_preview_timeout_continual) {
+                    // check have a target
+                    if (!this.target) {
+                        return;
+                    }
+
                     // push pointer back
                     let [, py] = global.get_pointer();
+                    const offset = 3;
                     let x;
-                    if (this._direction === Meta.MotionDirection.LEFT) {
-                        x = this.monitor.x + 3;
-                    }
-                    else {
-                        x = this.monitor.x + this.monitor.width - 3;
+                    switch (this._direction) {
+                    case Meta.MotionDirection.LEFT:
+                        x = this.monitor.x + offset;
+                        break;
+                    case Meta.MotionDirection.RIGHT:
+                        x = this.monitor.x + this.monitor.width - offset;
+                        break;
                     }
                     Utils.warpPointer(
                         x,
                         py,
                         false
                     );
-                    this.showPreview();
                     return;
                 }
 
