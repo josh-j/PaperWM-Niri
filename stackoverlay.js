@@ -354,8 +354,8 @@ export class StackOverlay {
         }
 
         /**
-         * if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY is lte
-         * than timeout, then won't see the preview anyway).
+         * if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY <= timeout,
+         * then won't see the preview anyway).
          */
         if (Settings.prefs.edge_preview_timeout_enable &&
             Settings.prefs.edge_preview_timeout <= this.SHOW_DELAY
