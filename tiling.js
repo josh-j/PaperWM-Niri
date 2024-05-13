@@ -4832,24 +4832,55 @@ export function allocateEqualHeight(column, available) {
 * this allows freshly created windows to be stacked without
 * having to change focus
 */
+/**
+ * "Slurps" a window into the currently active column, vertically
+ * stacking it.
+ * @param {Meta.Window} metaWindow
+ * @returns
+ */
 export function slurp(metaWindow) {
+    // get current direction mode
+    const direction = Settings.prefs.open_window_position;
+
     let space = spaces.spaceOfWindow(metaWindow);
     let index = space.indexOf(metaWindow);
 
-    let to, from;
-    let metaWindowToSlurp;
+    let to, from, metaWindowToSlurp;
 
-    if (index + 1 < space.length) {
+    switch (direction) {
+    case Settings.OpenWindowPositions.LEFT:
+        // check if there is a window to the left
+        if (index - 1 < 0) {
+            break;
+        }
         to = index;
-        from = to + 1;
+        from = index - 1;
         metaWindowToSlurp = space[from][0];
-    } else if (index + 1 === space.length) {
-        if (space[index].length > 1)
-            return;
-        metaWindowToSlurp = metaWindow;
-        to = index - 1;
-        from = index;
+        break;
+    case Settings.OpenWindowPositions.RIGHT:
+    default:
+        // check there is window to the right
+        if (index + 1 >= space.length) {
+            break;
+        }
+        to = index;
+        from = index + 1;
+        metaWindowToSlurp = space[from][0];
+        break;
     }
+
+
+    // if (index + 1 < space.length) {
+    //     to = index;
+    //     from = to + 1;
+    //     metaWindowToSlurp = space[from][0];
+    // } else if (index + 1 === space.length) {
+    //     if (space[index].length > 1)
+    //         return;
+    //     metaWindowToSlurp = metaWindow;
+    //     to = index - 1;
+    //     from = index;
+    // }
 
     // slurping fullscreen windows is trouble
     if (!metaWindowToSlurp || space.length < 2) {
@@ -4867,18 +4898,25 @@ export function slurp(metaWindow) {
         let column = space[from];
         let row = column.indexOf(metaWindowToSlurp);
         column.splice(row, 1);
-        if (column.length === 0)
+
+        // if from column is now empty, remove column from space
+        if (column.length === 0) {
             space.splice(from, 1);
+        }
     }
 
+    // after columns have slurped, to index may have changed
     space.layout(true, {
-        customAllocators: { [to]: allocateEqualHeight, ensure: false },
+        customAllocators: {
+            [space.indexOf(metaWindow)]: allocateEqualHeight,
+            ensure: false,
+        },
     });
 }
 
 /**
  * Barfs the bottom window from a column.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  * @returns
  */
 export function barf(metaWindow) {
