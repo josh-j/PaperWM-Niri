@@ -498,7 +498,7 @@ export class Space extends Array {
                 windows.map(mw => mw.get_frame_rect().height),
                 height
             );
-            let [w, relayout, y] = space.layoutColumnSimple(windows, x, y0, targetWidth, targetHeights, time);
+            let [, relayout, y] = space.layoutColumnSimple(windows, x, y0, targetWidth, targetHeights, time);
             needRelayout = needRelayout || relayout;
             return y;
         }
@@ -1234,7 +1234,7 @@ export class Space extends Array {
     }
 
     globalToViewport(gx, gy) {
-        let [ok, vx, vy] = this.actor.transform_stage_point(gx, gy);
+        let [, vx, vy] = this.actor.transform_stage_point(gx, gy);
         return [Math.round(vx), Math.round(vy)];
     }
 
@@ -1337,6 +1337,7 @@ export class Space extends Array {
 
         if (this.selectedWindow && this.selectedWindow === display.focus_window) {
             let index = this.indexOf(this.selectedWindow);
+            // eslint-disable-next-line no-return-assign
             this[index].forEach(w => w.lastFrame = w.get_frame_rect());
 
             // callback on display.focusWindow window
@@ -1795,8 +1796,8 @@ border-radius: ${borderWidth}px;
                 /**
                  * if user clicks on window, then ensureViewport on that window before exiting
                  */
-                let [gx, gy, $] = global.get_pointer();
-                let [ok, x, y] = this.actor.transform_stage_point(gx, gy);
+                let [gx, gy] = global.get_pointer();
+                let [, x, y] = this.actor.transform_stage_point(gx, gy);
                 let windowAtPoint = !Gestures.gliding && this.getWindowAtPoint(x, y);
                 if (windowAtPoint) {
                     ensureViewport(windowAtPoint, this);
@@ -1820,7 +1821,7 @@ border-radius: ${borderWidth}px;
                 if (dir === Clutter.ScrollDirection.SMOOTH)
                     return;
 
-                let [gx, gy] = event.get_coords();
+                let [gx] = event.get_coords();
                 if (!gx) {
                     return;
                 }
@@ -1966,7 +1967,7 @@ border-radius: ${borderWidth}px;
         let windows = workspace.list_windows()
             .sort(xz_comparator(workspace.list_windows()));
 
-        windows.forEach((meta_window, i) => {
+        windows.forEach((meta_window, _i) => {
             if (meta_window.above || meta_window.minimized) {
                 // Rough heuristic to figure out if a window should float
                 Scratch.makeScratch(meta_window);
@@ -4682,7 +4683,7 @@ export function centerWindowHorizontally(metaWindow) {
  */
 export function activateWindowUnderCursor(metaWindow, space) {
     const [gx, gy] = global.get_pointer();
-    const [ok, x, y] = space.actor.transform_stage_point(gx, gy);
+    const [, x, y] = space.actor.transform_stage_point(gx, gy);
     const mw = space?.getWindowAtPoint(x, y);
     if (mw) {
         ensureViewport(mw, space);
