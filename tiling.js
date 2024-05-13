@@ -3316,7 +3316,7 @@ export function registerWindow(metaWindow) {
     // Note: runs before gnome-shell's minimize handling code
     signals.connect(metaWindow, 'notify::fullscreen', () => {
         // if window is in a column, expel it
-        barfThis(metaWindow);
+        barfThis(metaWindow, metaWindow);
 
         Topbar.fixTopBar();
         spaces.spaceOfWindow(metaWindow)?.setSpaceTopbarElementsVisible(true);
@@ -4839,51 +4839,47 @@ export function allocateEqualHeight(column, available) {
  * @returns
  */
 export function slurp(metaWindow) {
-    // get current direction mode
-    const direction = Settings.prefs.open_window_position;
-
     let space = spaces.spaceOfWindow(metaWindow);
     let index = space.indexOf(metaWindow);
 
     let to, from, metaWindowToSlurp;
 
+    if (space.length < 2) {
+        return;
+    }
+
+    // if here, we have at least 2 columns
+
+    // get current direction mode
+    const direction = Settings.prefs.open_window_position;
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
-        // check if there is a window to the left
-        if (index - 1 < 0) {
+        // if current at beginning of tiling - slurp self
+        if (index === 0) {
+            to = index + 1;
+            from = index;
             break;
         }
+
         to = index;
         from = index - 1;
-        metaWindowToSlurp = space[from][0];
         break;
     case Settings.OpenWindowPositions.RIGHT:
     default:
-        // check there is window to the right
-        if (index + 1 >= space.length) {
+        // if current at end of tiling - slurp self
+        if (index + 1 === space.length) {
+            to = index - 1;
+            from = index;
             break;
         }
+
         to = index;
         from = index + 1;
-        metaWindowToSlurp = space[from][0];
         break;
     }
 
-
-    // if (index + 1 < space.length) {
-    //     to = index;
-    //     from = to + 1;
-    //     metaWindowToSlurp = space[from][0];
-    // } else if (index + 1 === space.length) {
-    //     if (space[index].length > 1)
-    //         return;
-    //     metaWindowToSlurp = metaWindow;
-    //     to = index - 1;
-    //     from = index;
-    // }
-
-    // slurping fullscreen windows is trouble
-    if (!metaWindowToSlurp || space.length < 2) {
+    metaWindowToSlurp = space[from]?.[0];
+    if (!metaWindowToSlurp) {
         return;
     }
 
@@ -4905,7 +4901,7 @@ export function slurp(metaWindow) {
         }
     }
 
-    // after columns have slurped, to index may have changed
+    // after columns have slurped, "to" index may have changed
     space.layout(true, {
         customAllocators: {
             [space.indexOf(metaWindow)]: allocateEqualHeight,
@@ -4915,37 +4911,19 @@ export function slurp(metaWindow) {
 }
 
 /**
- * Barfs the bottom window from a column.
+ * Barfs (expels) the bottom window in a column.
  * @param {Meta.Window} metaWindow
- * @returns
  */
 export function barf(metaWindow) {
-    if (!metaWindow)
-        return;
-
-    let space = spaces.spaceOfWindow(metaWindow);
-    let index = space.indexOf(metaWindow);
-    if (index === -1)
-        return;
-
-    let column = space[index];
-    if (column.length < 2)
-        return;
-
-    let bottom = column.splice(-1, 1)[0];
-    space.splice(index + 1, 0, [bottom]);
-
-    space.layout(true, {
-        customAllocators: { [index]: allocateEqualHeight, ensure: false },
-    });
+    barfThis(metaWindow);
 }
 
 /**
  * Barfs (expels) a specific window from a column.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  * @returns
  */
-export function barfThis(metaWindow) {
+function barfThis(metaWindow, expelWindow) {
     if (!metaWindow)
         return;
 
@@ -4958,13 +4936,32 @@ export function barfThis(metaWindow) {
     if (column.length < 2)
         return;
 
-    // remove metawindow from column
-    const indexOfWindow = column.indexOf(metaWindow);
-    column.splice(indexOfWindow, 1);
-    space.splice(index + 1, 0, [metaWindow]);
+    let to;
+    const direction = Settings.prefs.open_window_position;
+    switch (direction) {
+    case Settings.OpenWindowPositions.LEFT:
+        to = index - 1;
+        break;
+    case Settings.OpenWindowPositions.RIGHT:
+    default:
+        to = index + 1;
+        break;
+    }
+
+    // // remove metawindow from column
+    if (expelWindow) {
+        // remove expelWindow from current column
+        const indexOfWindow = column.indexOf(metaWindow);
+        column.splice(indexOfWindow, 1);
+    }
+    else {
+        // remove from bottom
+        expelWindow = column.splice(-1, 1)[0];
+    }
+    space.splice(to, 0, [expelWindow]);
 
     space.layout(true, {
-        customAllocators: { [index]: allocateEqualHeight, ensure: false },
+        customAllocators: { [space.indexOf(metaWindow)]: allocateEqualHeight, ensure: false },
     });
 }
 
