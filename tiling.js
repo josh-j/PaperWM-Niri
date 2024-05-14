@@ -4854,6 +4854,7 @@ export function slurp(metaWindow) {
     const direction = Settings.prefs.open_window_position;
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
+    case Settings.OpenWindowPositions.START:
         // if current at beginning of tiling - slurp self
         if (index === 0) {
             to = index + 1;
@@ -4865,6 +4866,7 @@ export function slurp(metaWindow) {
         from = index - 1;
         break;
     case Settings.OpenWindowPositions.RIGHT:
+    case Settings.OpenWindowPositions.END:
     default:
         // if current at end of tiling - slurp self
         if (index + 1 === space.length) {
@@ -4932,9 +4934,11 @@ export function barf(metaWindow, expelWindow) {
     const direction = Settings.prefs.open_window_position;
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
+    case Settings.OpenWindowPositions.START:
         to = index; // if left then current index will increment
         break;
     case Settings.OpenWindowPositions.RIGHT:
+    case Settings.OpenWindowPositions.END:
     default:
         to = index + 1;
         break;
