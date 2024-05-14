@@ -4932,7 +4932,7 @@ export function barf(metaWindow, expelWindow) {
     const direction = Settings.prefs.open_window_position;
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
-        to = index - 1;
+        to = index; // if left then current index will increment
         break;
     case Settings.OpenWindowPositions.RIGHT:
     default:
@@ -4943,7 +4943,7 @@ export function barf(metaWindow, expelWindow) {
     // // remove metawindow from column
     if (expelWindow) {
         // remove expelWindow from current column
-        const indexOfWindow = column.indexOf(metaWindow);
+        const indexOfWindow = column.indexOf(expelWindow);
         column.splice(indexOfWindow, 1);
     }
     else {
