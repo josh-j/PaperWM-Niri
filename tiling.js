@@ -3316,7 +3316,7 @@ export function registerWindow(metaWindow) {
     // Note: runs before gnome-shell's minimize handling code
     signals.connect(metaWindow, 'notify::fullscreen', () => {
         // if window is in a column, expel it
-        barfThis(metaWindow, metaWindow);
+        barf(metaWindow, metaWindow);
 
         Topbar.fixTopBar();
         spaces.spaceOfWindow(metaWindow)?.setSpaceTopbarElementsVisible(true);
@@ -4911,19 +4911,11 @@ export function slurp(metaWindow) {
 }
 
 /**
- * Barfs (expels) the bottom window in a column.
- * @param {Meta.Window} metaWindow
- */
-export function barf(metaWindow) {
-    barfThis(metaWindow);
-}
-
-/**
  * Barfs (expels) a specific window from a column.
  * @param {Meta.Window} metaWindow
  * @returns
  */
-function barfThis(metaWindow, expelWindow) {
+export function barf(metaWindow, expelWindow) {
     if (!metaWindow)
         return;
 
