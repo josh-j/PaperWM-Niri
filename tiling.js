@@ -3852,6 +3852,7 @@ export function insertWindow(metaWindow, { existing }) {
      * after actor is shown on stage.
      */
     if (!existing) {
+        const active = space.selectedWindow;
         clone.x = clone.targetX;
         clone.y = clone.targetY;
         space.layout();
@@ -3861,14 +3862,19 @@ export function insertWindow(metaWindow, { existing }) {
         resizeHandler(metaWindow);
         connectSizeChanged(true);
 
-        // remove winprop props after window shown
+        // // remove winprop props after window shown
         callbackOnActorShow(actor, () => {
             delete metaWindow.preferredWidth;
 
-            Main.activateWindow(metaWindow);
-            ensureViewport(space.selectedWindow, space);
+            ensureViewport(space.selectedWindow, space, {
+                callback: () => {},
+            });
+
             space.setSpaceTopbarElementsVisible(true);
+            Main.activateWindow(metaWindow);
         });
+
+        slurp(active);
 
         return;
     }
@@ -3988,6 +3994,7 @@ export function ensureViewport(meta_window, space, options = {}) {
     let moveto = options?.moveto ?? true;
     let animate = options?.animate ?? true;
     let ensureAnimation = options.ensureAnimation ?? Settings.EnsureViewportAnimation.TRANSLATE;
+    let callback = options.callback ?? function() {};
 
     let index = space.indexOf(meta_window);
     if (index === -1 || space.length === 0)
@@ -4018,7 +4025,11 @@ export function ensureViewport(meta_window, space, options = {}) {
 
     if (moveto) {
         move_to(space, meta_window, {
-            x, force, animate, ensureAnimation,
+            x,
+            force,
+            animate,
+            ensureAnimation,
+            callback,
         });
     }
 
@@ -4067,6 +4078,7 @@ export function move_to(space, metaWindow, options = {}) {
     let force = options.force ?? false;
     let animate = options.animate ?? true;
     let ensureAnimation = options.ensureAnimation ?? Settings.EnsureViewportAnimation.TRANSLATE;
+    let callback = options.callback ?? function() {};
     if (space.indexOf(metaWindow) === -1)
         return;
 
@@ -4074,12 +4086,14 @@ export function move_to(space, metaWindow, options = {}) {
     let target = x - clone.targetX;
     if (target === space.targetX && !force) {
         space.moveDone();
+        callback();
         return;
     }
 
     const done = () => {
         space.moveDone();
         space.fixOverlays(metaWindow);
+        callback();
     };
 
     space.targetX = target;
@@ -4826,12 +4840,6 @@ export function allocateEqualHeight(column, available) {
     return column.map(_ => Math.floor(available / column.length));
 }
 
-/*
-* pull in the top window from the column to the right. if there is no
-* column to the right, push active window into column to the left.
-* this allows freshly created windows to be stacked without
-* having to change focus
-*/
 /**
  * "Slurps" a window into the currently active column, vertically
  * stacking it.
@@ -4839,16 +4847,17 @@ export function allocateEqualHeight(column, available) {
  * @returns
  */
 export function slurp(metaWindow) {
-    let space = spaces.spaceOfWindow(metaWindow);
-    let index = space.indexOf(metaWindow);
+    if (!metaWindow) {
+        return;
+    }
 
+    const space = spaces.spaceOfWindow(metaWindow);
+    const index = space.indexOf(metaWindow);
     let to, from, metaWindowToSlurp;
 
     if (space.length < 2) {
         return;
     }
-
-    // if here, we have at least 2 columns
 
     // get current direction mode
     const direction = Settings.prefs.open_window_position;
@@ -4921,12 +4930,12 @@ export function barf(metaWindow, expelWindow) {
     if (!metaWindow)
         return;
 
-    let space = spaces.spaceOfWindow(metaWindow);
-    let index = space.indexOf(metaWindow);
+    const space = spaces.spaceOfWindow(metaWindow);
+    const index = space.indexOf(metaWindow);
     if (index === -1)
         return;
 
-    let column = space[index];
+    const column = space[index];
     if (column.length < 2)
         return;
 

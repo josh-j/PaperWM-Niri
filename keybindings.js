@@ -285,7 +285,7 @@ export function setupActions(settings) {
         Meta.KeyBindingFlags.PER_WINDOW);
 
     registerPaperAction('slurp-in',
-        Tiling.slurp,
+        (mw, _space) => Tiling.slurp(mw),
         Meta.KeyBindingFlags.PER_WINDOW);
 
     registerPaperAction('barf-out',
