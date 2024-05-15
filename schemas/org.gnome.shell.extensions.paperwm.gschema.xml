@@ -324,7 +324,7 @@
         <summary>Expel the bottom window into its own column</summary>
     </key>
     <key type="as" name="barf-out-active">
-        <default><![CDATA[['<Super>p']]]></default>
+        <default><![CDATA[['<Super><Shift>o']]]></default>
         <summary>Expel the active window into its own column</summary>
     </key>
 
