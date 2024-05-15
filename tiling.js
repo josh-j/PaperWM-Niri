@@ -3866,16 +3866,14 @@ export function insertWindow(metaWindow, { existing }) {
         callbackOnActorShow(actor, () => {
             delete metaWindow.preferredWidth;
 
-            ensureViewport(space.selectedWindow, space, {
-                callback: () => {},
-            });
-
+            ensureViewport(space.selectedWindow, space);
             space.setSpaceTopbarElementsVisible(true);
             Main.activateWindow(metaWindow);
+
+            if (Settings.prefs.open_window_position === Settings.OpenWindowPositions.STACK) {
+                slurp(active);
+            }
         });
-
-        slurp(active);
-
         return;
     }
 
@@ -3909,7 +3907,6 @@ export function getOpenWindowPositionIndex(space) {
     case Settings.OpenWindowPositions.END:
         // get number of columns in space
         return space.length + 1;
-
     default:
         return index + 1;
     }

@@ -599,10 +599,13 @@
     <key type="b" name="open-window-position-option-left">
         <default>true</default>
     </key>
-        <key type="b" name="open-window-position-option-start">
+    <key type="b" name="open-window-position-option-start">
         <default>false</default>
     </key>
-        <key type="b" name="open-window-position-option-end">
+    <key type="b" name="open-window-position-option-end">
+        <default>false</default>
+    </key>
+    <key type="b" name="open-window-position-option-stack">
         <default>false</default>
     </key>
 

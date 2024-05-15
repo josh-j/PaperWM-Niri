@@ -258,6 +258,9 @@ class SettingsWidget {
         case Settings.OpenWindowPositions.END:
             openWindowPosition.set_active_id('end');
             break;
+        case Settings.OpenWindowPositions.STACK:
+            openWindowPosition.set_active_id('stack');
+            break;
         default:
             openWindowPosition.set_active_id('right');
         }
@@ -273,6 +276,9 @@ class SettingsWidget {
             case 'end':
                 this._settings.set_int('open-window-position', Settings.OpenWindowPositions.END);
                 break;
+            case 'stack':
+                this._settings.set_int('open-window-position', Settings.OpenWindowPositions.STACK);
+                break;
             default:
                 this._settings.set_int('open-window-position', Settings.OpenWindowPositions.RIGHT);
             }
@@ -283,6 +289,7 @@ class SettingsWidget {
         booleanStateChanged('open-window-position-option-left');
         booleanStateChanged('open-window-position-option-start');
         booleanStateChanged('open-window-position-option-end');
+        booleanStateChanged('open-window-position-option-stack');
 
         const scratchOverview = this.builder.get_object('scratch-in-overview');
         if (this._settings.get_boolean('only-scratch-in-overview'))

@@ -12,7 +12,6 @@ import * as panelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as popupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import { Settings, Utils, Tiling, Navigator, Scratch } from './imports.js';
-import { Easer } from './utils.js';
 
 // eslint-disable-next-line no-undef
 const workspaceManager = global.workspace_manager;
@@ -46,6 +45,10 @@ export function enable (extension) {
         {
             mode: Settings.OpenWindowPositions.END,
             active: () => Settings.prefs.open_window_position_option_end,
+        },
+        {
+            mode: Settings.OpenWindowPositions.STACK,
+            active: () => Settings.prefs.open_window_position_option_stack,
         },
     ];
 
@@ -504,6 +507,7 @@ export const OpenPositionIcon = GObject.registerClass(
                     this.gIconLeft = Gio.icon_new_for_string(pather('./resources/open-position-left-symbolic.svg'));
                     this.gIconStart = Gio.icon_new_for_string(pather('./resources/open-position-start-symbolic.svg'));
                     this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end-symbolic.svg'));
+                    this.gIconStack = Gio.icon_new_for_string(pather('./resources/open-position-stack-symbolic.svg'));
 
                     // connection to update based on gsetting
                     signals.connect(gsettings, 'changed::open-window-position', (_settings, _key) => {
@@ -524,6 +528,9 @@ export const OpenPositionIcon = GObject.registerClass(
                         break;
                     case Settings.OpenWindowPositions.END:
                         this.gicon = this.gIconEnd;
+                        break;
+                    case Settings.OpenWindowPositions.STACK:
+                        this.gicon = this.gIconStack;
                         break;
                     default:
                         this.gicon = this.gIconRight;
@@ -549,6 +556,9 @@ ${this.getKeybindString('switch-open-window-position')}`);
                         break;
                     case Settings.OpenWindowPositions.END:
                         markup('END');
+                        break;
+                    case Settings.OpenWindowPositions.STACK:
+                        markup('STACK');
                         break;
                     default:
                         markup('RIGHT');

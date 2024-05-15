@@ -2042,6 +2042,26 @@ button or using the &lt;i&gt;Switch between positions for creating windows (e.g.
                                             </layout>
                                           </object>
                                         </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="focusable">False</property>
+                                            <property name="hexpand">1</property>
+                                            <property name="label" translatable="yes">STACK</property>
+                                            <property name="xalign">0</property>
+                                            <layout>
+                                              <property name="column">0</property>
+                                              <property name="row">4</property>
+                                            </layout>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSwitch" id="open-window-position-option-stack">
+                                            <layout>
+                                              <property name="column">1</property>
+                                              <property name="row">4</property>
+                                            </layout>
+                                          </object>
+                                        </child>
                                       </object>
                                     </child>
                                   </object>
