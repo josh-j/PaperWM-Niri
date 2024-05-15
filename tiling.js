@@ -3728,6 +3728,7 @@ export function insertWindow(metaWindow, { existing }) {
 
     const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
+    const active = space.selectedWindow;
 
     const connectSizeChanged = tiled => {
         if (tiled) {
@@ -3852,7 +3853,6 @@ export function insertWindow(metaWindow, { existing }) {
      * after actor is shown on stage.
      */
     if (!existing) {
-        const active = space.selectedWindow;
         clone.x = clone.targetX;
         clone.y = clone.targetY;
         space.layout();
@@ -3866,9 +3866,9 @@ export function insertWindow(metaWindow, { existing }) {
         callbackOnActorShow(actor, () => {
             delete metaWindow.preferredWidth;
 
+            Main.activateWindow(metaWindow);
             ensureViewport(space.selectedWindow, space);
             space.setSpaceTopbarElementsVisible(true);
-            Main.activateWindow(metaWindow);
 
             if (Settings.prefs.open_window_position === Settings.OpenWindowPositions.STACK) {
                 slurp(active);
