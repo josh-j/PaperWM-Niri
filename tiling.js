@@ -4907,8 +4907,8 @@ export function slurp(metaWindow) {
     space.layout(true, {
         customAllocators: {
             [space.indexOf(metaWindow)]: allocateEqualHeight,
-            ensure: false,
         },
+        ensure: false,
     });
 }
 
