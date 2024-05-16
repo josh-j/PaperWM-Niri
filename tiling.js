@@ -1349,7 +1349,7 @@ export class Space extends Array {
 
     /**
      * Applies clipping to metaWindow's clone.
-     * @param {MetaWindow} metaWindow
+     * @param {Meta.Window} metaWindow
      */
     applyClipToClone(metaWindow) {
         if (!metaWindow) {
@@ -3379,7 +3379,7 @@ export function destroyHandler(actor) {
 
 /**
  * Removes resize and position handler flags.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  */
 export function removeHandlerFlags(metaWindow) {
     delete metaWindow._resizeHandlerAdded;
@@ -3532,7 +3532,7 @@ export function nonTiledSizeHandler(metaWindow) {
 /**
  * Saves a metaWindow's frame x, y ,width, and height for restoring
  * after exiting fullscreen mode.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  */
 export function saveFullscreenFrame(metaWindow, tiled) {
     const f = metaWindow.get_frame_rect();
