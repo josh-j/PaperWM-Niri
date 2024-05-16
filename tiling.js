@@ -129,8 +129,12 @@ export function enable(extension) {
     gsettings.connect('changed::vertical-margin-bottom', marginsGapChanged);
     gsettings.connect('changed::window-gap', marginsGapChanged);
     gsettings.connect('changed::selection-border-size', () => {
-        const selected = spaces.activeSpace?.selectedWindow;
-        allocateClone(selected);
+        spaces.forEach(s => {
+            Settings.prefs.selection_border_size <= 0 ? s.hideSelection() : s.showSelection();
+            if (s.selectedWindow) {
+                allocateClone(s.selectedWindow);
+            }
+        });
     });
 
     backgroundGroup = Main.layoutManager._backgroundGroup;
@@ -1431,6 +1435,9 @@ export class Space extends Array {
     }
 
     showSelection() {
+        if (Settings.prefs.selection_border_size <= 0) {
+            return;
+        }
         this.selection.set_style_class_name('paperwm-selection tile-preview');
     }
 
