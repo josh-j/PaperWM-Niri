@@ -4893,20 +4893,23 @@ export function slurp(metaWindow) {
     space[to].push(metaWindowToSlurp);
 
     { // Remove the slurped window
-        let column = space[from];
-        let row = column.indexOf(metaWindowToSlurp);
+        const column = space[from];
+        const row = column.indexOf(metaWindowToSlurp);
         column.splice(row, 1);
 
         // if from column is now empty, remove column from space
         if (column.length === 0) {
             space.splice(from, 1);
         }
+
+        // with column removed, `to` column may have changed
+        to = space.indexOf(metaWindow);
     }
 
     // after columns have slurped, "to" index may have changed
     space.layout(true, {
         customAllocators: {
-            [space.indexOf(metaWindow)]: allocateEqualHeight,
+            [to]: allocateEqualHeight,
         },
         ensure: false,
     });
