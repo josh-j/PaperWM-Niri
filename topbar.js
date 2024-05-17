@@ -47,8 +47,12 @@ export function enable (extension) {
             active: () => Settings.prefs.open_window_position_option_end,
         },
         {
-            mode: Settings.OpenWindowPositions.STACK,
-            active: () => Settings.prefs.open_window_position_option_stack,
+            mode: Settings.OpenWindowPositions.DOWN,
+            active: () => Settings.prefs.open_window_position_option_down,
+        },
+        {
+            mode: Settings.OpenWindowPositions.UP,
+            active: () => Settings.prefs.open_window_position_option_up,
         },
     ];
 
@@ -507,7 +511,9 @@ export const OpenPositionIcon = GObject.registerClass(
                     this.gIconLeft = Gio.icon_new_for_string(pather('./resources/open-position-left-symbolic.svg'));
                     this.gIconStart = Gio.icon_new_for_string(pather('./resources/open-position-start-symbolic.svg'));
                     this.gIconEnd = Gio.icon_new_for_string(pather('./resources/open-position-end-symbolic.svg'));
-                    this.gIconStack = Gio.icon_new_for_string(pather('./resources/open-position-stack-symbolic.svg'));
+                    this.gIconDown = Gio.icon_new_for_string(pather('./resources/open-position-down-symbolic.svg'));
+                    this.gIconUp = Gio.icon_new_for_string(pather('./resources/open-position-up-symbolic.svg'));
+
 
                     // connection to update based on gsetting
                     signals.connect(gsettings, 'changed::open-window-position', (_settings, _key) => {
@@ -529,8 +535,11 @@ export const OpenPositionIcon = GObject.registerClass(
                     case Settings.OpenWindowPositions.END:
                         this.gicon = this.gIconEnd;
                         break;
-                    case Settings.OpenWindowPositions.STACK:
-                        this.gicon = this.gIconStack;
+                    case Settings.OpenWindowPositions.DOWN:
+                        this.gicon = this.gIconDown;
+                        break;
+                    case Settings.OpenWindowPositions.UP:
+                        this.gicon = this.gIconUp;
                         break;
                     default:
                         this.gicon = this.gIconRight;
@@ -557,8 +566,11 @@ ${this.getKeybindString('switch-open-window-position')}`);
                     case Settings.OpenWindowPositions.END:
                         markup('END');
                         break;
-                    case Settings.OpenWindowPositions.STACK:
-                        markup('STACK');
+                    case Settings.OpenWindowPositions.DOWN:
+                        markup('DOWN');
+                        break;
+                    case Settings.OpenWindowPositions.UP:
+                        markup('UP');
                         break;
                     default:
                         markup('RIGHT');

@@ -247,8 +247,10 @@ export function setupActions(settings) {
         (_mw, _space) => Topbar.setOpenPositionMode(Settings.OpenWindowPositions.START));
     registerPaperAction("open-window-position-end",
         (_mw, _space) => Topbar.setOpenPositionMode(Settings.OpenWindowPositions.END));
-    registerPaperAction("open-window-position-stack",
-        (_mw, _space) => Topbar.setOpenPositionMode(Settings.OpenWindowPositions.STACK));
+    registerPaperAction("open-window-position-down",
+        (_mw, _space) => Topbar.setOpenPositionMode(Settings.OpenWindowPositions.DOWN));
+    registerPaperAction("open-window-position-up",
+        (_mw, _space) => Topbar.setOpenPositionMode(Settings.OpenWindowPositions.UP));
 
     registerPaperAction("resize-h-inc",
         Tiling.resizeHInc,

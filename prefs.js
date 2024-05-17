@@ -276,8 +276,11 @@ class SettingsWidget {
             case 'end':
                 this._settings.set_int('open-window-position', Settings.OpenWindowPositions.END);
                 break;
-            case 'stack':
-                this._settings.set_int('open-window-position', Settings.OpenWindowPositions.STACK);
+            case 'down':
+                this._settings.set_int('open-window-position', Settings.OpenWindowPositions.DOWN);
+                break;
+            case 'up':
+                this._settings.set_int('open-window-position', Settings.OpenWindowPositions.UP);
                 break;
             default:
                 this._settings.set_int('open-window-position', Settings.OpenWindowPositions.RIGHT);
@@ -289,7 +292,8 @@ class SettingsWidget {
         booleanStateChanged('open-window-position-option-left');
         booleanStateChanged('open-window-position-option-start');
         booleanStateChanged('open-window-position-option-end');
-        booleanStateChanged('open-window-position-option-stack');
+        booleanStateChanged('open-window-position-option-down');
+        booleanStateChanged('open-window-position-option-up');
 
         const scratchOverview = this.builder.get_object('scratch-in-overview');
         if (this._settings.get_boolean('only-scratch-in-overview'))
