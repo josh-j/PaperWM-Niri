@@ -129,8 +129,12 @@ export function enable(extension) {
     gsettings.connect('changed::vertical-margin-bottom', marginsGapChanged);
     gsettings.connect('changed::window-gap', marginsGapChanged);
     gsettings.connect('changed::selection-border-size', () => {
-        const selected = spaces.activeSpace?.selectedWindow;
-        allocateClone(selected);
+        spaces.forEach(s => {
+            Settings.prefs.selection_border_size <= 0 ? s.hideSelection() : s.showSelection();
+            if (s.selectedWindow) {
+                allocateClone(s.selectedWindow);
+            }
+        });
     });
 
     backgroundGroup = Main.layoutManager._backgroundGroup;
@@ -1349,7 +1353,7 @@ export class Space extends Array {
 
     /**
      * Applies clipping to metaWindow's clone.
-     * @param {MetaWindow} metaWindow
+     * @param {Meta.Window} metaWindow
      */
     applyClipToClone(metaWindow) {
         if (!metaWindow) {
@@ -1432,6 +1436,9 @@ export class Space extends Array {
     }
 
     showSelection() {
+        if (Settings.prefs.selection_border_size <= 0) {
+            return;
+        }
         this.selection.set_style_class_name('paperwm-selection tile-preview');
     }
 
@@ -3379,7 +3386,7 @@ export function destroyHandler(actor) {
 
 /**
  * Removes resize and position handler flags.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  */
 export function removeHandlerFlags(metaWindow) {
     delete metaWindow._resizeHandlerAdded;
@@ -3532,7 +3539,7 @@ export function nonTiledSizeHandler(metaWindow) {
 /**
  * Saves a metaWindow's frame x, y ,width, and height for restoring
  * after exiting fullscreen mode.
- * @param {MetaWindow} metaWindow
+ * @param {Meta.Window} metaWindow
  */
 export function saveFullscreenFrame(metaWindow, tiled) {
     const f = metaWindow.get_frame_rect();
@@ -4861,26 +4868,12 @@ export function slurp(metaWindow) {
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
     case Settings.OpenWindowPositions.START:
-        // if current at beginning of tiling - slurp self
-        if (index === 0) {
-            to = index + 1;
-            from = index;
-            break;
-        }
-
         to = index;
         from = index - 1;
         break;
     case Settings.OpenWindowPositions.RIGHT:
     case Settings.OpenWindowPositions.END:
     default:
-        // if current at end of tiling - slurp self
-        if (index + 1 === space.length) {
-            to = index - 1;
-            from = index;
-            break;
-        }
-
         to = index;
         from = index + 1;
         break;
@@ -4899,22 +4892,25 @@ export function slurp(metaWindow) {
     space[to].push(metaWindowToSlurp);
 
     { // Remove the slurped window
-        let column = space[from];
-        let row = column.indexOf(metaWindowToSlurp);
+        const column = space[from];
+        const row = column.indexOf(metaWindowToSlurp);
         column.splice(row, 1);
 
         // if from column is now empty, remove column from space
         if (column.length === 0) {
             space.splice(from, 1);
         }
+
+        // with column removed, `to` column may have changed
+        to = space.indexOf(metaWindow);
     }
 
     // after columns have slurped, "to" index may have changed
     space.layout(true, {
         customAllocators: {
-            [space.indexOf(metaWindow)]: allocateEqualHeight,
-            ensure: false,
+            [to]: allocateEqualHeight,
         },
+        ensure: false,
     });
 }
 
