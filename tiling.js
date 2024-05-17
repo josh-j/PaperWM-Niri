@@ -38,6 +38,8 @@ export const FocusModes = { DEFAULT: 0, CENTER: 1, EDGE: 2 }; // export
 
 export const CycleWindowSizesDirection = { FORWARD: 0, BACKWARDS: 1 };
 
+export const slurpInsertPosition = { BOTTOM: 0, TOP: 1, ABOVE: 2, BELOW: 3 };
+
 /**
    Scrolled and tiled per monitor workspace.
 
@@ -3886,7 +3888,7 @@ export function insertWindow(metaWindow, { existing }) {
                     GLib.PRIORITY_DEFAULT,
                     100,
                     () => {
-                        slurp(active, true);
+                        slurp(active, slurpInsertPosition.BELOW);
                         return false; // on return false destroys timeout
                     });
                 break;
@@ -3895,7 +3897,7 @@ export function insertWindow(metaWindow, { existing }) {
                     GLib.PRIORITY_DEFAULT,
                     100,
                     () => {
-                        slurp(active, false);
+                        slurp(active, slurpInsertPosition.ABOVE);
                         return false; // on return false destroys timeout
                     });
                 break;
@@ -4868,10 +4870,10 @@ export function allocateEqualHeight(column, available) {
  * "Slurps" a window into the currently active column, vertically
  * stacking it.
  * @param {Meta.Window} metaWindow
- * @param {Boolean} push
+ * @param {Boolean} below
  * @returns
  */
-export function slurp(metaWindow, push = true) {
+export function slurp(metaWindow, insertAt = slurpInsertPosition.BOTTOM) {
     if (!metaWindow) {
         return;
     }
@@ -4910,11 +4912,22 @@ export function slurp(metaWindow, push = true) {
         metaWindowToSlurp.unmake_fullscreen();
     }
 
-    if (push) {
-        space[to].push(metaWindowToSlurp);
-    }
-    else {
-        space[to].unshift(metaWindowToSlurp);
+    const spaceTo = space[to];
+    const rowIndex = spaceTo.indexOf(metaWindow);
+    switch (insertAt) {
+    case slurpInsertPosition.ABOVE:
+        spaceTo.splice(rowIndex, 0, metaWindowToSlurp);
+        break;
+    case slurpInsertPosition.BELOW:
+        spaceTo.splice(rowIndex + 1, 0, metaWindowToSlurp);
+        break;
+    case slurpInsertPosition.TOP:
+        spaceTo.unshift(metaWindowToSlurp);
+        break;
+    case slurpInsertPosition.BOTTOM:
+    default:
+        spaceTo.push(metaWindowToSlurp);
+        break;
     }
 
     { // Remove the slurped window
