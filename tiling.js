@@ -3880,14 +3880,25 @@ export function insertWindow(metaWindow, { existing }) {
             ensureViewport(space.selectedWindow, space);
             space.setSpaceTopbarElementsVisible(true);
 
-            if (Settings.prefs.open_window_position === Settings.OpenWindowPositions.STACK) {
+            switch (Settings.prefs.open_window_position) {
+            case Settings.OpenWindowPositions.DOWN:
                 stackSlurpTimeout = GLib.timeout_add(
                     GLib.PRIORITY_DEFAULT,
                     100,
                     () => {
-                        slurp(active);
+                        slurp(active, true);
                         return false; // on return false destroys timeout
                     });
+                break;
+            case Settings.OpenWindowPositions.UP:
+                stackSlurpTimeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT,
+                    100,
+                    () => {
+                        slurp(active, false);
+                        return false; // on return false destroys timeout
+                    });
+                break;
             }
         });
         return;
@@ -4857,9 +4868,10 @@ export function allocateEqualHeight(column, available) {
  * "Slurps" a window into the currently active column, vertically
  * stacking it.
  * @param {Meta.Window} metaWindow
+ * @param {Boolean} push
  * @returns
  */
-export function slurp(metaWindow) {
+export function slurp(metaWindow, push = true) {
     if (!metaWindow) {
         return;
     }
@@ -4898,7 +4910,12 @@ export function slurp(metaWindow) {
         metaWindowToSlurp.unmake_fullscreen();
     }
 
-    space[to].push(metaWindowToSlurp);
+    if (push) {
+        space[to].push(metaWindowToSlurp);
+    }
+    else {
+        space[to].unshift(metaWindowToSlurp);
+    }
 
     { // Remove the slurped window
         const column = space[from];
