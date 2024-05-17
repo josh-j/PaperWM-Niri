@@ -89,7 +89,7 @@ let signals, backgroundGroup, grabSignals;
 let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
-let startupTimeoutId, timerId, fullscrenStartTimeout;
+let startupTimeoutId, timerId, fullscrenStartTimeout, stackSlurpTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -203,6 +203,8 @@ export function disable () {
     timerId = null;
     Utils.timeout_remove(fullscrenStartTimeout);
     fullscrenStartTimeout = null;
+    Utils.timeout_remove(stackSlurpTimeout);
+    stackSlurpTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -764,9 +766,10 @@ export class Space extends Array {
     queueLayout(animate = true, options = {}) {
         if (this._layoutQueued)
             return;
-
         this._layoutQueued = true;
-        Utils.later_add(Meta.LaterType.RESIZE, () => {
+
+        const laterType = options.laterType ?? Meta.LaterType.RESIZE;
+        Utils.later_add(laterType, () => {
             this._layoutQueued = false;
             this.layout(animate, options);
         });
@@ -3878,7 +3881,13 @@ export function insertWindow(metaWindow, { existing }) {
             space.setSpaceTopbarElementsVisible(true);
 
             if (Settings.prefs.open_window_position === Settings.OpenWindowPositions.STACK) {
-                slurp(active);
+                stackSlurpTimeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT,
+                    100,
+                    () => {
+                        slurp(active);
+                        return false; // on return false destroys timeout
+                    });
             }
         });
         return;
