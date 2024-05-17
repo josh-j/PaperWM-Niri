@@ -4862,26 +4862,12 @@ export function slurp(metaWindow) {
     switch (direction) {
     case Settings.OpenWindowPositions.LEFT:
     case Settings.OpenWindowPositions.START:
-        // if current at beginning of tiling - slurp self
-        if (index === 0) {
-            to = index + 1;
-            from = index;
-            break;
-        }
-
         to = index;
         from = index - 1;
         break;
     case Settings.OpenWindowPositions.RIGHT:
     case Settings.OpenWindowPositions.END:
     default:
-        // if current at end of tiling - slurp self
-        if (index + 1 === space.length) {
-            to = index - 1;
-            from = index;
-            break;
-        }
-
         to = index;
         from = index + 1;
         break;
