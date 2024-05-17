@@ -598,6 +598,13 @@ export function switchToNextOpenPositionMode() {
     gsettings.set_int('open-window-position', nextMode);
 }
 
+/**
+ * Switches to the next position for opening new windows.
+ */
+export function setOpenPositionMode(mode) {
+    gsettings.set_int('open-window-position', mode);
+}
+
 export const OpenPositionButton = GObject.registerClass(
     class OpenPositionButton extends panelMenu.Button {
         _init() {

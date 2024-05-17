@@ -171,6 +171,26 @@
       <default><![CDATA[['<Super><Shift>w']]]></default>
       <summary>Switch between positions for creating windows (e.g. right, left)</summary>
     </key>
+    <key type="as" name="open-window-position-right">
+      <default><![CDATA[[]]]></default>
+      <summary>Select the right open window position</summary>
+    </key>
+    <key type="as" name="open-window-position-left">
+      <default><![CDATA[[]]]></default>
+      <summary>Select the left open window position</summary>
+    </key>
+    <key type="as" name="open-window-position-start">
+      <default><![CDATA[[]]]></default>
+      <summary>Select the start open window position</summary>
+    </key>
+    <key type="as" name="open-window-position-end">
+      <default><![CDATA[[]]]></default>
+      <summary>Select the end open window position</summary>
+    </key>
+    <key type="as" name="open-window-position-stack">
+      <default><![CDATA[[]]]></default>
+      <summary>Select the stack open window position</summary>
+    </key>
 
     <key type="as" name="switch-next">
       <default><![CDATA[['<Super>period']]]></default>
