@@ -89,12 +89,19 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Right</kbd>                               | Activate the window to the left or right |
 | <kbd>Super</kbd><kbd>Up</kbd> or <kbd>Super</kbd><kbd>Down</kbd>                                  | Activate the window above or below |
 | <kbd>Super</kbd><kbd>Home</kbd> or <kbd>Super</kbd><kbd>End</kbd>                                 | Activate the first or last window |
+| _Not set by default (set in extension settings)_                                                  | Switch to the [second _to_ eleventh] window |
 | <kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Alt</kbd><kbd>Tab</kbd>                                    | Cycle through previously active windows |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>Tab</kbd> or <kbd>Shift</kbd><kbd>Alt</kbd><kbd>Tab</kbd>    | Cycle through previously active windows (backward order) |
 | <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                                       | Cycle through previously active scratch windows | 
 | <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                       | Cycle through previously active scratch windows (backward order) |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows |
+| _Not set by default (set in extension settings)_                                                  | Create new windows to the right of current window |
+| _Not set by default (set in extension settings)_                                                  | Create new windows to the left of current window |
+| _Not set by default (set in extension settings)_                                                  | Create new windows in vertical stack (down) |
+| _Not set by default (set in extension settings)_                                                  | Create new windows in vertical stack (up) |
+| _Not set by default (set in extension settings)_                                                  | Create new windows at start position |
+| _Not set by default (set in extension settings)_                                                  | Create new windows at end position |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd>      | Move the current window to the left or right |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right |
@@ -114,6 +121,7 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>R</kbd>                                                      | Resize the window (cycles through useful heights) |
 | <kbd>Super</kbd><kbd>Shift</kbd><kbd>Alt</kbd><kbd>R</kbd>                                        | Resize the window (cycles backwards through useful heights) |
 | <kbd>Super</kbd><kbd>t</kbd>                                                                      | Take window(s) dropping when finished navigating |
+| _Not set by default (set in extension settings)_                                                  | Activate the window under mouse cursor |
 
 ### The workspace stack & monitors ###
 

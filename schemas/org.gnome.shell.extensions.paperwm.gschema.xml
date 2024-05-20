@@ -173,27 +173,27 @@
     </key>
     <key type="as" name="open-window-position-right">
       <default><![CDATA[[]]]></default>
-      <summary>Select the right open window position</summary>
+      <summary>Create new windows to the right</summary>
     </key>
     <key type="as" name="open-window-position-left">
       <default><![CDATA[[]]]></default>
-      <summary>Select the left open window position</summary>
-    </key>
-    <key type="as" name="open-window-position-start">
-      <default><![CDATA[[]]]></default>
-      <summary>Select the start open window position</summary>
-    </key>
-    <key type="as" name="open-window-position-end">
-      <default><![CDATA[[]]]></default>
-      <summary>Select the end open window position</summary>
+      <summary>Create new windows to the left</summary>
     </key>
     <key type="as" name="open-window-position-down">
       <default><![CDATA[[]]]></default>
-      <summary>Select the down (stack) open window position</summary>
+      <summary>Create new windows in vertical stack (down)</summary>
     </key>
     <key type="as" name="open-window-position-up">
       <default><![CDATA[[]]]></default>
-      <summary>Select the up (stack) open window position</summary>
+      <summary>Create new windows in vertical stack (up)</summary>
+    </key>
+    <key type="as" name="open-window-position-start">
+      <default><![CDATA[[]]]></default>
+      <summary>Create new windows at start position</summary>
+    </key>
+    <key type="as" name="open-window-position-end">
+      <default><![CDATA[[]]]></default>
+      <summary>Create new windows at end position</summary>
     </key>
 
     <key type="as" name="switch-next">
