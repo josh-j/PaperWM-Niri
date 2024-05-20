@@ -624,7 +624,7 @@
         <default>true</default>
     </key>
     <key type="b" name="open-window-position-option-down">
-        <default>false</default>
+        <default>true</default>
     </key>
     <key type="b" name="open-window-position-option-up">
         <default>false</default>
