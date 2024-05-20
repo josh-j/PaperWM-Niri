@@ -623,16 +623,16 @@
     <key type="b" name="open-window-position-option-left">
         <default>true</default>
     </key>
-    <key type="b" name="open-window-position-option-start">
-        <default>false</default>
-    </key>
-    <key type="b" name="open-window-position-option-end">
-        <default>false</default>
-    </key>
     <key type="b" name="open-window-position-option-down">
         <default>false</default>
     </key>
     <key type="b" name="open-window-position-option-up">
+        <default>false</default>
+    </key>
+    <key type="b" name="open-window-position-option-start">
+        <default>false</default>
+    </key>
+    <key type="b" name="open-window-position-option-end">
         <default>false</default>
     </key>
 
