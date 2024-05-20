@@ -285,7 +285,7 @@ By default PaperWM inserts new windows to the right of the currently active wind
 
 There are several `positions` available for selection.  Namely, `right`, `left`, `start`, `end`.  The latter two will insert windows at the start or end of tiled windows container.
 
-Options for these settings, as well as settings to enable/disable specific positions in the `Open Window Position` buttong, are provided in PaperWM settings:
+Options for these settings, as well as settings to enable/disable specific positions in the `Open Window Position` buttons, are provided in PaperWM settings:
 
 https://github.com/paperwm/PaperWM/assets/30424662/4e4aa415-d047-44cb-b87a-d7e08493ecbd
 
