@@ -167,6 +167,10 @@ export class ClickOverlay {
 
 export class StackOverlay {
     constructor(direction, monitor) {
+        if (!monitor) {
+            return;
+        }
+
         this.SHOW_DELAY = 100;
 
         this._direction = direction;
