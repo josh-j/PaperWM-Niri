@@ -755,8 +755,8 @@ export class Space extends Array {
             this.moveDone();
         }
 
-        // if only one window on space, then center it
-        if (centerIfOne && this.getWindows().length === 1) {
+        // if only one column on space, then center it
+        if (centerIfOne && this.length === 1) {
             const mw = this.getWindows()[0];
             centerWindowHorizontally(mw);
         }
