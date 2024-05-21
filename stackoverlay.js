@@ -182,8 +182,11 @@ export class StackOverlay {
 
         this.monitor = monitor;
         let panelBox = Main.layoutManager.panelBox;
-        overlay.y = monitor.y + panelBox.height + Settings.prefs.vertical_margin;
-        overlay.height = this.monitor.height - panelBox.height - Settings.prefs.vertical_margin;
+        overlay.y = monitor?.y ?? 0 + panelBox.height + Settings.prefs.vertical_margin;
+        overlay.height = Math.max(
+            0,
+            this.monitor?.height ?? 0 - panelBox.height - Settings.prefs.vertical_margin
+        );
         overlay.width = Tiling.stack_margin;
 
         this.signals = new Utils.Signals();

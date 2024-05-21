@@ -155,7 +155,7 @@ export function enable(extension) {
                 let options = s.isFullyVisible(s.selectedWindow) ? { moveto: false } : { force: true };
                 ensureViewport(s.selectedWindow, s, options);
             }
-            s.monitor.clickOverlay.show();
+            s.monitor?.clickOverlay.show();
         });
         Topbar.fixTopBar();
 
