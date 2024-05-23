@@ -2122,6 +2122,15 @@ export const Spaces = class Spaces extends Map {
        which is more stable for restoring monitor layouts.
      */
     monitorsChanged() {
+        if (Main.layoutManager.monitors.length === 0) {
+            return;
+        }
+
+        let primary = Main.layoutManager.primaryMonitor;
+        if (!primary) {
+            return;
+        }
+
         this.onlyOnPrimary = this.overrideSettings.get_boolean('workspaces-only-on-primary');
         this.monitors = new Map();
 
@@ -2142,7 +2151,6 @@ export const Spaces = class Spaces extends Map {
         this.clickOverlays = [];
         let mru = this.mru();
 
-        let primary = Main.layoutManager.primaryMonitor;
         // get monitors but ensure primary monitor is first
         let monitors = Main.layoutManager.monitors.filter(m => m !== primary);
         monitors.unshift(primary);
