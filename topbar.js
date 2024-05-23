@@ -554,7 +554,9 @@ export const OpenPositionIcon = GObject.registerClass(
                         const ct = this.tooltip.clutter_text;
                         ct.set_markup(`<i>Open Window Position</i>
 Current position: <b>${mode}</b>\
-${this.getKeybindString('switch-open-window-position')}`);
+${this.getKeybindString('switch-open-window-position')}
+<span foreground="#a3a2a2" style="oblique" size="10pt">change available modes
+in advanced settings</span>`);
                     };
                     switch (this.mode) {
                     case Settings.OpenWindowPositions.LEFT:
