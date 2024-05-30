@@ -3382,6 +3382,10 @@ export function allocateClone(metaWindow) {
         selection.set_size(
             frame.width + (hMax ? 0 : protrusion * 2),
             frame.height + (vMax ? 0 : protrusion * 2));
+
+        const rtop = Settings.prefs.selection_border_radius_top;
+        const rbottom = Settings.prefs.selection_border_radius_bottom;
+        selection.style = `border-radius: ${rtop}px ${rtop}px ${rbottom}px ${rbottom}px`;
     }
 }
 
