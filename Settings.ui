@@ -506,7 +506,7 @@
                   <object class="GtkLabel">
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">Gaps and margins</property>
+                    <property name="label" translatable="yes">Border | Gaps | Margins</property>
                     <attributes>
                       <attribute name="weight" value="bold" />
                     </attributes>
@@ -1189,7 +1189,7 @@
                   <object class="GtkLabel">
                     <property name="halign">start</property>
                     <property name="hexpand">True</property>
-                    <property name="label" translatable="yes">Animation / Visual Settings</property>
+                    <property name="label" translatable="yes">Animation | Visual Settings</property>
                     <attributes>
                       <attribute name="weight" value="bold" />
                     </attributes>
