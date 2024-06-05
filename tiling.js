@@ -3339,6 +3339,13 @@ export function registerWindow(metaWindow) {
     signals.connect(metaWindow, 'notify::minimized', metaWindow => {
         minimizeHandler(metaWindow);
     });
+    signals.connect(metaWindow, 'notify::maximized-horizontally', metaWindow => {
+        if (Settings.prefs.maximize_within_tiling && metaWindow.get_maximized() === Meta.MaximizeFlags.BOTH) {
+            metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
+            toggleMaximizeHorizontally(metaWindow);
+        }
+        spaces.spaceOfWindow(metaWindow)?.layout(false);
+    });
     signals.connect(actor, 'show', actor => {
         showHandler(actor);
     });
