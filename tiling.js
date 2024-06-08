@@ -765,6 +765,12 @@ export class Space extends Array {
         }
 
         callback && callback();
+
+        // save the last size frame (for use in restoring)
+        this.getWindows().forEach(w => {
+            w._last_layout_frame = w.get_frame_rect();
+        });
+
         this.emit('layout', this);
     }
 
@@ -2016,6 +2022,8 @@ border-radius: ${borderWidth}px;
             removeHandlerFlags(w);
             delete w.pos_mismatch_count;
             delete w.tiled_on_minimize;
+            delete w._fullscreen_frame;
+            delete w._last_layout_frame;
         });
         this.signals.destroy();
         this.signals = null;
@@ -3339,18 +3347,28 @@ export function registerWindow(metaWindow) {
     signals.connect(metaWindow, 'notify::minimized', metaWindow => {
         minimizeHandler(metaWindow);
     });
+
     signals.connect(metaWindow, 'notify::maximized-horizontally', metaWindow => {
         if (
             Settings.prefs.maximize_within_tiling &&
             metaWindow.get_maximized() === Meta.MaximizeFlags.BOTH) {
             metaWindow.unmaximize(Meta.MaximizeFlags.BOTH);
+
+            // restore last layout frame
+            if (metaWindow._last_layout_frame) {
+                const lsf = metaWindow._last_layout_frame;
+                metaWindow.move_resize_frame(true, lsf.x, lsf.y, lsf.width, lsf.height);
+            }
+
             toggleMaximizeHorizontally(metaWindow);
+            // spaces.spaceOfWindow(metaWindow)?.layout();
         }
-        spaces.spaceOfWindow(metaWindow)?.layout();
     });
+
     signals.connect(actor, 'show', actor => {
         showHandler(actor);
     });
+
     signals.connect(actor, 'destroy', destroyHandler);
 
     return true;
