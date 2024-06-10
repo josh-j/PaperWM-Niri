@@ -1014,6 +1014,35 @@ export class Space extends Array {
         return this.getWindows().some(w => w.fullscreen);
     }
 
+    /**
+     * Sets the scale of windows in this space.
+     * @param {Number} scale
+     */
+    setWindowsScale(scale, animate = true) {
+        this.getWindows().forEach(w => {
+            if (w.clone) {
+                if (animate) {
+                    Easer.addEase(w.clone, {
+                        time: Settings.prefs.animation_time,
+                        scale_x: scale,
+                        scale_y: scale,
+                    });
+                    return;
+                }
+
+                w.clone.scale_x = scale;
+                w.clone.scale_y = scale;
+            }
+        });
+    }
+
+    /**
+     * Resets window scale to 1.0.
+     */
+    resetWindowScale() {
+        this.setWindowsScale(1.0);
+    }
+
     swap(direction, metaWindow) {
         metaWindow = metaWindow || this.selectedWindow;
 
@@ -1891,11 +1920,17 @@ border-radius: ${borderWidth}px;
 
         Easer.addEase(this.actor,
             {
-                x: 0, y: 0, scale_x: 1, scale_y: 1,
+                x: 0, y: 0,
+                scale_x: 1,
+                scale_y: 1,
                 time,
             });
         Easer.addEase(clip,
-            { scale_x: 1, scale_y: 1, time });
+            {
+                scale_x: 1,
+                scale_y: 1,
+                time,
+            });
 
         clip.set_position(monitor.x, monitor.y);
         clip.set_size(monitor.width, monitor.height);
@@ -2019,8 +2054,6 @@ border-radius: ${borderWidth}px;
 
     destroy() {
         this.getWindows().forEach(w => {
-
-            
             removePaperWMFlags(w);
         });
         this.signals.destroy();
@@ -2699,6 +2732,9 @@ export const Spaces = class Spaces extends Map {
             return;
         }
         inPreview = PreviewMode.SEQUENTIAL;
+
+        // set window scale
+        this.forEach(s => s.setWindowsScale(0.5));
 
         if (Main.panel.statusArea.appMenu) {
             Main.panel.statusArea.appMenu.container.hide();
