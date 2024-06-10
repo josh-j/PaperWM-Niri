@@ -3037,11 +3037,12 @@ export const Spaces = class Spaces extends Map {
             // Hide any spaces that aren't visible This
             // avoids a nasty preformance degregration in some
             // cases
-            for (const space of spaces.values()) {
-                if (!visible.get(space)) {
-                    space.hide();
+            this.forEach(s => s.resetWindowScale());
+            this.forEach(s => {
+                if (!visible.get(s)) {
+                    s.hide();
                 }
-            }
+            });
 
             to.border.hide();
             to.border.opacity = 255;
