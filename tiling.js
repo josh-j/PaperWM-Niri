@@ -1417,12 +1417,41 @@ export class Space extends Array {
         actor.set_clip(x, y, cw, ch);
     }
 
-    startAnimate() {
+    startAnimate(overview = false) {
         if (!this._isAnimating && !Meta.is_wayland_compositor()) {
             // Tracking the background fixes issue #80
             // It also let us activate window clones clicked during animation
             // Untracked in moveDone
             Main.layoutManager.trackChrome(this.background);
+        }
+
+        // if overview, then create new window clones for placement
+        if (overview) {
+            // create new clutter windows for each window and hide actor
+            this.getWindows().forEach(w => {
+                const actor = w.get_compositor_private();
+                if (!actor) {
+                    return;
+                }
+                actor.remove_clip();
+                if (inGrab && inGrab.window === w)
+                    return;
+
+                showWindow(w);
+                w
+
+                // create ovClone
+                const ovClone = new Clutter.Clone({ source: actor });
+                this.actor.add_child(ovClone);
+                Easer.addEase(w.clone, {
+                    time: Settings.prefs.animation_time,
+                    scale_x: 0.5,
+                    scale_y: 0.5,
+                });
+            });
+
+            this._isAnimating = true;
+            return;
         }
 
         this.visible.forEach(w => {
@@ -2732,9 +2761,6 @@ export const Spaces = class Spaces extends Map {
             return;
         }
         inPreview = PreviewMode.SEQUENTIAL;
-
-        // set window scale
-        this.forEach(s => s.setWindowsScale(0.5));
 
         if (Main.panel.statusArea.appMenu) {
             Main.panel.statusArea.appMenu.container.hide();
