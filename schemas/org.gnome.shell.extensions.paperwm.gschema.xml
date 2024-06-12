@@ -27,6 +27,11 @@
       <summary>Switch to previously active scratch window, backward order</summary>
     </key>
 
+    <key type="as" name="show-space-overview">
+        <default><![CDATA[['<Alt><Ctrl>x']]]></default>
+      <summary>Shows the space overview</summary>
+    </key>
+
     <key type="as" name="previous-workspace">
       <default><![CDATA[['<Super>Above_Tab']]]></default>
       <summary>Switch to previously active workspace</summary>

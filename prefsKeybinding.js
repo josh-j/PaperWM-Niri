@@ -85,6 +85,7 @@ const actions = {
         'activate-window-under-cursor',
     ],
     workspaces: [
+        'show-space-overview',
         'previous-workspace',
         'previous-workspace-backward',
         'move-previous-workspace',

@@ -1417,41 +1417,72 @@ export class Space extends Array {
         actor.set_clip(x, y, cw, ch);
     }
 
-    startAnimate(overview = false) {
+    showOverview() {
+        this.hideSelection();
+
+        // we need to to hide all windows and clones
+        // create new clutter windows for each window and hide actor
+        this.getWindows().forEach(w => {
+            const actor = w.get_compositor_private();
+            if (!actor) {
+                return;
+            }
+            actor.remove_clip();
+            hideWindowAndClone(w);
+
+            // create ovClone
+            const ovClone = new Clutter.Clone({ source: actor, reactive: true });
+            ovClone.set_pivot_point(0, 0.5);
+            ovClone.x = actor.x;
+            ovClone.y = actor.y;
+
+            this.signals.connect(ovClone, 'button-press-event', () => {
+                this.hideOverview();
+            });
+
+            this.actor.add_child(ovClone);
+            Easer.addEase(ovClone, {
+                time: Settings.prefs.animation_time,
+                x: actor.x,
+                y: actor.y,
+                scale_x: 0.5,
+                scale_y: 0.5,
+            });
+
+            w.ovClone = ovClone;
+        });
+    }
+
+    hideOverview() {
+        this.getWindows().forEach(w => {
+            if (!w.ovClone) {
+                return;
+            }
+
+            const actor = w.get_compositor_private();
+            const ovClone = w.ovClone;
+            delete w.ovClone;
+            Easer.addEase(ovClone, {
+                time: Settings.prefs.animation_time,
+                x: actor.x,
+                y: actor.y,
+                scale_x: 1,
+                scale_y: 1,
+                onComplete: () => {
+                    ovClone.destroy();
+                    showWindow(w);
+                    this.showSelection();
+                },
+            });
+        });
+    }
+
+    startAnimate() {
         if (!this._isAnimating && !Meta.is_wayland_compositor()) {
             // Tracking the background fixes issue #80
             // It also let us activate window clones clicked during animation
             // Untracked in moveDone
             Main.layoutManager.trackChrome(this.background);
-        }
-
-        // if overview, then create new window clones for placement
-        if (overview) {
-            // create new clutter windows for each window and hide actor
-            this.getWindows().forEach(w => {
-                const actor = w.get_compositor_private();
-                if (!actor) {
-                    return;
-                }
-                actor.remove_clip();
-                if (inGrab && inGrab.window === w)
-                    return;
-
-                showWindow(w);
-                w
-
-                // create ovClone
-                const ovClone = new Clutter.Clone({ source: actor });
-                this.actor.add_child(ovClone);
-                Easer.addEase(w.clone, {
-                    time: Settings.prefs.animation_time,
-                    scale_x: 0.5,
-                    scale_y: 0.5,
-                });
-            });
-
-            this._isAnimating = true;
-            return;
         }
 
         this.visible.forEach(w => {
@@ -2725,7 +2756,7 @@ export const Spaces = class Spaces extends Map {
         const to = monitorSpaces.indexOf(toSpace);
         monitorSpaces.forEach((space, i) => {
             space.setMonitor(currentMonitor);
-            space.startAnimate(true);
+            space.startAnimate();
 
             Easer.removeEase(space.border);
             space.border.opacity = 255;

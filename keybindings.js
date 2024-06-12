@@ -98,6 +98,10 @@ export function setupActions(settings) {
     registerAction('live-alt-tab-scratch-backward', LiveAltTab.liveAltTabScratch,
         { settings, mutterFlags: Meta.KeyBindingFlags.IS_REVERSED });
 
+    registerAction('show-space-overview', (_mw, space) => {
+        space.showOverview();
+    }, { settings });
+
     registerAction('move-monitor-right', () => {
         Tiling.spaces.switchMonitor(Meta.DisplayDirection.RIGHT, true);
     }, { settings });
