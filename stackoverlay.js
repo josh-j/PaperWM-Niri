@@ -372,7 +372,7 @@ export class StackOverlay {
 
         // Remove any window clips, and show the metaWindow.clone's
         actor.remove_clip();
-        Tiling.animateWindow(this.target);
+        Tiling.showClone(this.target);
 
         // set clone parameters
         clone.opacity = 255 * 0.95;

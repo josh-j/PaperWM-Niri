@@ -225,7 +225,7 @@ export function animateWindows() {
         Main.uiGroup.insert_child_above(w.clone, global.window_group);
         let f = w.get_frame_rect();
         w.clone.set_position(f.x, f.y);
-        Tiling.animateWindow(w);
+        Tiling.showClone(w);
     }
 }
 
