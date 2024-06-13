@@ -309,6 +309,10 @@ export class Space extends Array {
             style_class: 'paperwm-selection tile-preview',
         });
         this.selection = selection;
+        // initial state is shown (unless border-size is 0)
+        if (Settings.prefs.selection_border_size <= 0) {
+            this.hideSelection();
+        }
 
         clip.space = this;
         cloneContainer.space = this;
@@ -3365,6 +3369,13 @@ export function registerWindow(metaWindow) {
 
     signals.connect(actor, 'show', actor => {
         showHandler(actor);
+    });
+
+    signals.connect(metaWindow, 'workspace-changed', metaWindow => {
+        const actor = metaWindow.get_compositor_private();
+        signals.connectOneShot(actor, 'stage-views-changed', _actor => {
+            resizeHandler(metaWindow);
+        });
     });
 
     signals.connect(actor, 'destroy', destroyHandler);
