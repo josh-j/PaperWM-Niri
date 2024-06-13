@@ -486,12 +486,12 @@
     </key>
 
     <key type="i" name="vertical-margin">
-      <default>10</default>
+      <default>20</default>
       <summary>Minimum margin from windows top edge</summary>
     </key>
 
     <key type="i" name="vertical-margin-bottom">
-        <default>10</default>
+        <default>20</default>
         <summary>Minimum margin from windows bottom edge</summary>
     </key>
 
