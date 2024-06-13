@@ -151,7 +151,6 @@ export function disable() {
 
     screenSignals.forEach(id => workspaceManager.disconnect(id));
     screenSignals = [];
-    // panelBox.scale_y = 1;
     openPrefs = null;
     gsettings = null;
 }
