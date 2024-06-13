@@ -668,8 +668,13 @@ export class Space extends Array {
             workArea.y = 0;
             this.setSpaceTopbarElementsVisible(false);
             break;
-        case this.monitor === primaryMonitor && this.showTopBar:
+        case this.monitor === primaryMonitor: {
+            if (!this.showTopBar) {
+                workArea.y -= panelBoxHeight;
+                workArea.height += panelBoxHeight;
+            }
             break;
+        }
         default:
             if (Settings.prefs.show_window_position_bar) {
                 workArea.y += panelBoxHeight;
@@ -677,23 +682,6 @@ export class Space extends Array {
             }
             break;
         }
-
-        // if (this.selectedWindow?.fullscreen) {
-        //     workArea.y = 0;
-        //     this.setSpaceTopbarElementsVisible(false);
-        // }
-        // // compensate to keep window position bar on all monitors
-        // else if (
-        //     Settings.prefs.show_window_position_bar ||
-        //     this.showTopBar
-        // ) {
-        //     const panelBoxHeight = Topbar.panelBox.height;
-        //     const monitor = Main.layoutManager.primaryMonitor;
-        //     if (monitor !== this.monitor) {
-        //         workArea.y += panelBoxHeight;
-        //         workArea.height -= panelBoxHeight;
-        //     }
-        // }
 
         let availableHeight = workArea.height;
         let y0 = workArea.y;
@@ -2674,7 +2662,7 @@ export const Spaces = class Spaces extends Map {
 
     _animateToSpaceOrdered(toSpace, animate = true) {
         // Always show the topbar when using the workspace stack
-        Topbar.fixTopBar();
+        // Topbar.fixTopBar(toSpace);
 
         toSpace = toSpace || this.selectedSpace;
         let monitorSpaces = this._getOrderedSpaces(toSpace.monitor);

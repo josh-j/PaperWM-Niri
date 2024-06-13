@@ -121,12 +121,12 @@ export function enable (extension) {
         fixOpenPositionIcon();
     });
 
-    signals.connect(panelBox, 'show', () => {
-        fixTopBar();
-    });
-    signals.connect(panelBox, 'hide', () => {
-        fixTopBar();
-    });
+    // signals.connect(panelBox, 'show', () => {
+    //     fixTopBar();
+    // });
+    // signals.connect(panelBox, 'hide', () => {
+    //     fixTopBar();
+    // });
     /**
      * Set clear-style when hiding overview.
      */
@@ -847,8 +847,8 @@ export function fixStyle() {
     Settings.prefs.show_window_position_bar ? setNoBackgroundStyle() : setTransparentStyle();
 }
 
-export function fixTopBar() {
-    let space = Tiling?.spaces?.monitors?.get(panelMonitor()) ?? false;
+export function fixTopBar(space) {
+    space = space ?? Tiling?.spaces?.selectedSpace;
     if (!space)
         return;
 
@@ -860,22 +860,23 @@ export function fixTopBar() {
     // check if is currently fullscreened (check focused-floating, focused-scratch, and selected/tiled window)
     let fullscreen = focusIsFloatOrScratch ? focused.fullscreen : selected && selected.fullscreen;
 
-    if (!space.showTopBar) {
-        panelBox.scale_y = 0; // Update the workarea to support hide top bar
-        panelBox.hide();
+    if (normal && !space.showTopBar) {
+        hideTopBar();
     }
-    // else if (normal && !space.showTopBar) {
-    //     panelBox.scale_y = 0; // Update the workarea to support hide top bar
-    //     panelBox.hide();
-    // }
     else if (normal && fullscreen) {
-        panelBox.hide();
+        hideTopBar();
     }
     else {
-        console.error(new Error());
-        panelBox.scale_y = 1;
-        panelBox.show();
+        showTopBar();
     }
+}
+
+export function showTopBar() {
+    panelBox.show();
+}
+
+export function hideTopBar() {
+    panelBox.hide();
 }
 
 export function fixWorkspaceIndicator() {
