@@ -357,8 +357,9 @@ export class Space extends Array {
         // now set monitor for this space
         this.setMonitor(monitor);
 
-        if (doInit)
+        if (doInit) {
             this.init();
+        }
     }
 
     init() {
@@ -1546,9 +1547,9 @@ export class Space extends Array {
     updateShowTopBar() {
         let showTopBar = this.getShowTopBarSetting();
         if (showTopBar) {
-            this.showTopBar = 1;
+            this.showTopBar = true;
         } else {
-            this.showTopBar = 0;
+            this.showTopBar = false;
         }
         this._populated && Topbar.fixTopBar();
 
