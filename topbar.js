@@ -151,7 +151,7 @@ export function disable() {
 
     screenSignals.forEach(id => workspaceManager.disconnect(id));
     screenSignals = [];
-    panelBox.scale_y = 1;
+    // panelBox.scale_y = 1;
     openPrefs = null;
     gsettings = null;
 }
@@ -847,18 +847,18 @@ export function fixStyle() {
     Settings.prefs.show_window_position_bar ? setNoBackgroundStyle() : setTransparentStyle();
 }
 
-export function fixTopBar(space) {
-    space = space ?? Tiling?.spaces?.selectedSpace;
+export function fixTopBar() {
+    const space = Tiling?.spaces?.selectedSpace;
     if (!space)
         return;
 
-    let normal = !Main.overview.visible && !Tiling.inPreview;
+    const normal = !Main.overview.visible && !Tiling.inPreview;
     // selected is current (tiled) selected window (can be different to focused window)
-    let selected = space.selectedWindow;
-    let focused = display.focus_window;
-    let focusIsFloatOrScratch = focused && (space.isFloating(focused) || Scratch.isScratchWindow(focused));
+    const selected = space.selectedWindow;
+    const focused = display.focus_window;
+    const focusIsFloatOrScratch = focused && (space.isFloating(focused) || Scratch.isScratchWindow(focused));
     // check if is currently fullscreened (check focused-floating, focused-scratch, and selected/tiled window)
-    let fullscreen = focusIsFloatOrScratch ? focused.fullscreen : selected && selected.fullscreen;
+    const fullscreen = focusIsFloatOrScratch ? focused.fullscreen : selected && selected.fullscreen;
 
     if (normal && !space.showTopBar) {
         hideTopBar();

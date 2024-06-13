@@ -91,7 +91,7 @@ let signals, backgroundGroup, grabSignals;
 let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
-let startupTimeoutId, timerId, fullscrenStartTimeout, stackSlurpTimeout;
+let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, topbarCheckTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -206,10 +206,12 @@ export function disable () {
     startupTimeoutId = null;
     Utils.timeout_remove(timerId);
     timerId = null;
-    Utils.timeout_remove(fullscrenStartTimeout);
-    fullscrenStartTimeout = null;
+    Utils.timeout_remove(fullscreenStartTimeout);
+    fullscreenStartTimeout = null;
     Utils.timeout_remove(stackSlurpTimeout);
     stackSlurpTimeout = null;
+    Utils.timeout_remove(topbarCheckTimeout);
+    topbarCheckTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -1688,6 +1690,13 @@ border-radius: ${borderWidth}px;
             }
         };
 
+        // if windowPositionBar is disabled ==> don't show elements
+        if (!Settings.prefs.show_window_position_bar) {
+            setVisible(false);
+            this.enableWindowPositionBar(false);
+            return;
+        }
+
         if (this.selectedWindow?.fullscreen) {
             setVisible(false);
             this.enableWindowPositionBar(false);
@@ -1696,12 +1705,6 @@ border-radius: ${borderWidth}px;
 
         if (this.hasTopBar && inPreview) {
             Topbar.setTransparentStyle();
-        }
-
-        // if windowPositionBar is disabled ==> don't show elements
-        if (!Settings.prefs.show_window_position_bar) {
-            setVisible(false);
-            return;
         }
 
         // if on different monitor then override to show elements
@@ -2662,7 +2665,7 @@ export const Spaces = class Spaces extends Map {
 
     _animateToSpaceOrdered(toSpace, animate = true) {
         // Always show the topbar when using the workspace stack
-        // Topbar.fixTopBar(toSpace);
+        Topbar.fixTopBar();
 
         toSpace = toSpace || this.selectedSpace;
         let monitorSpaces = this._getOrderedSpaces(toSpace.monitor);
@@ -3351,8 +3354,24 @@ export function registerWindow(metaWindow) {
         // if window is in a column, expel it
         barf(metaWindow, metaWindow);
 
-        Topbar.fixTopBar();
-        spaces.spaceOfWindow(metaWindow)?.setSpaceTopbarElementsVisible(true);
+        Topbar.panelBox.hide();
+        const space = spaces.spaceOfWindow(metaWindow);
+        space?.setSpaceTopbarElementsVisible(true);
+
+        /**
+         * Workaround: seems on unfullscreening gnome enforces showing topbar.
+         * Here we call a recursive monitoring function that checks topbar
+         * visibility (stops once the topbar is no longer visible).
+         */
+        topbarCheckTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30, () => {
+            if (!space.showTopBar && Topbar.panelBox.visible) {
+                Topbar.panelBox.hide();
+                return true;
+            }
+
+            topbarCheckTimeout = null;
+            return false;
+        });
     });
     signals.connect(metaWindow, 'notify::minimized', metaWindow => {
         minimizeHandler(metaWindow);
@@ -3848,11 +3867,11 @@ export function insertWindow(metaWindow, { existing }) {
         if (metaWindow.fullscreen) {
             animateWindow(metaWindow);
             callbackOnActorShow(actor, () => {
-                fullscrenStartTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+                fullscreenStartTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
                     metaWindow.unmake_fullscreen();
                     showWindow(metaWindow);
                     metaWindow.make_fullscreen();
-                    fullscrenStartTimeout = null;
+                    fullscreenStartTimeout = null;
                     return false; // on return false destroys timeout
                 });
             });
