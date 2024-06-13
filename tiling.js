@@ -672,8 +672,15 @@ export class Space extends Array {
             break;
         case this.monitor === primaryMonitor: {
             if (!this.showTopBar) {
+                // remove panelbox height
                 workArea.y -= panelBoxHeight;
                 workArea.height += panelBoxHeight;
+
+                if (Settings.prefs.show_window_position_bar) {
+                    // add panelbox height if need to show window position bar
+                    workArea.y += panelBoxHeight;
+                    workArea.height -= panelBoxHeight;
+                }
             }
             break;
         }
