@@ -660,19 +660,39 @@ export class Space extends Array {
          * If current window is fullscreened, then treat workarea as fullscreen (y = 0).
          * This a "flash of topbar spacing") before consecutive layout call resolves.
          */
-        if (this.selectedWindow?.fullscreen) {
+        const panelBoxHeight = Topbar.panelBox.height;
+        const primaryMonitor = Main.layoutManager.primaryMonitor;
+        switch (true) {
+        case this.selectedWindow?.fullscreen:
             workArea.y = 0;
             this.setSpaceTopbarElementsVisible(false);
-        }
-        // compensate to keep window position bar on all monitors
-        else if (Settings.prefs.show_window_position_bar) {
-            const panelBoxHeight = Topbar.panelBox.height;
-            const monitor = Main.layoutManager.primaryMonitor;
-            if (monitor !== this.monitor) {
+            break;
+        case this.monitor === primaryMonitor && this.showTopBar:
+            break;
+        default:
+            if (Settings.prefs.show_window_position_bar) {
                 workArea.y += panelBoxHeight;
                 workArea.height -= panelBoxHeight;
             }
+            break;
         }
+
+        // if (this.selectedWindow?.fullscreen) {
+        //     workArea.y = 0;
+        //     this.setSpaceTopbarElementsVisible(false);
+        // }
+        // // compensate to keep window position bar on all monitors
+        // else if (
+        //     Settings.prefs.show_window_position_bar ||
+        //     this.showTopBar
+        // ) {
+        //     const panelBoxHeight = Topbar.panelBox.height;
+        //     const monitor = Main.layoutManager.primaryMonitor;
+        //     if (monitor !== this.monitor) {
+        //         workArea.y += panelBoxHeight;
+        //         workArea.height -= panelBoxHeight;
+        //     }
+        // }
 
         let availableHeight = workArea.height;
         let y0 = workArea.y;
@@ -1525,7 +1545,6 @@ export class Space extends Array {
 
     updateShowTopBar() {
         let showTopBar = this.getShowTopBarSetting();
-
         if (showTopBar) {
             this.showTopBar = 1;
         } else {
