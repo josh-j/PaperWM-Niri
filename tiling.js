@@ -491,13 +491,19 @@ export class Space extends Array {
                 w.clone.cloneActor.source = null;
     }
 
+    /**
+     * Returns current workspace for this space.
+     * @returns object with x, y, width, and height values for this WorkArea.
+     */
     workArea() {
         let workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitor.index);
-        workArea.x -= this.monitor.x;
-        workArea.y -= this.monitor.y;
-        workArea.height -= Settings.prefs.vertical_margin + Settings.prefs.vertical_margin_bottom;
-        workArea.y += Settings.prefs.vertical_margin;
-        return workArea;
+        return {
+            x: workArea.x - this.monitor.x,
+            y: workArea.y - this.monitor.y + Settings.prefs.vertical_margin,
+            width: workArea.width,
+            height: workArea.height -
+                (Settings.prefs.vertical_margin + Settings.prefs.vertical_margin_bottom),
+        };
     }
 
     layoutGrabColumn(column, x, y0, targetWidth, availableHeight, time, grabWindow) {
@@ -2019,8 +2025,6 @@ border-radius: ${borderWidth}px;
 
     destroy() {
         this.getWindows().forEach(w => {
-
-            
             removePaperWMFlags(w);
         });
         this.signals.destroy();
