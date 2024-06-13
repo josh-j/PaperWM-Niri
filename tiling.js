@@ -2023,8 +2023,6 @@ border-radius: ${borderWidth}px;
 
     destroy() {
         this.getWindows().forEach(w => {
-
-            
             removePaperWMFlags(w);
         });
         this.signals.destroy();
@@ -3371,11 +3369,14 @@ export function registerWindow(metaWindow) {
         showHandler(actor);
     });
 
-    signals.connect(metaWindow, 'workspace-changed', metaWindow => {
-        const actor = metaWindow.get_compositor_private();
-        signals.connectOneShot(actor, 'stage-views-changed', _actor => {
+    /**
+     * Ensures when moving window that it's targetHeight is met.
+     */
+    signals.connect(actor, 'stage-views-changed', _actor => {
+        const f = metaWindow.get_frame_rect();
+        if (metaWindow._targetHeight !== f.height) {
             resizeHandler(metaWindow);
-        });
+        }
     });
 
     signals.connect(actor, 'destroy', destroyHandler);
