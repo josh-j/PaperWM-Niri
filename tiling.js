@@ -504,8 +504,7 @@ export class Space extends Array {
             x: workArea.x - this.monitor.x,
             y: workArea.y - this.monitor.y + Settings.prefs.vertical_margin,
             width: workArea.width,
-            height: workArea.height -
-                (Settings.prefs.vertical_margin + Settings.prefs.vertical_margin_bottom),
+            height: workArea.height - Settings.prefs.vertical_margin - Settings.prefs.vertical_margin_bottom,
         };
     }
 
