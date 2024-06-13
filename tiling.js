@@ -3361,7 +3361,6 @@ export function registerWindow(metaWindow) {
         // if window is in a column, expel it
         barf(metaWindow, metaWindow);
 
-        Topbar.panelBox.hide();
         const space = spaces.spaceOfWindow(metaWindow);
         space?.setSpaceTopbarElementsVisible(true);
 
@@ -3371,7 +3370,10 @@ export function registerWindow(metaWindow) {
          * visibility (stops once the topbar is no longer visible).
          */
         topbarCheckTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30, () => {
-            if (!space.showTopBar && Topbar.panelBox.visible) {
+            if (
+                space?.monitor === Topbar.panelMonitor() &&
+                !space.showTopBar && Topbar.panelBox.visible
+            ) {
                 Topbar.panelBox.hide();
                 return true;
             }
