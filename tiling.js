@@ -499,7 +499,7 @@ export class Space extends Array {
     }
 
     /**
-     * Returns current workspace for this space.
+     * Returns current workArea parameters for this space.
      * @returns object with x, y, width, and height values for this WorkArea.
      */
     workArea() {
