@@ -3375,7 +3375,7 @@ export function registerWindow(metaWindow) {
     signals.connect(actor, 'stage-views-changed', _actor => {
         const f = metaWindow.get_frame_rect();
         if (metaWindow._targetHeight !== f.height) {
-            resizeHandler(metaWindow);
+            metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
         }
     });
 
