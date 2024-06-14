@@ -3375,7 +3375,7 @@ export function registerWindow(metaWindow) {
     signals.connect(actor, 'stage-views-changed', _actor => {
         const f = metaWindow.get_frame_rect();
         if (metaWindow._targetHeight !== f.height) {
-            metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
+            resizeHandler(metaWindow);
         }
     });
 
@@ -3486,11 +3486,15 @@ export function resizeHandler(metaWindow) {
     if (inGrab && inGrab.window === metaWindow)
         return;
 
+    const space = spaces.spaceOfWindow(metaWindow);
+    if (!space) {
+        return;
+    }
+
     const f = metaWindow.get_frame_rect();
     metaWindow._targetWidth = null;
     metaWindow._targetHeight = null;
 
-    const space = spaces.spaceOfWindow(metaWindow);
     if (space.indexOf(metaWindow) === -1) {
         nonTiledSizeHandler(metaWindow);
         return;
