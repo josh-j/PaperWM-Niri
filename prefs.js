@@ -628,6 +628,7 @@ class SettingsWidget {
         backgroundBox.append(clearBackground);
 
         let hideTopBarSwitch = new Gtk.Switch({ active: !settings.get_boolean('show-top-bar') });
+        let hidePositionBarSwitch = new Gtk.Switch({ active: !settings.get_boolean('show-top-bar') });
 
         let directoryBox = new Gtk.Box({ spacing: 16 });
         let directoryChooser = this.createFileChooserButton(
@@ -654,7 +655,8 @@ class SettingsWidget {
         list.append(this.createRow('Name', nameEntry));
         list.append(this.createRow('Color', colorButton));
         list.append(this.createRow('Background', backgroundBox));
-        list.append(this.createRow('Hide top bar', hideTopBarSwitch));
+        list.append(this.createRow('Hide Gnome Top Bar', hideTopBarSwitch));
+        list.append(this.createRow('Hide Window Position Bar', hidePositionBarSwitch));
         list.append(this.createRow('Directory', directoryBox));
 
         let rgba = new Gdk.RGBA();

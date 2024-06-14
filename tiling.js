@@ -1503,7 +1503,6 @@ export class Space extends Array {
             this.updateBackground();
         }
         this.updateName();
-        this.updateShowTopBar();
         this.signals.connect(this.settings, 'changed::name', this.updateName.bind(this));
         this.signals.connect(this.settings, 'changed::color', () => {
             this.updateColor();
@@ -1511,10 +1510,16 @@ export class Space extends Array {
         });
         this.signals.connect(this.settings, 'changed::background',
             this.updateBackground.bind(this));
+
+        this.updateShowTopBar();
         this.signals.connect(gsettings, 'changed::default-show-top-bar',
             this.showTopBarChanged.bind(this));
         this.signals.connect(this.settings, 'changed::show-top-bar',
             this.showTopBarChanged.bind(this));
+
+        this.updateShowPositionBar();
+        this.signals.connect(this.settings, 'changed::show-position-bar',
+            this.showPositionBarChanged.bind(this));
     }
 
     /**
@@ -1522,9 +1527,9 @@ export class Space extends Array {
      * default-show-top-bar setting.
      * @returns Boolean
      */
-    getShowTopBarSetting() {
+    _getShowTopBarSetting() {
         let showTopBar = Settings.prefs.default_show_top_bar;
-        let userValue = this.settings.get_user_value('show-top-bar');
+        const userValue = this.settings.get_user_value('show-top-bar');
         if (userValue) {
             showTopBar = userValue.unpack();
         }
@@ -1532,8 +1537,20 @@ export class Space extends Array {
         return showTopBar;
     }
 
+    updateShowTopBar() {
+        let showTopBar = this._getShowTopBarSetting();
+        if (showTopBar) {
+            this.showTopBar = true;
+        } else {
+            this.showTopBar = false;
+        }
+        this._populated && Topbar.fixTopBar();
+
+        this.layout();
+    }
+
     showTopBarChanged() {
-        let showTopBar = this.getShowTopBarSetting();
+        let showTopBar = this._getShowTopBarSetting();
 
         // remove window position bar actors
         this.actor.remove_child(this.windowPositionBarBackdrop);
@@ -1546,16 +1563,30 @@ export class Space extends Array {
         this.updateShowTopBar();
     }
 
-    updateShowTopBar() {
-        let showTopBar = this.getShowTopBarSetting();
-        if (showTopBar) {
-            this.showTopBar = true;
-        } else {
-            this.showTopBar = false;
-        }
-        this._populated && Topbar.fixTopBar();
+    /**
+     * Returns the show-position-bar (workspace) setting.
+     * @returns Boolean
+     */
+    _getShowPositionBar() {
+        return this.settings.get_user_value('show-position-bar').unpack();
+    }
 
-        this.layout();
+    updateShowPositionBar() {
+        this.showPositionBar = this._getShowPositionBar();
+    }
+
+    showPositionBarChanged() {
+        const show = this._getShowPositionBar();
+
+        // remove window position bar actors
+        this.actor.remove_child(this.windowPositionBarBackdrop);
+        this.actor.remove_child(this.windowPositionBar);
+        if (show) {
+            this.actor.add_child(this.windowPositionBarBackdrop);
+            this.actor.add_child(this.windowPositionBar);
+        }
+
+        this.updateShowPositionBar();
     }
 
     /**

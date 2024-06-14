@@ -433,7 +433,11 @@
       </key>
       <key type="b" name="show-top-bar">
           <default>true</default>
-          <summary>Show the topbar</summary>
+          <summary>Show the GNOME Top Bar</summary>
+      </key>
+      <key type="b" name="show-position-bar">
+          <default>true</default>
+          <summary>Show the PaperWM Window Position Bar</summary>
       </key>
       <key type="s" name="color">
           <default>''</default>
