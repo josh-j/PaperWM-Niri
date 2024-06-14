@@ -127,7 +127,7 @@ class ActionDispatcher {
         // https://bugzilla.gnome.org/show_bug.cgi?id=596695 for
         // details.) So we check now. (straight from SwitcherPopup)
         if (this._modifierMask) {
-            let [x, y, mods] = global.get_pointer();
+            let [, , mods] = global.get_pointer();
             if (!(mods & this._modifierMask)) {
                 this._finish(global.get_current_time());
                 return false;
@@ -189,7 +189,7 @@ class ActionDispatcher {
         }
 
         if (this._modifierMask) {
-            let [x, y, mods] = global.get_pointer();
+            let [, , mods] = global.get_pointer();
             let state = mods & this._modifierMask;
 
             if (state === 0)
@@ -238,7 +238,7 @@ class ActionDispatcher {
         }
     }
 
-    _finish(timestamp) {
+    _finish(_timestamp) {
         let nav = getNavigator();
         nav.accept();
         !this._destroy && nav.destroy();
@@ -447,7 +447,9 @@ class NavigatorClass {
 
         if (selected && !Tiling.inGrab) {
             let hasFocus = selected && selected.has_focus();
-            selected.foreach_transient(mw => hasFocus = mw.has_focus() || hasFocus);
+            selected.foreach_transient(mw => {
+                hasFocus = mw.has_focus() || hasFocus;
+            });
             if (hasFocus) {
                 Tiling.focus_handler(selected);
             } else {
@@ -527,7 +529,7 @@ export function dismissDispatcher(mode) {
     }
 }
 
-export function preview_navigate(meta_window, space, { display, screen, binding }) {
+export function preview_navigate(meta_window, space, { _display, _screen, binding }) {
     let tabPopup = getActionDispatcher(Clutter.GrabState.KEYBOARD);
     tabPopup.show(binding.is_reversed(), binding.get_name(), binding.get_mask());
 }
