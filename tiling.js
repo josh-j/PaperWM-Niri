@@ -1568,7 +1568,7 @@ export class Space extends Array {
      * @returns Boolean
      */
     _getShowPositionBar() {
-        return this.settings.get_user_value('show-position-bar').unpack();
+        return this.settings.get_user_value('show-position-bar')?.unpack() ?? true;
     }
 
     updateShowPositionBar() {
@@ -1576,6 +1576,7 @@ export class Space extends Array {
     }
 
     showPositionBarChanged() {
+        console.log(`position bar changed`);
         const show = this._getShowPositionBar();
 
         // remove window position bar actors

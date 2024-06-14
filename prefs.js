@@ -628,7 +628,7 @@ class SettingsWidget {
         backgroundBox.append(clearBackground);
 
         let hideTopBarSwitch = new Gtk.Switch({ active: !settings.get_boolean('show-top-bar') });
-        let hidePositionBarSwitch = new Gtk.Switch({ active: !settings.get_boolean('show-top-bar') });
+        let hidePositionBarSwitch = new Gtk.Switch({ active: !settings.get_boolean('show-position-bar') });
 
         let directoryBox = new Gtk.Box({ spacing: 16 });
         let directoryChooser = this.createFileChooserButton(
@@ -704,8 +704,12 @@ class SettingsWidget {
             clearBackground.sensitive = settings.get_string('background') != '';
         });
 
-        hideTopBarSwitch.connect('state-set', (gtkswitch_, state) => {
+        hideTopBarSwitch.connect('state-set', (_switch, state) => {
             settings.set_boolean('show-top-bar', !state);
+        });
+
+        hidePositionBarSwitch.connect('state-set', (_switch, state) => {
+            settings.set_boolean('show-position-bar', !state);
         });
 
         clearDirectory.connect('clicked', () => {
