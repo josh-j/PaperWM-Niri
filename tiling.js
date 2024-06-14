@@ -3373,9 +3373,11 @@ export function registerWindow(metaWindow) {
          * visibility (stops once the topbar is no longer visible).
          */
         topbarCheckTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30, () => {
+            const panelSpace = Topbar.panelSpace();
             if (
-                space?.monitor === Topbar.panelMonitor() &&
-                !space.showTopBar && Topbar.panelBox.visible
+                panelSpace &&
+                !panelSpace.showTopBar &&
+                Topbar.panelBox.visible
             ) {
                 Topbar.panelBox.hide();
                 return true;
@@ -3418,6 +3420,15 @@ export function registerWindow(metaWindow) {
         if (metaWindow._targetHeight !== f.height) {
             resizeHandler(metaWindow);
         }
+
+        // const panelSpace = Topbar.panelSpace();
+        // if (
+        //     panelSpace &&
+        //     !panelSpace.showTopBar &&
+        //     Topbar.panelBox.visible
+        // ) {
+        //     Topbar.panelBox.hide();
+        // }
     });
 
     signals.connect(actor, 'destroy', destroyHandler);

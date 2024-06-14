@@ -118,12 +118,12 @@ export function enable (extension) {
         fixOpenPositionIcon();
     });
 
-    // signals.connect(panelBox, 'show', () => {
-    //     fixTopBar();
-    // });
-    // signals.connect(panelBox, 'hide', () => {
-    //     fixTopBar();
-    // });
+    signals.connect(panelBox, 'show', () => {
+        fixTopBar();
+    });
+    signals.connect(panelBox, 'hide', () => {
+        fixTopBar();
+    });
 
     /**
      * Set clear-style when hiding overview.
@@ -811,8 +811,20 @@ export const WorkspaceMenu = GObject.registerClass(
         }
     });
 
+/**
+ * Returns monitor where panel is currently on.
+ * @returns Monitor
+ */
 export function panelMonitor() {
     return Main.layoutManager.primaryMonitor;
+}
+
+/**
+ * Returns space where panel is currently on.
+ * @returns Tiling.Space
+ */
+export function panelSpace() {
+    return Tiling?.spaces?.monitors?.get(panelMonitor());
 }
 
 export function setNoBackgroundStyle() {
@@ -845,7 +857,7 @@ export function fixStyle() {
 }
 
 export function fixTopBar() {
-    let space = Tiling?.spaces?.monitors?.get(panelMonitor());
+    let space = panelSpace();
     if (!space)
         return;
 
