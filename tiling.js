@@ -3527,11 +3527,15 @@ export function resizeHandler(metaWindow) {
     if (inGrab && inGrab.window === metaWindow)
         return;
 
+    const space = spaces.spaceOfWindow(metaWindow);
+    if (!space) {
+        return;
+    }
+
     const f = metaWindow.get_frame_rect();
     metaWindow._targetWidth = null;
     metaWindow._targetHeight = null;
 
-    const space = spaces.spaceOfWindow(metaWindow);
     if (space.indexOf(metaWindow) === -1) {
         nonTiledSizeHandler(metaWindow);
         return;
