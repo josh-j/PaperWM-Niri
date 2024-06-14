@@ -203,7 +203,7 @@ export function enable(extension) {
     }
 }
 
-export function disable () {
+export function disable() {
     Utils.timeout_remove(startupTimeoutId);
     startupTimeoutId = null;
     Utils.timeout_remove(timerId);
@@ -247,7 +247,7 @@ export class Space extends Array {
     /** @type {import('@gi-types/meta').BackgroundActor} */
     background;
 
-    constructor (workspace, container, doInit) {
+    constructor(workspace, container, doInit) {
         super(0);
         this.workspace = workspace;
         this.signals = new Utils.Signals();
@@ -771,7 +771,7 @@ export class Space extends Array {
                 this.targetX = min + Math.round((workArea.width - width) / 2);
             } else if (this.targetX + width < min + workArea.width) {
                 this.targetX = min + workArea.width - width;
-            } else if (this.targetX > workArea.min ) {
+            } else if (this.targetX > workArea.min) {
                 this.targetX = workArea.x;
             }
             Easer.addEase(this.cloneContainer,
@@ -1320,7 +1320,7 @@ export class Space extends Array {
         }
     }
 
-    moveDone(focusedWindowCallback = _focusedWindow => {}) {
+    moveDone(focusedWindowCallback = _focusedWindow => { }) {
         if (this.cloneContainer.x !== this.targetX ||
             this.actor.y !== 0 ||
             Navigator.navigating || inPreview ||
@@ -2038,7 +2038,7 @@ border-radius: ${borderWidth}px;
     // Fix for eg. space.map, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Species
     static get [Symbol.species]() { return Array; }
 
-    selectedIndex () {
+    selectedIndex() {
         if (this.selectedWindow) {
             return this.indexOf(this.selectedWindow);
         } else {
@@ -2252,7 +2252,7 @@ export const Spaces = class Spaces extends Map {
         let prevNSpaces = saveState?.prevSpaces?.size ?? 0;
         let addSpaces = Math.max(0, prevNSpaces - workspaceManager.n_workspaces);
         console.info(`nPrevSpaces ${prevNSpaces}, current nSpaces ${workspaceManager.n_workspaces}, need to add ${addSpaces}`);
-        for (let i = 0; i < addSpaces; i++ ) {
+        for (let i = 0; i < addSpaces; i++) {
             workspaceManager.append_new_workspace(false, global.get_current_time());
         }
 
@@ -2402,7 +2402,7 @@ export const Spaces = class Spaces extends Map {
      * Return true if there are less-than-or-equal-to spaces than monitors.
      */
     lteSpacesThanMonitors(onFalseCallback) {
-        const cb = onFalseCallback ?? function(_nSpaces, _nMonitors) {};
+        const cb = onFalseCallback ?? function (_nSpaces, _nMonitors) { };
         const nSpaces = [...this].length;
         const nMonitors = Main.layoutManager.monitors.length;
 
@@ -2965,7 +2965,7 @@ export const Spaces = class Spaces extends Map {
 
         mru.forEach((space, i) => {
             let actor = space.actor;
-            let h, onComplete = () => {};
+            let h, onComplete = () => { };
             if (to === i)
                 h = StackPositions.selected;
             else if (to + 1 === i)
@@ -3212,7 +3212,7 @@ export const Spaces = class Spaces extends Map {
           somewhat more stable on X11, but there's at minimum some racing with
           `wm_class` which can break the users winprop rules.
         */
-        signals.connectOneShot(actor, 'first-frame', () =>  {
+        signals.connectOneShot(actor, 'first-frame', () => {
             allocateClone(metaWindow);
             insertWindow(metaWindow, { existing: false });
         });
@@ -3417,7 +3417,11 @@ export function registerWindow(metaWindow) {
         workspaceChangeTimeouts.splice(index, 1);
         // console.log(`num workspaceChangeTimeouts ${workspaceChangeTimeouts.length}`);
     };
-    signals.connect(metaWindow, 'workspace-changed', _mw => {
+    signals.connect(metaWindow, 'workspace-changed', mw => {
+        if (!isTiled(mw)) {
+            return;
+        }
+
         let tries = 0;
         const timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             if (tries >= 10) {
@@ -3618,7 +3622,7 @@ export function resizeHandler(metaWindow) {
 
     if (needLayout && !space._inLayout) {
         // Restore window position when eg. exiting fullscreen
-        let callback = () => {};
+        let callback = () => { };
         if (addCallback && !Navigator.navigating && selected) {
             callback = () => {
                 moveTo(x, true);
@@ -4095,7 +4099,7 @@ export function ensuredX(meta_window, space) {
         if (index === 0 && space.length === 1)
             x = min + Math.round((workArea.width - frame.width) / 2);
         else if (index === 0 || (Math.abs(x - min) < Math.abs(x + frame.width - max) &&
-                                 index !== space.length - 1))
+            index !== space.length - 1))
             x = min + Settings.prefs.horizontal_margin;
         else
             x = max - Settings.prefs.horizontal_margin - frame.width;
@@ -4135,7 +4139,7 @@ export function ensureViewport(meta_window, space, options = {}) {
     let moveto = options?.moveto ?? true;
     let animate = options?.animate ?? true;
     let ensureAnimation = options.ensureAnimation ?? Settings.EnsureViewportAnimation.TRANSLATE;
-    let callback = options.callback ?? function() {};
+    let callback = options.callback ?? function () { };
 
     let index = space.indexOf(meta_window);
     if (index === -1 || space.length === 0)
@@ -4219,7 +4223,7 @@ export function move_to(space, metaWindow, options = {}) {
     let force = options.force ?? false;
     let animate = options.animate ?? true;
     let ensureAnimation = options.ensureAnimation ?? Settings.EnsureViewportAnimation.TRANSLATE;
-    let callback = options.callback ?? function() {};
+    let callback = options.callback ?? function () { };
     if (space.indexOf(metaWindow) === -1)
         return;
 
@@ -4957,8 +4961,8 @@ export function allocateDefault(column, availableHeight, selectedWindow) {
         let availableForNonSelected = Math.max(
             0,
             availableHeight -
-                (column.length - 1) * gap -
-                (selectedWindow ? selectedHeight : 0)
+            (column.length - 1) * gap -
+            (selectedWindow ? selectedHeight : 0)
         );
 
         const deficit = Math.max(
