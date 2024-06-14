@@ -170,7 +170,7 @@ export class MoveGrab {
 
         let [sx, sy] = space.globalToScroll(gx, gy, { useTarget: true });
 
-        Tiling.space.forEach(space => {
+        Tiling.spaces.forEach(space => {
             this.signals.connect(space.background, "motion-event", this.spaceMotion.bind(this, space));
         });
         this.selectDndZone(space, sx, sy, single && onSame);
