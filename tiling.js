@@ -91,7 +91,7 @@ let signals, backgroundGroup, grabSignals;
 let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
-let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, topbarCheckTimeout;
+let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -210,8 +210,9 @@ export function disable () {
     fullscreenStartTimeout = null;
     Utils.timeout_remove(stackSlurpTimeout);
     stackSlurpTimeout = null;
-    Utils.timeout_remove(topbarCheckTimeout);
-    topbarCheckTimeout = null;
+    Utils.timeout_remove(workspaceChangeTimeout);
+    workspaceChangeTimeout = null;
+
 
     grabSignals.destroy();
     grabSignals = null;
@@ -3366,26 +3367,6 @@ export function registerWindow(metaWindow) {
 
         const space = spaces.spaceOfWindow(metaWindow);
         space?.setSpaceTopbarElementsVisible(true);
-
-        /**
-         * Workaround: seems on unfullscreening gnome enforces showing topbar.
-         * Here we call a recursive monitoring function that checks topbar
-         * visibility (stops once the topbar is no longer visible).
-         */
-        topbarCheckTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 30, () => {
-            const panelSpace = Topbar.panelSpace();
-            if (
-                panelSpace &&
-                !panelSpace.showTopBar &&
-                Topbar.panelBox.visible
-            ) {
-                Topbar.panelBox.hide();
-                return true;
-            }
-
-            topbarCheckTimeout = null;
-            return false;
-        });
     });
     signals.connect(metaWindow, 'notify::minimized', metaWindow => {
         minimizeHandler(metaWindow);
@@ -3413,22 +3394,43 @@ export function registerWindow(metaWindow) {
     });
 
     /**
-     * Ensures when moving window that it's targetHeight is met.
+     * Check when moving window that it's targetHeight is correct.
      */
     signals.connect(actor, 'stage-views-changed', _actor => {
         const f = metaWindow.get_frame_rect();
         if (metaWindow._targetHeight !== f.height) {
             resizeHandler(metaWindow);
         }
+    });
 
-        // const panelSpace = Topbar.panelSpace();
-        // if (
-        //     panelSpace &&
-        //     !panelSpace.showTopBar &&
-        //     Topbar.panelBox.visible
-        // ) {
-        //     Topbar.panelBox.hide();
-        // }
+    /**
+     * Not all applications (and application states) work well with `stage-views-change`
+     * actor signal (and the resizeHandler).  For example, some apps if too wide
+     * (e.g. full width of tiling window) won't get detected with `stage-views-changed`
+     * signal when it's workspace has changed (e.g. keybind to move to another monitor).
+     * The below works around this issue by continually (up to a number of tries)
+     * checking the height and resizing.
+     */
+    signals.connect(metaWindow, 'workspace-changed', _mw => {
+        let tries = 0;
+        workspaceChangeTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+            if (tries >= 10) {
+                workspaceChangeTimeout = null;
+                return false;
+            }
+
+            tries++;
+            const f = metaWindow.get_frame_rect();
+            if (metaWindow._targetHeight !== f.height) {
+                if (!isNaN(metaWindow._targetHeight)) {
+                    metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
+                }
+                return true;
+            }
+
+            workspaceChangeTimeout = null;
+            return false;
+        });
     });
 
     signals.connect(actor, 'destroy', destroyHandler);

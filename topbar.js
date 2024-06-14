@@ -121,9 +121,9 @@ export function enable (extension) {
     signals.connect(panelBox, 'show', () => {
         fixTopBar();
     });
-    signals.connect(panelBox, 'hide', () => {
-        fixTopBar();
-    });
+    // signals.connect(panelBox, 'hide', () => {
+    //     fixTopBar();
+    // });
 
     /**
      * Set clear-style when hiding overview.
