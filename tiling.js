@@ -91,7 +91,7 @@ let signals, backgroundGroup, grabSignals;
 let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
-let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeout;
+let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -110,6 +110,8 @@ export function enable(extension) {
 
     signals = new Utils.Signals();
     grabSignals = new Utils.Signals();
+
+    workspaceChangeTimeouts = []; // init array to hold timeouts
 
     // setup actions on gap changes
     let marginsGapChanged = () => {
@@ -210,9 +212,8 @@ export function disable () {
     fullscreenStartTimeout = null;
     Utils.timeout_remove(stackSlurpTimeout);
     stackSlurpTimeout = null;
-    Utils.timeout_remove(workspaceChangeTimeout);
-    workspaceChangeTimeout = null;
-
+    workspaceChangeTimeouts?.forEach(t => Utils.timeout_remove(t));
+    workspaceChangeTimeouts = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -3411,15 +3412,20 @@ export function registerWindow(metaWindow) {
      * The below works around this issue by continually (up to a number of tries)
      * checking the height and resizing.
      */
+    const done = t => {
+        const index = workspaceChangeTimeouts.indexOf(t);
+        workspaceChangeTimeouts.splice(index, 1);
+        // console.log(`num workspaceChangeTimeouts ${workspaceChangeTimeouts.length}`);
+    };
     signals.connect(metaWindow, 'workspace-changed', _mw => {
         let tries = 0;
-        workspaceChangeTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
+        const timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             if (tries >= 10) {
-                workspaceChangeTimeout = null;
+                done(timeout);
                 return false;
             }
-
             tries++;
+            // console.log(`try ${tries} height check on ${metaWindow.title}`);
             const f = metaWindow.get_frame_rect();
             if (metaWindow._targetHeight !== f.height) {
                 if (!isNaN(metaWindow._targetHeight)) {
@@ -3428,13 +3434,13 @@ export function registerWindow(metaWindow) {
                 return true;
             }
 
-            workspaceChangeTimeout = null;
+            done(timeout);
             return false;
         });
+        workspaceChangeTimeouts.push(timeout);
     });
 
     signals.connect(actor, 'destroy', destroyHandler);
-
     return true;
 }
 
