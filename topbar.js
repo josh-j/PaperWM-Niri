@@ -87,9 +87,6 @@ export function enable (extension) {
 
     signals.connect(Main.overview, 'showing', fixTopBar);
     signals.connect(Main.overview, 'hidden', () => {
-        // if (Tiling.spaces.selectedSpace.showTopBar) {
-        //     return;
-        // }
         fixTopBar();
     });
 
