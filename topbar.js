@@ -127,6 +127,7 @@ export function enable (extension) {
     // signals.connect(panelBox, 'hide', () => {
     //     fixTopBar();
     // });
+
     /**
      * Set clear-style when hiding overview.
      */
@@ -847,7 +848,7 @@ export function fixStyle() {
 }
 
 export function fixTopBar() {
-    const space = Tiling?.spaces?.selectedSpace;
+    let space = Tiling?.spaces?.monitors?.get(panelMonitor());
     if (!space)
         return;
 
