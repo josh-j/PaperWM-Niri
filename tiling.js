@@ -1555,14 +1555,12 @@ export class Space extends Array {
     /**
      * Removes the window position bar actor, and re-adds if needed.
      */
-    _removeAddPositionBar(add) {
-        add = add ?? this._getShowPositionBar();
-
+    _removeAddPositionBar() {
         // remove window position bar actors
         this.actor.remove_child(this.windowPositionBarBackdrop);
         this.actor.remove_child(this.windowPositionBar);
 
-        if (add) {
+        if (this._getShowPositionBar()) {
             this.actor.add_child(this.windowPositionBarBackdrop);
             this.actor.add_child(this.windowPositionBar);
         }
@@ -1573,7 +1571,7 @@ export class Space extends Array {
      * @returns Boolean
      */
     _getShowPositionBar() {
-        const value = Settings.prefs.default_show_top_bar;
+        const value = Settings.prefs.show_window_position_bar;
         let userValue = true;
         try {
             userValue = this.settings.get_user_value('show-position-bar').unpack();
@@ -1585,11 +1583,11 @@ export class Space extends Array {
 
     updateShowPositionBar() {
         this.showPositionBar = this._getShowPositionBar();
+        Topbar.fixStyle();
         this.layout();
     }
 
     showPositionBarChanged() {
-        console.log(`position bar changed`);
         this._removeAddPositionBar();
         this.updateShowPositionBar();
     }
@@ -2247,7 +2245,7 @@ export const Spaces = class Spaces extends Map {
 
             this.spaceContainer.show();
             Topbar.refreshWorkspaceIndicator();
-            this.setSpaceTopbarElementsVisible();
+            this.forEach(s => s.setSpaceTopbarElementsVisible());
             Stackoverlay.multimonitorSupport();
         };
 
@@ -2533,7 +2531,7 @@ export const Spaces = class Spaces extends Map {
         // });
 
         // ensure after swapping that the space elements are shown correctly
-        this.setSpaceTopbarElementsVisible(true, { force: true });
+        this.forEach(s => s.setSpaceTopbarElementsVisible(true, { force: true }));
     }
 
     swapMonitor(direction, backDirection, options = {}) {
@@ -2601,7 +2599,7 @@ export const Spaces = class Spaces extends Map {
         // });
 
         // ensure after swapping that the space elements are shown correctly
-        this.setSpaceTopbarElementsVisible(true, { force: true });
+        this.forEach(s => s.setSpaceTopbarElementsVisible(true, { force: true }));
     }
 
     switchWorkspace(wm, fromIndex, toIndex, animate = false) {
@@ -2649,7 +2647,7 @@ export const Spaces = class Spaces extends Map {
         let monitor = toSpace.monitor;
         this.setMonitors(monitor, toSpace, true);
 
-        this.setSpaceTopbarElementsVisible();
+        this.forEach(s => s.setSpaceTopbarElementsVisible());
         let doAnimate = animate || this.space_paperwmAnimation;
         this.animateToSpace(
             toSpace,
@@ -2661,16 +2659,6 @@ export const Spaces = class Spaces extends Map {
         this.touchSignal = signals.connect(Main.panel, "captured-event", Gestures.horizontalTouchScroll.bind(toSpace));
 
         inPreview = PreviewMode.NONE;
-    }
-
-    /**
-     * See Space.setSpaceTopbarElementsVisible function for what this does.
-     * @param {boolean} visible
-     */
-    setSpaceTopbarElementsVisible(visible = false, options = {}) {
-        this.forEach(s => {
-            s.setSpaceTopbarElementsVisible(visible, options);
-        });
     }
 
     _getOrderedSpaces(monitor) {
@@ -2765,7 +2753,7 @@ export const Spaces = class Spaces extends Map {
             Main.panel.statusArea.appMenu.container.hide();
         }
 
-        this.setSpaceTopbarElementsVisible(true);
+        this.forEach(s => s.setSpaceTopbarElementsVisible(true));
         this._animateToSpaceOrdered(this.selectedSpace, false);
 
         let selected = this.selectedSpace.selectedWindow;
@@ -2881,7 +2869,7 @@ export const Spaces = class Spaces extends Map {
         let monitor = space.monitor;
         this.selectedSpace = space;
 
-        this.setSpaceTopbarElementsVisible(true);
+        this.forEach(s => s.setSpaceTopbarElementsVisible(true));
         let cloneParent = space.clip.get_parent();
         mru.forEach((space, i) => {
             space.startAnimate();
@@ -3035,7 +3023,7 @@ export const Spaces = class Spaces extends Map {
 
         Topbar.updateWorkspaceIndicator(to.index);
         if (to.hasTopBar) {
-            if (this.showPositionBar) {
+            if (to.showPositionBar) {
                 Topbar.setNoBackgroundStyle();
             } else {
                 Topbar.setTransparentStyle();
@@ -3250,26 +3238,6 @@ export const Spaces = class Spaces extends Map {
             allocateClone(metaWindow);
             insertWindow(metaWindow, { existing: false });
         });
-    }
-
-    /**
-     * Checks whether the window position bar should be enabled.
-     */
-    showWindowPositionBarChanged() {
-        if (Settings.prefs.show_window_position_bar) {
-            this.forEach(s => {
-                s.enableWindowPositionBar();
-            });
-        }
-
-        if (!Settings.prefs.show_window_position_bar) {
-            // should be in normal topbar mode
-            this.forEach(s => {
-                s.enableWindowPositionBar(false);
-            });
-        }
-
-        Topbar.fixStyle();
     }
 };
 Signals.addSignalMethods(Spaces.prototype);

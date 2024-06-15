@@ -101,9 +101,49 @@ export function enable (extension) {
 
     signals.connect(gsettings, 'changed::show-window-position-bar', (_settings, _key) => {
         const spaces = Tiling.spaces;
-        spaces.setSpaceTopbarElementsVisible();
-        spaces.forEach(s => s.layout(false));
-        spaces.showWindowPositionBarChanged();
+
+        // // /**
+        // //  * See Space.setSpaceTopbarElementsVisible function for what this does.
+        // //  * @param {boolean} visible
+        // //  */
+        // // setSpaceTopbarElementsVisible(visible = false, options = {}) {
+        // //     this.forEach(s => {
+        // //         s.setSpaceTopbarElementsVisible(visible, options);
+        // //     });
+        // // }
+        // // spaces.setSpaceTopbarElementsVisible();
+
+        // spaces.forEach(s => s.setSpaceTopbarElementsVisible());
+
+
+        // // /**
+        // //  * Checks whether the window position bar should be enabled.
+        // //  */
+        // // showWindowPositionBarChanged() {
+        // //     if (Settings.prefs.show_window_position_bar) {
+        // //         this.forEach(s => {
+        // //             s.enableWindowPositionBar();
+        // //         });
+        // //     }
+
+        // //     if (!Settings.prefs.show_window_position_bar) {
+        // //         // should be in normal topbar mode
+        // //         this.forEach(s => {
+        // //             s.enableWindowPositionBar(false);
+        // //         });
+        // //     }
+
+        // //     Topbar.fixStyle();
+        // // }
+        // // spaces.showWindowPositionBarChanged();
+
+        // spaces.forEach(s => s.enableWindowPositionBar(Settings.prefs.show_window_position_bar));
+        // spaces.forEach(s => s.layout());
+
+
+
+        spaces.forEach(s => s.showPositionBarChanged());
+        fixStyle();
     });
 
     signals.connect(gsettings, 'changed::show-workspace-indicator', (_settings, _key) => {
@@ -599,7 +639,6 @@ export function switchToNextOpenPositionMode() {
     // if current mode is -1, then set the mode to the first option
     let nextMode;
     if (currIndex < 0) {
-        console.log(`couldn't find`);
         nextMode = activeModes[0];
     }
     else {
@@ -831,6 +870,7 @@ export function setNoBackgroundStyle() {
     if (Settings.prefs.disable_topbar_styling) {
         return;
     }
+
     removeStyles();
     Main.panel.add_style_class_name('background-clear');
 }
@@ -839,6 +879,7 @@ export function setTransparentStyle() {
     if (Settings.prefs.disable_topbar_styling) {
         return;
     }
+
     removeStyles();
     Main.panel.add_style_class_name('topbar-transparent-background');
 }
@@ -853,11 +894,20 @@ export function removeStyles() {
  * Applies correct style based on whether we use the windowPositionBar or not.
  */
 export function fixStyle() {
-    Settings.prefs.show_window_position_bar ? setNoBackgroundStyle() : setTransparentStyle();
+    const space = panelSpace();
+    if (
+        Settings.prefs.show_window_position_bar &&
+        (space?.showPositionBar ?? true)
+    ) {
+        setNoBackgroundStyle();
+    }
+    else {
+        setTransparentStyle();
+    }
 }
 
 export function fixTopBar() {
-    let space = panelSpace();
+    const space = panelSpace();
     if (!space)
         return;
 
