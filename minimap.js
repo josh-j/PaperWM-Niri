@@ -103,7 +103,8 @@ export class Minimap extends Array {
         column.splice(row, 1);
         if (column.length === 0)
             this.splice(index, 1);
-        this.container.remove_child(clone);
+        // this.container.remove_child(clone);
+        Utils.actor_remove_child(this.container, clone);
         this.layout();
     }
 

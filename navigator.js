@@ -357,7 +357,8 @@ class NavigatorClass {
                 time: Settings.prefs.animation_time,
                 opacity: 0,
                 onComplete: () => {
-                    global.stage.remove_child(this.takeHint);
+                    // global.stage.remove_child(this.takeHint);
+                    Utils.actor_remove_child(global.stage, this.takeHint);
                 },
             });
         }

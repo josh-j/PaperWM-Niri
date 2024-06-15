@@ -972,7 +972,7 @@ export class Space extends Array {
     }
 
     removeWindow(metaWindow) {
-        let index = this.indexOf(metaWindow);
+        const index = this.indexOf(metaWindow);
         if (index === -1)
             return this.removeFloating(metaWindow);
 
@@ -987,20 +987,26 @@ export class Space extends Array {
             this.selectedWindow = stack[stack.length - 1];
         }
 
-        let column = this[index];
-        let row = column.indexOf(metaWindow);
+        const column = this[index];
+        const row = column.indexOf(metaWindow);
         column.splice(row, 1);
-        if (column.length === 0)
+        if (column.length === 0) {
             this.splice(index, 1);
+        }
 
         this.visible.splice(this.visible.indexOf(metaWindow), 1);
 
-        let clone = metaWindow.clone;
-        this.cloneContainer.remove_child(clone);
+        const clone = metaWindow.clone;
+        // this.cloneContainer.remove_child(clone);
+        Utils.actor_remove_child(this.cloneContainer, clone);
+
         // Don't destroy the selection highlight widget
-        if (clone.first_child.name === 'selection')
-            clone.remove_child(clone.first_child);
-        let actor = metaWindow.get_compositor_private();
+        if (clone.first_child.name === 'selection') {
+            // clone.remove_child(clone.first_child);
+            Utils.actor_remove_child(clone, clone.first_child);
+        }
+
+        const actor = metaWindow.get_compositor_private();
         if (actor)
             actor.remove_clip();
 
@@ -1035,7 +1041,8 @@ export class Space extends Array {
         if (i === -1)
             return false;
         this._floating.splice(i, 1);
-        this.actor.remove_child(metaWindow.clone);
+        // this.actor.remove_child(metaWindow.clone);
+        Utils.actor_remove_child(this.actor, metaWindow.clone);
         return true;
     }
 
@@ -1660,21 +1667,25 @@ border-radius: ${borderWidth}px;
     enableWindowPositionBar(enable = true) {
         const add = enable && this.showPositionBar;
         if (add) {
-            [this.windowPositionBarBackdrop, this.windowPositionBar]
-                .forEach(i => {
-                    if (!i.get_parent()) {
-                        this.actor.add_child(i);
-                    }
-                });
+            // [this.windowPositionBarBackdrop, this.windowPositionBar]
+            //     .forEach(i => {
+            //         if (!i.get_parent()) {
+            //             this.actor.add_child(i);
+            //         }
+            //     });
+            Utils.actor_add_child(this.actor, this.windowPositionBarBackdrop);
+            Utils.actor_add_child(this.actor, this.windowPositionBar);
             this.updateWindowPositionBar();
         }
         else {
-            [this.windowPositionBarBackdrop, this.windowPositionBar]
-                .forEach(i => {
-                    if (i.get_parent()) {
-                        this.actor.remove_child(i);
-                    }
-                });
+            // [this.windowPositionBarBackdrop, this.windowPositionBar]
+            //     .forEach(i => {
+            //         if (i.get_parent()) {
+            //             this.actor.remove_child(i);
+            //         }
+            //     });
+            Utils.actor_remove_child(this.actor, this.windowPositionBarBackdrop);
+            Utils.actor_remove_child(this.actor, this.windowPositionBar);
         }
     }
 
