@@ -375,23 +375,47 @@ export function actor_raise(actor, above) {
 }
 
 export function actor_reparent(actor, newParent) {
-    const parent = actor.get_parent();
-    if (parent) {
-        parent.remove_child(actor);
-    }
+    actor_remove_parent(actor);
     newParent.add_child(actor);
 }
 
 /**
  * Removes a child from a parent actor.  Checks child
  * exists in parent first.
- * @param {Clutter.Actortor} parent
+ * @param {Clutter.Actor} parent
  * @param {Clutter.Actor} child
  */
 export function actor_remove_child(parent, child) {
     if (parent.get_children().includes(child)) {
         parent.remove_child(child);
     }
+}
+
+/**
+ * Removes the parent from this actor (if it has one).
+ * @param {Clutter.Actor} actor
+ */
+export function actor_remove_parent(actor) {
+    const parent = actor.get_parent();
+    if (parent) {
+        parent.remove_child(actor);
+    }
+}
+
+/**
+ * Adds a child from a parent actor.  Checks child if is already
+ * attached.
+ * @param {Clutter.Actor} parent
+ * @param {Clutter.Actor} child
+ */
+export function actor_add_child(parent, child) {
+    // check if already a child of this parent
+    if (parent.get_children().includes(child)) {
+        return;
+    }
+
+    actor_remove_parent(child);
+    parent.add_child(child);
 }
 
 /**
