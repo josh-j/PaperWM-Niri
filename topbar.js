@@ -101,48 +101,7 @@ export function enable (extension) {
 
     signals.connect(gsettings, 'changed::show-window-position-bar', (_settings, _key) => {
         const spaces = Tiling.spaces;
-
-        // // /**
-        // //  * See Space.setSpaceTopbarElementsVisible function for what this does.
-        // //  * @param {boolean} visible
-        // //  */
-        // // setSpaceTopbarElementsVisible(visible = false, options = {}) {
-        // //     this.forEach(s => {
-        // //         s.setSpaceTopbarElementsVisible(visible, options);
-        // //     });
-        // // }
-        // // spaces.setSpaceTopbarElementsVisible();
-
-        // spaces.forEach(s => s.setSpaceTopbarElementsVisible());
-
-
-        // // /**
-        // //  * Checks whether the window position bar should be enabled.
-        // //  */
-        // // showWindowPositionBarChanged() {
-        // //     if (Settings.prefs.show_window_position_bar) {
-        // //         this.forEach(s => {
-        // //             s.enableWindowPositionBar();
-        // //         });
-        // //     }
-
-        // //     if (!Settings.prefs.show_window_position_bar) {
-        // //         // should be in normal topbar mode
-        // //         this.forEach(s => {
-        // //             s.enableWindowPositionBar(false);
-        // //         });
-        // //     }
-
-        // //     Topbar.fixStyle();
-        // // }
-        // // spaces.showWindowPositionBarChanged();
-
-        // spaces.forEach(s => s.enableWindowPositionBar(Settings.prefs.show_window_position_bar));
-        // spaces.forEach(s => s.layout());
-
-
-
-        spaces.forEach(s => s.showPositionBarChanged());
+        spaces.forEach(s => s.showPositionBarChanged(false));
         fixStyle();
     });
 

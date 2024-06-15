@@ -1517,12 +1517,16 @@ export class Space extends Array {
         this.updateShowTopBar();
         this.signals.connect(gsettings, 'changed::default-show-top-bar',
             this.showTopBarChanged.bind(this));
-        this.signals.connect(this.settings, 'changed::show-top-bar',
-            this.showTopBarChanged.bind(this));
+        this.signals.connect(this.settings, 'changed::show-top-bar', () => {
+            this.showTopBarChanged();
+            this.layout(false);
+        });
 
         this.updateShowPositionBar();
-        this.signals.connect(this.settings, 'changed::show-position-bar',
-            this.showPositionBarChanged.bind(this));
+        this.signals.connect(this.settings, 'changed::show-position-bar', () => {
+            this.showPositionBarChanged();
+            this.layout(false);
+        });
     }
 
     /**
@@ -1544,7 +1548,6 @@ export class Space extends Array {
     updateShowTopBar() {
         this.showTopBar = this._getShowTopBarSetting();
         this._populated && Topbar.fixTopBar();
-        this.layout();
     }
 
     showTopBarChanged() {
@@ -1557,9 +1560,10 @@ export class Space extends Array {
      */
     _removeAddPositionBar() {
         // remove window position bar actors
-        this.actor.remove_child(this.windowPositionBarBackdrop);
-        this.actor.remove_child(this.windowPositionBar);
+        Utils.actor_remove_child(this.actor, this.windowPositionBarBackdrop);
+        Utils.actor_remove_child(this.actor, this.windowPositionBar);
 
+        // adds them is should show for this space
         if (this._getShowPositionBar()) {
             this.actor.add_child(this.windowPositionBarBackdrop);
             this.actor.add_child(this.windowPositionBar);
@@ -1584,19 +1588,11 @@ export class Space extends Array {
     updateShowPositionBar() {
         this.showPositionBar = this._getShowPositionBar();
         Topbar.fixStyle();
-        this.layout();
     }
 
     showPositionBarChanged() {
         this._removeAddPositionBar();
         this.updateShowPositionBar();
-    }
-
-    /**
-     * Returns true if this space has the topbar.
-     */
-    get hasTopBar() {
-        return this.monitor && this.monitor === Topbar.panelMonitor();
     }
 
     updateColor() {
@@ -1689,7 +1685,7 @@ border-radius: ${borderWidth}px;
         }
 
         // show space duplicate elements if not primary monitor
-        if (!this.hasTopBar) {
+        if (this !== Topbar.panelSpace()) {
             Utils.actor_raise(this.workspaceIndicator);
             this.workspaceLabel.show();
         }
@@ -1747,17 +1743,18 @@ border-radius: ${borderWidth}px;
             return;
         }
 
-        if (this.hasTopBar && inPreview) {
+        const hasTopBar = this === Topbar.panelSpace();
+        if (hasTopBar && inPreview) {
             Topbar.setTransparentStyle();
         }
 
         // if on different monitor then override to show elements
-        if (!this.hasTopBar) {
+        if (!hasTopBar) {
             visible = true;
         }
 
         // don't show elements on spaces with actual TopBar (unless inPreview)
-        if (this.hasTopBar && !inPreview) {
+        if (hasTopBar && !inPreview) {
             visible = false;
         }
 
@@ -3022,7 +3019,7 @@ export const Spaces = class Spaces extends Map {
         inPreview = PreviewMode.NONE;
 
         Topbar.updateWorkspaceIndicator(to.index);
-        if (to.hasTopBar) {
+        if (to === Topbar.panelSpace()) {
             if (to.showPositionBar) {
                 Topbar.setNoBackgroundStyle();
             } else {
@@ -4860,7 +4857,7 @@ export function setFocusMode(mode, space) {
     space = space ?? spaces.activeSpace;
     space.focusMode = mode;
     space.focusModeIcon.setMode(mode);
-    if (space.hasTopBar) {
+    if (space === Topbar.panelSpace()) {
         Topbar.focusButton.setFocusMode(mode);
     }
 

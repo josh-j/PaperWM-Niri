@@ -383,6 +383,18 @@ export function actor_reparent(actor, newParent) {
 }
 
 /**
+ * Removes a child from a parent actor.  Checks child
+ * exists in parent first.
+ * @param {Clutter.Actortor} parent
+ * @param {Clutter.Actor} child
+ */
+export function actor_remove_child(parent, child) {
+    if (parent.get_children().includes(child)) {
+        parent.remove_child(child);
+    }
+}
+
+/**
  * Backwards compatible later_add function.
  */
 export function later_add(...args) {
