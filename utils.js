@@ -134,8 +134,7 @@ export function toggleWindowBoxes(metaWindow) {
         return frameBox;
     };
 
-    let boxes = [];
-
+    const boxes = [];
     boxes.push(makeFrameBox(frame, "red"));
     boxes.push(makeFrameBox(inputFrame, "blue"));
 
@@ -145,7 +144,6 @@ export function toggleWindowBoxes(metaWindow) {
     }
 
     boxes.forEach(box => global.stage.add_child(box));
-
     metaWindow._paperDebugBoxes = boxes;
     return boxes;
 }

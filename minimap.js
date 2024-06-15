@@ -149,9 +149,9 @@ export class Minimap extends Array {
     }
 
     createClone(mw) {
-        let windowActor = mw.get_compositor_private();
-        let clone = new Clutter.Clone({ source: windowActor });
-        let container = new Clutter.Actor({
+        const windowActor = mw.get_compositor_private();
+        const clone = new Clutter.Clone({ source: windowActor });
+        const container = new Clutter.Actor({
             // layout_manager: new WindowCloneLayout(this),
             name: "window-clone-container",
         });

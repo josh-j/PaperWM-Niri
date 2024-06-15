@@ -343,7 +343,8 @@ class NavigatorClass {
             const y = monitor.height - 100;
 
             this.takeHint.opacity = 0;
-            global.stage.add_child(this.takeHint);
+            // global.stage.add_child(this.takeHint);
+            Utils.actor_add_child(global.stage, this.takeHint);
             this.takeHint.set_position(x, y);
 
             Utils.Easer.addEase(this.takeHint, {
@@ -352,7 +353,8 @@ class NavigatorClass {
             });
         } else {
             this.takeHint.opacity = 255;
-            global.stage.add_child(this.takeHint);
+            // global.stage.add_child(this.takeHint);
+            Utils.actor_add_child(global.stage, this.takeHint);
             Utils.Easer.addEase(this.takeHint, {
                 time: Settings.prefs.animation_time,
                 opacity: 0,

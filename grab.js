@@ -554,7 +554,8 @@ export class MoveGrab {
             zone.actor[zone.originProp] = zone.center;
         }
 
-        zone.space.cloneContainer.add_child(zone.actor);
+        // zone.space.cloneContainer.add_child(zone.actor);
+        Utils.actor_add_child(zone.space.cloneContainer, zone.actor);
         zone.space.hideSelection();
         zone.actor.show();
         raise();

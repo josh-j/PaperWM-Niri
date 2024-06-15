@@ -304,12 +304,12 @@ export class Space extends Array {
             }
         });
         this.workspaceIndicator = workspaceIndicator;
-        let workspaceLabel = new St.Label();
+        const workspaceLabel = new St.Label();
         workspaceIndicator.add_child(workspaceLabel);
         this.workspaceLabel = workspaceLabel;
         workspaceLabel.hide();
 
-        let selection = new St.Widget({
+        const selection = new St.Widget({
             name: 'selection',
             style_class: 'paperwm-selection tile-preview',
         });
@@ -334,7 +334,7 @@ export class Space extends Array {
         this.border.hide();
 
         let monitor = Main.layoutManager.primaryMonitor;
-        let prevSpace = saveState.prevSpaces.get(workspace);
+        const prevSpace = saveState.prevSpaces.get(workspace);
         this.targetX = 0;
         if (prevSpace && prevSpace.monitor) {
             let prevMonitor = Main.layoutManager.monitors[prevSpace.monitor.index];
@@ -1572,8 +1572,10 @@ export class Space extends Array {
 
         // adds them is should show for this space
         if (this._getShowPositionBar()) {
-            this.actor.add_child(this.windowPositionBarBackdrop);
-            this.actor.add_child(this.windowPositionBar);
+            // this.actor.add_child(this.windowPositionBarBackdrop);
+            // this.actor.add_child(this.windowPositionBar);
+            Utils.actor_add_child(this.actor, this.windowPositionBarBackdrop);
+            Utils.actor_add_child(this.actor, this.windowPositionBar);
         }
     }
 
@@ -5190,7 +5192,8 @@ export function takeWindow(metaWindow, space, params) {
     const animateTake = (window, existing) => {
         navigator._moving.push(window);
         if (!existing) {
-            backgroundGroup.add_child(metaWindow.clone);
+            // backgroundGroup.add_child(metaWindow.clone);
+            Utils.actor_add_child(backgroundGroup, metaWindow.clone);
         }
 
         const lowest = navigator._moving[navigator._moving.length - 2];

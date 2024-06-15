@@ -320,8 +320,8 @@ const BaseIcon = GObject.registerClass(
         initToolTip() {
             const tt = new St.Label({ style_class: 'focus-button-tooltip' });
             tt.hide();
-            // eslint-disable-next-line no-undef
-            global.stage.add_child(tt);
+            // global.stage.add_child(tt);
+            Utils.actor_add_child(global.stage, tt);
             this.tooltip_parent.connect('enter-event', _icon => {
                 this._updateTooltipPosition(this.tooltip_x_point);
                 this.updateTooltipText();
