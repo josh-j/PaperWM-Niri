@@ -101,7 +101,7 @@ export function enable (extension) {
 
     signals.connect(gsettings, 'changed::show-window-position-bar', (_settings, _key) => {
         const spaces = Tiling.spaces;
-        spaces.forEach(s => s.showPositionBarChanged(false));
+        spaces.forEach(s => s.showPositionBarChanged());
         fixStyle();
     });
 

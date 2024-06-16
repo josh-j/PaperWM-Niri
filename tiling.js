@@ -1602,6 +1602,7 @@ export class Space extends Array {
     showPositionBarChanged() {
         this._removeAddPositionBar();
         this.updateShowPositionBar();
+        this.setSpaceTopbarElementsVisible(true);
     }
 
     /**
@@ -5299,7 +5300,6 @@ export function takeWindow(metaWindow, space, params) {
                     return false;
                 }
             });
-
 
         signals.connectOneShot(navigator, 'destroy', () => {
             navigator.showTakeHint(false);
