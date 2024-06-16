@@ -80,7 +80,7 @@
     </key>
     <key type="as" name="toggle-top-bar">
       <default><![CDATA[[]]]></default>
-      <summary>Toggle the GNOME Top Bar on current workspace</summary>
+      <summary>Toggle the Top Bar on current workspace</summary>
     </key>
     <key type="as" name="toggle-position-bar">
       <default><![CDATA[[]]]></default>

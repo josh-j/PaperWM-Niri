@@ -157,8 +157,8 @@ There's a single scrollable tiling per workspace. Adding another monitor simply 
 | <kbd>Super</kbd><kbd>PageDown</kbd>                                                               | Switch to workspace below |
 | <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageUp</kbd>                                                  | Move active window one workspace up |
 | <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>PageDown</kbd>                                                | Move active window one workspace down |
-| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>B</kbd>                                                       | Toggle show/hide GNOME TopBar and Window Position Bar |
-| _Not set by default (set in extension settings)_                                                  | Toggle show/hide GNOME TopBar |
+| <kbd>Ctrl</kbd><kbd>Super</kbd><kbd>B</kbd>                                                       | Toggle show/hide (GNOME) TopBar and Window Position Bar |
+| _Not set by default (set in extension settings)_                                                  | Toggle show/hide (GNOME) TopBar |
 | _Not set by default (set in extension settings)_                                                  | Toggle show/hide Window Position Bar |
 
 
