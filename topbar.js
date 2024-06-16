@@ -11,7 +11,7 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as panelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as popupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-import { Settings, Utils, Tiling, Navigator, Scratch, Topbar } from './imports.js';
+import { Settings, Utils, Tiling, Navigator, Scratch } from './imports.js';
 
 // eslint-disable-next-line no-undef
 const workspaceManager = global.workspace_manager;
@@ -937,9 +937,9 @@ export function updateWorkspaceIndicator(index) {
  * Refreshes topbar workspace indicator.
  */
 export function refreshWorkspaceIndicator() {
-    const panelSpace = Topbar.panelSpace();
-    if (panelSpace) {
-        updateWorkspaceIndicator(panelSpace.index);
+    const space = panelSpace();
+    if (space) {
+        updateWorkspaceIndicator(space.index);
     }
 }
 
