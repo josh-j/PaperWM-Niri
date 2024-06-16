@@ -1604,6 +1604,13 @@ export class Space extends Array {
         this.updateShowPositionBar();
     }
 
+    /**
+     * Returns true if this space has the topbar.
+     */
+    get hasTopBar() {
+        return this.monitor && this.monitor === Topbar.panelMonitor();
+    }
+
     updateColor() {
         let color = this.settings.get_string('color');
         if (color === '') {
@@ -1698,7 +1705,7 @@ border-radius: ${borderWidth}px;
         }
 
         // show space duplicate elements if not primary monitor
-        if (this !== Topbar.panelSpace()) {
+        if (!this.hasTopBar) {
             Utils.actor_raise(this.workspaceIndicator);
             this.workspaceLabel.show();
         }
@@ -1756,18 +1763,17 @@ border-radius: ${borderWidth}px;
             return;
         }
 
-        const hasTopBar = this === Topbar.panelSpace();
-        if (hasTopBar && inPreview) {
+        if (this.hasTopBar && inPreview) {
             Topbar.setTransparentStyle();
         }
 
         // if on different monitor then override to show elements
-        if (!hasTopBar) {
+        if (!this.hasTopBar) {
             visible = true;
         }
 
         // don't show elements on spaces with actual TopBar (unless inPreview)
-        if (hasTopBar && !inPreview) {
+        if (this.hasTopBar && !inPreview) {
             visible = false;
         }
 
@@ -3032,7 +3038,7 @@ export const Spaces = class Spaces extends Map {
         inPreview = PreviewMode.NONE;
 
         Topbar.updateWorkspaceIndicator(to.index);
-        if (to === Topbar.panelSpace()) {
+        if (to.hasTopBar) {
             if (to.showPositionBar) {
                 Topbar.setNoBackgroundStyle();
             } else {
@@ -4870,7 +4876,7 @@ export function setFocusMode(mode, space) {
     space = space ?? spaces.activeSpace;
     space.focusMode = mode;
     space.focusModeIcon.setMode(mode);
-    if (space === Topbar.panelSpace()) {
+    if (space.hasTopBar) {
         Topbar.focusButton.setFocusMode(mode);
     }
 
