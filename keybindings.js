@@ -172,6 +172,15 @@ export function setupActions(settings) {
     registerNavigatorAction('move-down-workspace', Tiling.moveDownSpace);
     registerNavigatorAction('move-up-workspace', Tiling.moveUpSpace);
 
+    registerPaperAction("toggle-show-top-bar", (_mw, space) => {
+        const value = space.settings.get_boolean('show-top-bar');
+        space.settings.set_boolean('show-top-bar', !value);
+    });
+    registerPaperAction("toggle-show-position-bar", (_mw, space) => {
+        const value = space.settings.get_boolean('show-position-bar');
+        space.settings.set_boolean('show-position-bar', !value);
+    });
+
     registerNavigatorAction('take-window', Tiling.takeWindow);
 
     registerMinimapAction("switch-next", (mw, space) => space.switchLinear(1, false));

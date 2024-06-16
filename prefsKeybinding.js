@@ -95,6 +95,8 @@ const actions = {
         'switch-down-workspace-from-all-monitors',
         'move-up-workspace',
         'move-down-workspace',
+        'toggle-show-top-bar',
+        'toggle-show-position-bar',
     ],
     monitors: [
         'switch-monitor-right',

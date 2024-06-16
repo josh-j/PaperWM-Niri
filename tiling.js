@@ -1545,7 +1545,7 @@ export class Space extends Array {
         const value = Settings.prefs.default_show_top_bar;
         let userValue = true;
         try {
-            userValue = this.settings.get_user_value('show-top-bar').unpack();
+            userValue = this.settings.get_boolean('show-top-bar');
         } catch (error) {
 
         }
@@ -1587,7 +1587,7 @@ export class Space extends Array {
         const value = Settings.prefs.show_window_position_bar;
         let userValue = true;
         try {
-            userValue = this.settings.get_user_value('show-position-bar').unpack();
+            userValue = this.settings.get_boolean('show-position-bar');
         } catch (error) {
 
         }

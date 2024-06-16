@@ -74,6 +74,15 @@
       <summary>Move window one workspace up</summary>
     </key>
 
+    <key type="as" name="toggle-show-top-bar">
+      <default><![CDATA[['<Super><Ctrl>b']]]></default>
+      <summary>Toggle show/hide the GNOME Top Bar on current workspace</summary>
+    </key>
+    <key type="as" name="toggle-show-position-bar">
+      <default><![CDATA[['<Super><Ctrl>n']]]></default>
+      <summary>Toggle show/hide the Window Position Bar on current workspace</summary>
+    </key>
+
     <key type="as" name="move-monitor-right">
         <default><![CDATA[['<Super><Shift><Ctrl>Right']]]></default>
         <summary>Move the active window to the right monitor</summary>
