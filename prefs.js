@@ -124,24 +124,24 @@ class SettingsWidget {
             });
         };
 
-        const gestureFingersChanged = key => {
-            const builder = this.builder.get_object(key);
-            const setting = this._settings.get_int(key);
-            const valueToFingers = {
-                0: 'fingers-disabled',
-                3: 'three-fingers',
-                4: 'four-fingers',
-            };
-            const fingersToValue = Object.fromEntries(
-                Object.entries(valueToFingers).map(a => a.reverse())
-            );
+        // const gestureFingersChanged = key => {
+        //     const builder = this.builder.get_object(key);
+        //     const setting = this._settings.get_int(key);
+        //     const valueToFingers = {
+        //         0: 'fingers-disabled',
+        //         3: 'three-fingers',
+        //         4: 'four-fingers',
+        //     };
+        //     const fingersToValue = Object.fromEntries(
+        //         Object.entries(valueToFingers).map(a => a.reverse())
+        //     );
 
-            builder.set_active_id(valueToFingers[setting] ?? 'fingers-disable');
-            builder.connect('changed', obj => {
-                const value = fingersToValue[obj.get_active_id()] ?? 0;
-                this._settings.set_int(key, value);
-            });
-        };
+        //     builder.set_active_id(valueToFingers[setting] ?? 'fingers-disable');
+        //     builder.connect('changed', obj => {
+        //         const value = fingersToValue[obj.get_active_id()] ?? 0;
+        //         this._settings.set_int(key, value);
+        //     });
+        // };
 
         // General
         intValueChanged('selection_size_spin', 'selection-border-size');
@@ -701,22 +701,30 @@ class SettingsWidget {
         });
 
         settings.connect('changed::background', () => {
+            // eslint-disable-next-line eqeqeq
             clearBackground.sensitive = settings.get_string('background') != '';
         });
 
         hideTopBarSwitch.connect('state-set', (_switch, state) => {
             settings.set_boolean('show-top-bar', !state);
         });
+        settings.connect('changed::show-top-bar', () => {
+            hideTopBarSwitch.set_active(!settings.get_boolean('show-top-bar'));
+        });
 
         hidePositionBarSwitch.connect('state-set', (_switch, state) => {
             settings.set_boolean('show-position-bar', !state);
         });
+        settings.connect('changed::show-position-bar', () => {
+            hidePositionBarSwitch.set_active(!settings.get_boolean('show-position-bar'));
+        });
+
 
         clearDirectory.connect('clicked', () => {
             settings.reset('directory');
         });
-
         settings.connect('changed::directory', () => {
+            // eslint-disable-next-line eqeqeq
             clearDirectory.sensitive = settings.get_string('directory') != '';
         });
 
