@@ -5304,7 +5304,7 @@ export function takeWindow(metaWindow, space, params) {
         signals.connectOneShot(navigator, 'destroy', () => {
             navigator.showTakeHint(false);
             let selectedSpace = spaces.selectedSpace;
-            navigator._moving.reverse().forEach(w => {
+            navigator._moving.forEach(w => {
                 changeSpace(w);
                 insertWindow(w, { existing: true });
 
