@@ -124,6 +124,28 @@ export function enable (extension) {
     //     fixTopBar();
     // });
 
+    panelBox.reactive = true;
+    signals.connect(panelBox, 'scroll-event', (_actor, event) => {
+        // if workspace indicator has cursor, exit
+        const indicator = Tiling.spaces?.activeSpace?.workspaceIndicator;
+        if (indicator) {
+            const [gx, gy] = Utils.getPointerCoords();
+            if (Utils.isInRect(gx, gy, indicator)) {
+                return;
+            }
+        }
+
+        let direction = event.get_scroll_direction();
+        switch (direction) {
+        case Clutter.ScrollDirection.DOWN:
+            Tiling.spaces?.activeSpace.switchRight(false);
+            break;
+        case Clutter.ScrollDirection.UP:
+            Tiling.spaces?.activeSpace.switchLeft(false);
+            break;
+        }
+    });
+
     /**
      * Set clear-style when hiding overview.
      */

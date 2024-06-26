@@ -213,7 +213,7 @@ export function monitorAtPoint(gx, gy) {
  * Returns the monitor current pointer coordinates.
  */
 export function monitorAtCurrentPoint() {
-    let [gx, gy] = getPointerCoords();
+    const [gx, gy] = getPointerCoords();
     return monitorAtPoint(gx, gy);
 }
 
