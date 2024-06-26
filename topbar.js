@@ -126,24 +126,7 @@ export function enable (extension) {
 
     panelBox.reactive = true;
     signals.connect(panelBox, 'scroll-event', (_actor, event) => {
-        // if workspace indicator has cursor, exit
-        const indicator = Tiling.spaces?.activeSpace?.workspaceIndicator;
-        if (indicator) {
-            const [gx, gy] = Utils.getPointerCoords();
-            if (Utils.isInRect(gx, gy, indicator)) {
-                return;
-            }
-        }
-
-        let direction = event.get_scroll_direction();
-        switch (direction) {
-        case Clutter.ScrollDirection.DOWN:
-            Tiling.spaces?.activeSpace.switchRight(false);
-            break;
-        case Clutter.ScrollDirection.UP:
-            Tiling.spaces?.activeSpace.switchLeft(false);
-            break;
-        }
+        topBarScrollAction(event);
     });
 
     /**
@@ -172,6 +155,42 @@ export function disable() {
     screenSignals = [];
     openPrefs = null;
     gsettings = null;
+}
+
+/**
+ * Action when mouse scrolling on topbar.
+ * @param {Clutter.event} event
+ * @returns
+ */
+export function topBarScrollAction(event) {
+    const [gx, gy] = Utils.getPointerCoords();
+    // if workspace indicator has cursor, exit
+    const indicator = Tiling.spaces?.activeSpace?.workspaceIndicator;
+    if (indicator && indicator.visible) {
+        if (Utils.isInRect(gx, gy, indicator)) {
+            return Clutter.EVENT_PROPAGATE;
+        }
+    }
+
+    // same check for gnome pill
+    const pill = Main?.panel?.statusArea?.activities;
+    console.log(`pill ${pill} vis ${pill?.visible}`);
+    if (pill && pill.visible) {
+        if (Utils.isInRect(gx, gy, pill)) {
+            return Clutter.EVENT_PROPAGATE;
+        }
+    }
+
+    let direction = event.get_scroll_direction();
+    switch (direction) {
+    case Clutter.ScrollDirection.DOWN:
+        Tiling.spaces?.activeSpace.switchRight(false);
+        break;
+    case Clutter.ScrollDirection.UP:
+        Tiling.spaces?.activeSpace.switchLeft(false);
+        break;
+    }
+    return Clutter.EVENT_STOP;
 }
 
 export function showWorkspaceMenu(show = false) {

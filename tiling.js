@@ -267,7 +267,6 @@ export class Space extends Array {
                 switchToNextFocusMode(this);
             })
             .setVisible(false); // hide by default
-        this.showFocusModeIcon();
         this.unfocusXPosition = null; // init
 
         let clip = new Clutter.Actor({ name: "clip" });
@@ -352,6 +351,10 @@ export class Space extends Array {
         this.windowPositionBarBackdrop = new St.Widget({
             name: 'windowPositionBarBackdrop',
             style_class: 'paperwm-window-position-bar-backdrop',
+            reactive: true,
+        });
+        signals.connect(this.windowPositionBarBackdrop, 'scroll-event', (_actor, event) => {
+            Topbar.topBarScrollAction(event);
         });
         this.windowPositionBar = new St.Widget({
             name: 'windowPositionBar',
@@ -360,10 +363,8 @@ export class Space extends Array {
         this.windowPositionBar.hide(); // default on empty space
         Utils.actor_raise(this.windowPositionBar);
 
-
-        if (this.showPositionBar) {
-            this.enableWindowPositionBar();
-        }
+        this.showPositionBar && this.enableWindowPositionBar();
+        this.showFocusModeIcon();
 
         // now set monitor for this space
         this.setMonitor(monitor);
