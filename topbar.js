@@ -174,7 +174,6 @@ export function topBarScrollAction(event) {
 
     // same check for gnome pill
     const pill = Main?.panel?.statusArea?.activities;
-    console.log(`pill ${pill} vis ${pill?.visible}`);
     if (pill && pill.visible) {
         if (Utils.isInRect(gx, gy, pill)) {
             return Clutter.EVENT_PROPAGATE;
