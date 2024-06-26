@@ -168,7 +168,7 @@ export function topBarScrollAction(event) {
     const indicator = Tiling.spaces?.activeSpace?.workspaceIndicator;
     if (indicator && indicator.visible) {
         if (Utils.isInRect(gx, gy, indicator)) {
-            return Clutter.EVENT_PROPAGATE;
+            return Clutter.EVENT_STOP;
         }
     }
 
@@ -176,7 +176,7 @@ export function topBarScrollAction(event) {
     const pill = Main?.panel?.statusArea?.activities;
     if (pill && pill.visible) {
         if (Utils.isInRect(gx, gy, pill)) {
-            return Clutter.EVENT_PROPAGATE;
+            return Clutter.EVENT_STOP;
         }
     }
 
