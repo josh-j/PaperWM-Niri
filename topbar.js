@@ -189,6 +189,7 @@ export function topBarScrollAction(event) {
         Tiling.spaces?.activeSpace.switchLeft(false);
         break;
     }
+    Main.activateWindow(Tiling.spaces?.activeSpace?.selectedWindow);
     return Clutter.EVENT_STOP;
 }
 
