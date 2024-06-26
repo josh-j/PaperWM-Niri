@@ -189,7 +189,19 @@ export function topBarScrollAction(event) {
         Tiling.spaces?.activeSpace.switchLeft(false);
         break;
     }
-    Main.activateWindow(Tiling.spaces?.activeSpace?.selectedWindow);
+    const selected = Tiling.spaces?.activeSpace?.selectedWindow;
+    if (selected) {
+        let hasFocus = selected.has_focus();
+        selected.foreach_transient(mw => {
+            hasFocus = mw.has_focus() || hasFocus;
+        });
+        if (hasFocus) {
+            Tiling.focus_handler(selected);
+        } else {
+            Main.activateWindow(selected);
+        }
+    }
+
     return Clutter.EVENT_STOP;
 }
 
