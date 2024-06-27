@@ -83,7 +83,7 @@ export function enable (extension) {
 
     screenSignals.push(
         workspaceManager.connect_after('workspace-switched',
-            (workspaceManager, from, to) => updateWorkspaceIndicator(to)));
+            (_workspaceManager, _from, to) => updateWorkspaceIndicator(to)));
 
     signals.connect(Main.overview, 'showing', fixTopBar);
     signals.connect(Main.overview, 'hidden', () => {
@@ -162,6 +162,17 @@ export function disable() {
  * @returns
  */
 export function topBarScrollAction(event) {
+    // if topbar workspaceMenu (indicator) has pointer, exit
+    if (menu && menu.has_pointer) {
+        return Clutter.EVENT_STOP;
+    }
+
+    // same check for gnome pill
+    const pill = Main.panel?.statusArea?.activities;
+    if (pill && pill.has_pointer) {
+        return Clutter.EVENT_STOP;
+    }
+
     let direction = event.get_scroll_direction();
     switch (direction) {
     case Clutter.ScrollDirection.DOWN:
