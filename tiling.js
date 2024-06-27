@@ -1914,7 +1914,7 @@ border-radius: ${borderWidth}px;
             });
 
         this.signals.connect(this.background, 'scroll-event',
-            (actor, event) => {
+            (_actor, event) => {
                 if (!inGrab && !Navigator.navigating)
                     return;
                 let dir = event.get_scroll_direction();
@@ -2199,7 +2199,7 @@ export const Spaces = class Spaces extends Map {
         this.forEach(space => space.init());
 
         // Bind to visible workspace when starting up
-        this.touchSignal = signals.connect(Main.panel, "captured-event", Gestures.horizontalTouchScroll.bind(this.activeSpace));
+        this.touchSignal = signals.connect(Main.panel, "touch-event", Gestures.horizontalTouchScroll.bind(this.activeSpace));
 
         this.stack = this.mru();
     }
@@ -2674,7 +2674,7 @@ export const Spaces = class Spaces extends Map {
 
         // Update panel to handle target workspace
         signals.disconnect(Main.panel, this.touchSignal);
-        this.touchSignal = signals.connect(Main.panel, "captured-event", Gestures.horizontalTouchScroll.bind(toSpace));
+        this.touchSignal = signals.connect(Main.panel, "touch-event", Gestures.horizontalTouchScroll.bind(toSpace));
 
         inPreview = PreviewMode.NONE;
     }

@@ -124,8 +124,7 @@ export function enable (extension) {
     //     fixTopBar();
     // });
 
-    panelBox.reactive = true;
-    signals.connect(panelBox, 'scroll-event', (_actor, event) => {
+    signals.connect(Main.panel, 'scroll-event', (_actor, event) => {
         topBarScrollAction(event);
     });
 
@@ -163,23 +162,6 @@ export function disable() {
  * @returns
  */
 export function topBarScrollAction(event) {
-    const [gx, gy] = Utils.getPointerCoords();
-    // if workspace indicator has cursor, exit
-    const indicator = Tiling.spaces?.activeSpace?.workspaceIndicator;
-    if (indicator && indicator.visible) {
-        if (Utils.isInRect(gx, gy, indicator)) {
-            return Clutter.EVENT_STOP;
-        }
-    }
-
-    // same check for gnome pill
-    const pill = Main?.panel?.statusArea?.activities;
-    if (pill && pill.visible) {
-        if (Utils.isInRect(gx, gy, pill)) {
-            return Clutter.EVENT_STOP;
-        }
-    }
-
     let direction = event.get_scroll_direction();
     switch (direction) {
     case Clutter.ScrollDirection.DOWN:

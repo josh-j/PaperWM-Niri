@@ -25,7 +25,7 @@ export function enable() {
     warpRipple.addTo(Main.uiGroup);
 
     signals = new Signals();
-    signals.connect(global.stage, "captured-event", (actor, event) => {
+    signals.connect(global.stage, "touch-event", (_actor, event) => {
         switch (event.type()) {
         case Clutter.EventType.TOUCH_BEGIN:
         case Clutter.EventType.TOUCH_UPDATE:
