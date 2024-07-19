@@ -314,7 +314,13 @@ export class MoveGrab {
             Utils.warpPointer(gx, gy, false);
         }
         let [dx, dy] = this.pointerOffset;
-        let clone = metaWindow.clone;
+        let clone = metaWindow?.clone;
+
+        // check if window and clone exists
+        if (!clone) {
+            this.end();
+            return;
+        }
 
         let tx = clone.get_transition('x');
         let ty = clone.get_transition('y');
@@ -379,15 +385,15 @@ export class MoveGrab {
             opacity: clone?.__oldOpacity ?? 255,
         };
 
-        if (this.dnd) {
-            let dndTarget = this.dndTarget;
-
+        if (clone && this.dnd) {
+            const dndTarget = this.dndTarget;
             if (dndTarget) {
-                let space = dndTarget.space;
+                const space = dndTarget.space;
                 space.showSelection();
 
-                if (Scratch.isScratchWindow(metaWindow))
+                if (Scratch.isScratchWindow(metaWindow)) {
                     Scratch.unmakeScratch(metaWindow);
+                }
 
                 // Remember the global coordinates of the clone
                 let [x] = clone.get_position();
@@ -422,7 +428,7 @@ export class MoveGrab {
 
                 Utils.actor_raise(clone);
             }
-            else {
+            else if (clone) {
                 metaWindow.move_frame(true, clone.x, clone.y);
                 Scratch.makeScratch(metaWindow);
                 this.initialSpace.moveDone();
@@ -450,7 +456,9 @@ export class MoveGrab {
 
             Navigator.getNavigator().accept();
         }
-        else if (this.initialSpace.indexOf(metaWindow) !== -1) {
+        else if (
+            clone &&
+            this.initialSpace.indexOf(metaWindow) !== -1) {
             let space = this.initialSpace;
             space.targetX = space.cloneContainer.x;
 
@@ -475,7 +483,7 @@ export class MoveGrab {
         this.initialSpace.layout();
         // ensure window is properly activated after layout/ensureViewport tweens
         Utils.later_add(Meta.LaterType.IDLE, () => {
-            Main.activateWindow(metaWindow);
+            metaWindow?.get_workspace() && Main.activateWindow(metaWindow);
         });
 
         // // Make sure the window is on the correct workspace.
