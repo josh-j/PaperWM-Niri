@@ -4442,8 +4442,20 @@ export function focus_handler(metaWindow) {
         space.enableWindowPositionBar(false);
         space.setSpaceTopbarElementsVisible(false);
         space.hideSelection();
+        if (!metaWindow.is_above()) {
+            metaWindow.make_above();
+        }
     }
     else {
+        space.getWindows().filter(w => w.fullscreen).forEach(w => {
+            if (
+                w._fullscreen_above !== null &&
+                !w._fullscreen_above
+            ) {
+                w.unmake_above();
+            }
+        });
+
         let needLayout = false;
         /**
          * If has fullscreen window - when selected non-fullscreen window, do layout:
