@@ -2397,10 +2397,13 @@ export const Spaces = class Spaces extends Map {
 
                 if (
                     metaWindow.get_workspace() === workspaceManager.get_active_workspace() &&
-                    !metaWindow.minimized)
+                    !metaWindow.minimized
+                ) {
                     actor.show();
-                else
+                }
+                else {
                     actor.hide();
+                }
             });
 
         this.signals.destroy();
