@@ -312,7 +312,7 @@ export class Space extends Array {
 
         const selection = new St.Widget({
             name: 'selection',
-            style_class: 'paperwm-selection',
+            style_class: 'paperwm-selection tile-preview',
         });
         this.selection = selection;
         // initial state is shown (unless border-size is 0)
@@ -1495,7 +1495,7 @@ export class Space extends Array {
         if (Settings.prefs.selection_border_size <= 0) {
             return;
         }
-        this.selection.set_style_class_name('paperwm-selection');
+        this.selection.set_style_class_name('paperwm-selection tile-preview');
     }
 
     setSelectionActive() {
