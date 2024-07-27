@@ -2249,6 +2249,10 @@ export const Spaces = class Spaces extends Map {
         let mru = this.mru();
 
         let primary = Main.layoutManager.primaryMonitor;
+        if (!primary) {
+            return;
+        }
+
         // get monitors but ensure primary monitor is first
         let monitors = Main.layoutManager.monitors.filter(m => m !== primary);
         monitors.unshift(primary);
