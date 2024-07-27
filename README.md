@@ -355,9 +355,9 @@ Users can disable PaperWM's ability to change GNOME Top Bar styling from PaperWM
 
 _Note: several PaperWM specific features are dependent on changing the Gnome Top Bar to function correctly.  If you choose to disable PaperWM's ability to change the Top Bar styles (with the setting above), you may also want to disable the [Window Position Bar](#window-position-bar-colored-bar-segment-in-top-bar)_.
 
-## Recommended Gnome Shell Settings ##
+## Managed Gnome Shell Settings ##
 
-There's a few Gnome Shell settings which works poorly with PaperWM. Namely
+There's a few Gnome Shell settings that are incompatible with, or work poorly with, PaperWM. Namely
 - `workspaces-only-on-primary`: Multi monitor support require workspaces
   spanning all monitors
 - `edge-tiling`: We don't support the native half tiled windows

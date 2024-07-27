@@ -2408,10 +2408,15 @@ export const Spaces = class Spaces extends Map {
                 metaWindow._targetHeight = null;
                 metaWindow._targetWidth = null;
 
-                if (metaWindow.get_workspace() === workspaceManager.get_active_workspace() && !metaWindow.minimized)
+                if (
+                    metaWindow.get_workspace() === workspaceManager.get_active_workspace() &&
+                    !metaWindow.minimized
+                ) {
                     actor.show();
-                else
+                }
+                else {
                     actor.hide();
+                }
             });
 
         this.signals.destroy();
@@ -3400,8 +3405,23 @@ export function registerWindow(metaWindow) {
         // if window is in a column, expel it
         barf(metaWindow, metaWindow);
 
-        const space = spaces.spaceOfWindow(metaWindow);
-        space?.setSpaceTopbarElementsVisible(true);
+        /**
+         * Set fullscreen windows to "always on top".  This is to ensure
+         * that the fullscreened window is "above" modal windows.
+         */
+        if (metaWindow.fullscreen) {
+            // get current "above" value (for later restoring)
+            metaWindow._fullscreen_above = metaWindow.is_above();
+            metaWindow.make_above();
+        }
+        else if (metaWindow._fullscreen_above !== null) {
+            if (!metaWindow._fullscreen_above) {
+                metaWindow.unmake_above();
+            }
+            delete metaWindow._fullscreen_above;
+        }
+
+        spaces.spaceOfWindow(metaWindow)?.setSpaceTopbarElementsVisible(true);
     });
     signals.connect(metaWindow, 'notify::minimized', metaWindow => {
         minimizeHandler(metaWindow);
@@ -3543,6 +3563,8 @@ export function removePaperWMFlags(w) {
     delete w._pos_mismatch_count;
     delete w._tiled_on_minimize;
     delete w._fullscreen_frame;
+    delete w._fullscreen_lock;
+    delete w._fullscreen_above;
     delete w._last_layout_frame;
 }
 
@@ -4436,8 +4458,20 @@ export function focus_handler(metaWindow) {
         space.enableWindowPositionBar(false);
         space.setSpaceTopbarElementsVisible(false);
         space.hideSelection();
+        if (!metaWindow.is_above()) {
+            metaWindow.make_above();
+        }
     }
     else {
+        space.getWindows().filter(w => w.fullscreen).forEach(w => {
+            if (
+                w._fullscreen_above !== null &&
+                !w._fullscreen_above
+            ) {
+                w.unmake_above();
+            }
+        });
+
         let needLayout = false;
         /**
          * If has fullscreen window - when selected non-fullscreen window, do layout:
