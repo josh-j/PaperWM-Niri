@@ -2263,7 +2263,7 @@ export const Spaces = class Spaces extends Map {
                     this.activeSpace.layout();
                     if (monitorTimeoutCount < 4) {
                         monitorChangeTimeout++;
-                        console.warn(`MONITORS_CHANGED: no primary monitor, check ${monitorChangeTimeout}`);
+                        console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${monitorChangeTimeout}`);
                         return true;
                     }
                     return false; // on return false destroys timeout
