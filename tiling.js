@@ -2258,7 +2258,7 @@ export const Spaces = class Spaces extends Map {
             //         this.activeSpace.layout();
             //         return false; // on return false destroys timeout
             //     });
-
+            console.warn(`MONITOR_CHANGED: no primary monitor`);
             return;
         }
 
@@ -2296,7 +2296,7 @@ export const Spaces = class Spaces extends Map {
 
             // finally run a layout
             activeSpace?.queueLayout();
-            console.log(`monitorChange completed: queing layout on ${activeSpace?.name}`);
+            console.warn(`MONITORS_CHANGED: completed - queing layout on ${activeSpace?.name}`);
         };
 
         if (this.onlyOnPrimary) {
