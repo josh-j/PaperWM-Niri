@@ -2250,6 +2250,15 @@ export const Spaces = class Spaces extends Map {
 
         let primary = Main.layoutManager.primaryMonitor;
         if (!primary) {
+            // TEST:
+            GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT,
+                2000,
+                () => {
+                    this.activeSpace.layout();
+                    return false; // on return false destroys timeout
+                });
+
             return;
         }
 
