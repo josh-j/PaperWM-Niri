@@ -186,6 +186,10 @@ export function setupActions(settings) {
         space.settings.set_boolean('show-position-bar', !value);
     });
 
+    registerPaperAction('workspace-zoom', (_mw, space) => {
+        space.zoom(0.80);
+    });
+
     registerNavigatorAction('take-window', Tiling.takeWindow);
 
     registerMinimapAction("switch-next", (mw, space) => space.switchLinear(1, false));

@@ -98,6 +98,7 @@ const actions = {
         'toggle-top-and-position-bar',
         'toggle-top-bar',
         'toggle-position-bar',
+        'workspace-zoom',
     ],
     monitors: [
         'switch-monitor-right',

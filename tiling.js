@@ -257,6 +257,8 @@ export class Space extends Array {
         this._floating = [];
         this._populated = false;
 
+        this._zoom_scale = 1.0;
+
         // default focusMode (can be overriden by saved user pref in Space.init method)
         this.focusMode = FocusModes.DEFAULT;
         this.focusModeIcon = new Topbar.FocusIcon({
@@ -870,6 +872,20 @@ export class Space extends Array {
             }
             return true;
         }
+    }
+
+    /**
+     * Zooms out/in windows view
+     * @param {Number} scale 
+     */
+    zoom(scale) {
+        this.startAnimate();
+        Easer.addEase(this.cloneContainer,
+            {
+                scale_x: scale,
+                scale_y: scale,
+                time: Settings.prefs.animation_time,
+            });
     }
 
     getWindows() {
