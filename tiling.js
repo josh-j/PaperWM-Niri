@@ -2251,13 +2251,13 @@ export const Spaces = class Spaces extends Map {
         let primary = Main.layoutManager.primaryMonitor;
         if (!primary) {
             // TEST:
-            GLib.timeout_add(
-                GLib.PRIORITY_DEFAULT,
-                2000,
-                () => {
-                    this.activeSpace.layout();
-                    return false; // on return false destroys timeout
-                });
+            // GLib.timeout_add(
+            //     GLib.PRIORITY_DEFAULT,
+            //     2000,
+            //     () => {
+            //         this.activeSpace.layout();
+            //         return false; // on return false destroys timeout
+            //     });
 
             return;
         }
@@ -2293,6 +2293,10 @@ export const Spaces = class Spaces extends Map {
             Topbar.refreshWorkspaceIndicator();
             this.forEach(s => s.setSpaceTopbarElementsVisible());
             Stackoverlay.multimonitorSupport();
+
+            // finally run a layout
+            activeSpace?.queueLayout();
+            console.log(`monitorChange completed: queing layout on ${activeSpace?.name}`);
         };
 
         if (this.onlyOnPrimary) {
