@@ -2258,14 +2258,15 @@ export const Spaces = class Spaces extends Map {
             let monitorTimeoutCount = 0;
             monitorChangeTimeout = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT,
-                2000,
+                1000,
                 () => {
                     this.activeSpace.layout();
-                    if (monitorTimeoutCount < 4) {
-                        monitorChangeTimeout++;
-                        console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${monitorChangeTimeout}`);
+                    if (monitorTimeoutCount < 5) {
+                        monitorTimeoutCount++;
+                        console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${monitorTimeoutCount}`);
                         return true;
                     }
+                    monitorChangeTimeout = null;
                     return false; // on return false destroys timeout
                 });
             return;
