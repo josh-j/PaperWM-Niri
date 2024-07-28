@@ -459,26 +459,26 @@ export function timeout_remove(...timeouts) {
  * @returns GLib timeout id
  */
 export function periodic_timeout(options = { }) {
-    const pperiod = options.period_ms ?? 1000;
-    const pcount = options.count ?? 1;
-    const pinit = options.init ?? function() {};
-    const pcallback = options.callback ?? function() {};
-    const pcontinue = options.onContinue ?? function() {};
-    const pcomplete = options.onComplete ?? function() {};
+    const operiod = options?.period_ms ?? 1000;
+    const ocount = options?.count ?? 1;
+    const oinit = options?.init ?? function() {};
+    const ocallback = options?.callback ?? function() {};
+    const ocontinue = options?.onContinue ?? function() {};
+    const ocomplete = options?.onComplete ?? function() {};
 
-    pinit();
+    oinit();
     let called = 0;
     return GLib.timeout_add(
         GLib.PRIORITY_DEFAULT,
-        pperiod,
+        operiod,
         () => {
-            pcallback();
-            if (called < pcount) {
+            ocallback();
+            if (called < ocount) {
                 called++;
-                pcontinue(called);
+                ocontinue(called);
                 return true;
             }
-            pcomplete();
+            ocomplete();
             return false; // on return false destroys timeout
         });
 }
