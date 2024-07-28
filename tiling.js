@@ -2253,22 +2253,23 @@ export const Spaces = class Spaces extends Map {
 
         let primary = Main.layoutManager.primaryMonitor;
         if (!primary) {
-            // remove any previous timeout;
-            Utils.timeout_remove(monitorChangeTimeout);
-            let monitorTimeoutCount = 0;
-            monitorChangeTimeout = GLib.timeout_add(
-                GLib.PRIORITY_DEFAULT,
-                1000,
-                () => {
-                    this.activeSpace.layout();
-                    if (monitorTimeoutCount < 5) {
-                        monitorTimeoutCount++;
-                        console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${monitorTimeoutCount}`);
-                        return true;
-                    }
+            // setup periodic timout to call layout on all spaces 5 times (1 second apart)
+            monitorChangeTimeout = Utils.periodic_timeout({
+                count: 5,
+                init: () => {
+                    Utils.timeout_remove(monitorChangeTimeout);
+                },
+                callback: () => {
+                    this?.spaces.forEach(s => s.layout());
+                },
+                onContinue: called => {
+                    console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${called}`);
+                },
+                onComplete: () => {
                     monitorChangeTimeout = null;
-                    return false; // on return false destroys timeout
-                });
+                },
+            });
+
             return;
         }
 
