@@ -876,15 +876,46 @@ export class Space extends Array {
 
     /**
      * Zooms out/in windows view
-     * @param {Number} scale 
+     * @param {Number} scale
      */
     zoom(scale) {
+        this._zoom_scale = scale;
+        const y = (this.height - this.height * scale) / 2;
+        this.cloneContainer.reactive = true;
+
         this.startAnimate();
         Easer.addEase(this.cloneContainer,
             {
+                y,
                 scale_x: scale,
                 scale_y: scale,
                 time: Settings.prefs.animation_time,
+                onComplete: () => {
+                    if (this.selectedWindow) {
+                        ensureViewport(this.selectedWindow, this);
+                    }
+
+                    // remove any previous signals
+                    this.signals.disconnect(this.cloneContainer);
+                    this.signals.connectOneShot(this.cloneContainer, 'button-press-event', () => {
+                        this.cloneContainer.reactive = false;
+                        this._zoom_scale = 1.0;
+                        Easer.addEase(this.cloneContainer,
+                            {
+                                y: 0,
+                                scale_x: 1.0,
+                                scale_y: 1.0,
+                                time: Settings.prefs.animation_time,
+                                onComplete: () => {
+                                    this.stopAnimate();
+                                    // ensure selected window for zoom-in
+                                    if (this.selectedWindow) {
+                                        ensureViewport(this.selectedWindow, this);
+                                    }
+                                },
+                            });
+                    });
+                },
             });
     }
 
@@ -1393,15 +1424,7 @@ export class Space extends Array {
             }
         });
 
-        this.visible.forEach(w => {
-            if (Easer.isEasing(w.clone))
-                return;
-            this.applyClipToClone(w);
-            showWindow(w);
-        });
-
-        this._floating.forEach(showWindow);
-
+        this.stopAnimate();
         this.fixOverlays();
 
         if (!Meta.is_wayland_compositor()) {
@@ -1473,6 +1496,15 @@ export class Space extends Array {
         });
 
         this._isAnimating = true;
+    }
+
+    stopAnimate() {
+        this.visible.forEach(w => {
+            this.applyClipToClone(w);
+            showWindow(w);
+        });
+
+        this._floating.forEach(showWindow);
     }
 
     fixOverlays(metaWindow) {
@@ -4221,7 +4253,7 @@ export function ensureViewport(meta_window, space, options = {}) {
         !meta_window.fullscreen) {
         animateDown(space.selectedWindow);
     }
-    let x = ensuredX(meta_window, space);
+    let x = ensuredX(meta_window, space) * space?._zoom_scale ?? 1.0;
 
     space.selectedWindow = meta_window;
     let selected = space.selectedWindow;
@@ -4300,7 +4332,7 @@ export function move_to(space, metaWindow, options = {}) {
         return;
 
     let clone = metaWindow.clone;
-    let target = x - clone.targetX;
+    let target = (x - clone.targetX) * space?._zoom_scale ?? 1.0;
     if (target === space.targetX && !force) {
         space.moveDone();
         callback();

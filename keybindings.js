@@ -187,7 +187,9 @@ export function setupActions(settings) {
     });
 
     registerPaperAction('workspace-zoom', (_mw, space) => {
-        space.zoom(0.80);
+        // decrement zoom
+        const zoom = Math.max((space?._zoom_scale ?? 1.0) - 0.1, 0.1);
+        space.zoom(zoom);
     });
 
     registerNavigatorAction('take-window', Tiling.takeWindow);
