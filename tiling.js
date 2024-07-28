@@ -2260,16 +2260,15 @@ export const Spaces = class Spaces extends Map {
                     Utils.timeout_remove(monitorChangeTimeout);
                 },
                 callback: () => {
-                    this?.spaces.forEach(s => s.layout());
+                    this?.forEach(s => s.layout());
                 },
                 onContinue: called => {
-                    console.warn(`MONITORS_CHANGED: no primary monitor - 'space.layout' call ${called}`);
+                    console.warn(`MONITORS_CHANGED: no primary monitor - 'layout' on spaces call ${called}`);
                 },
                 onComplete: () => {
                     monitorChangeTimeout = null;
                 },
             });
-
             return;
         }
 

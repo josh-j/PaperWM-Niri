@@ -460,7 +460,7 @@ export function timeout_remove(...timeouts) {
  */
 export function periodic_timeout(options = { }) {
     const pperiod = options.period_ms ?? 1000;
-    let pcount = options.count ?? 1;
+    const pcount = options.count ?? 1;
     const pinit = options.init ?? function() {};
     const pcallback = options.callback ?? function() {};
     const pcontinue = options.onContinue ?? function() {};
@@ -474,7 +474,7 @@ export function periodic_timeout(options = { }) {
         () => {
             pcallback();
             if (called < pcount) {
-                pcount++;
+                called++;
                 pcontinue(called);
                 return true;
             }
