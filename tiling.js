@@ -92,6 +92,7 @@ let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
 let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
+let monitorChangeTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -214,6 +215,8 @@ export function disable() {
     stackSlurpTimeout = null;
     workspaceChangeTimeouts?.forEach(t => Utils.timeout_remove(t));
     workspaceChangeTimeouts = null;
+    Utils.timeout_remove(monitorChangeTimeout);
+    monitorChangeTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -2250,15 +2253,21 @@ export const Spaces = class Spaces extends Map {
 
         let primary = Main.layoutManager.primaryMonitor;
         if (!primary) {
-            // TEST:
-            // GLib.timeout_add(
-            //     GLib.PRIORITY_DEFAULT,
-            //     2000,
-            //     () => {
-            //         this.activeSpace.layout();
-            //         return false; // on return false destroys timeout
-            //     });
-            console.warn(`MONITOR_CHANGED: no primary monitor`);
+            // remove any previous timeout;
+            Utils.timeout_remove(monitorChangeTimeout);
+            let monitorTimeoutCount = 0;
+            monitorChangeTimeout = GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT,
+                2000,
+                () => {
+                    this.activeSpace.layout();
+                    if (monitorTimeoutCount < 4) {
+                        monitorChangeTimeout++;
+                        console.warn(`MONITORS_CHANGED: no primary monitor, check ${monitorChangeTimeout}`);
+                        return true;
+                    }
+                    return false; // on return false destroys timeout
+                });
             return;
         }
 
@@ -2293,10 +2302,6 @@ export const Spaces = class Spaces extends Map {
             Topbar.refreshWorkspaceIndicator();
             this.forEach(s => s.setSpaceTopbarElementsVisible());
             Stackoverlay.multimonitorSupport();
-
-            // finally run a layout
-            activeSpace?.queueLayout();
-            console.warn(`MONITORS_CHANGED: completed - queing layout on ${activeSpace?.name}`);
         };
 
         if (this.onlyOnPrimary) {
