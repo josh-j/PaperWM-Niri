@@ -92,6 +92,7 @@ let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
 let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
+let monitorChangeTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -214,6 +215,8 @@ export function disable() {
     stackSlurpTimeout = null;
     workspaceChangeTimeouts?.forEach(t => Utils.timeout_remove(t));
     workspaceChangeTimeouts = null;
+    Utils.timeout_remove(monitorChangeTimeout);
+    monitorChangeTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -2249,6 +2252,26 @@ export const Spaces = class Spaces extends Map {
         let mru = this.mru();
 
         let primary = Main.layoutManager.primaryMonitor;
+        if (!primary) {
+            // setup periodic timout to call layout on all spaces 5 times (1 second apart)
+            monitorChangeTimeout = Utils.periodic_timeout({
+                count: 5,
+                init: () => {
+                    Utils.timeout_remove(monitorChangeTimeout);
+                },
+                callback: () => {
+                    this?.forEach(s => s.layout());
+                },
+                onContinue: called => {
+                    console.warn(`MONITORS_CHANGED: no primary monitor - 'layout' on spaces call ${called}`);
+                },
+                onComplete: () => {
+                    monitorChangeTimeout = null;
+                },
+            });
+            return;
+        }
+
         // get monitors but ensure primary monitor is first
         let monitors = Main.layoutManager.monitors.filter(m => m !== primary);
         monitors.unshift(primary);
@@ -3476,25 +3499,29 @@ export function registerWindow(metaWindow) {
             return;
         }
 
-        let tries = 0;
-        const timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-            if (tries >= 10) {
-                done(timeout);
-                return false;
+        const timeout = Utils.periodic_timeout(
+            {
+                period_ms: 100,
+                count: 10,
+                callback: () => {
+                    const f = metaWindow.get_frame_rect();
+                    if (metaWindow._targetHeight !== f.height) {
+                        if (!isNaN(metaWindow._targetHeight)) {
+                            metaWindow.move_resize_frame(
+                                true,
+                                f.x,
+                                f.y,
+                                f.width,
+                                metaWindow._targetHeight
+                            );
+                        }
+                    }
+                },
+                onComplete: () => {
+                    done(timeout);
+                },
             }
-            tries++;
-            // console.log(`try ${tries} height check on ${metaWindow.title}`);
-            const f = metaWindow.get_frame_rect();
-            if (metaWindow._targetHeight !== f.height) {
-                if (!isNaN(metaWindow._targetHeight)) {
-                    metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
-                }
-                return true;
-            }
-
-            done(timeout);
-            return false;
-        });
+        );
         workspaceChangeTimeouts.push(timeout);
     });
 
