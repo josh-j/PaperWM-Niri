@@ -445,6 +445,50 @@ export function timeout_remove(...timeouts) {
     });
 }
 
+/**
+ * Calls a period timeout (GLib.timeout_add) that calls a callback function.
+ * Also contains parameters for init (call for initialisation), onContinue (callback when continuing),
+ * onComplete (callback when completed last callback).
+ * @param {Object} options
+ * @param {Number} options.period_ms
+ * @param {Number} options.count
+ * @param {Function} options.init
+ * @param {Function} options.callback
+ * @param {Function} options.onContinue
+ * @param {Function} options.onComplete
+ * @returns GLib timeout id
+ */
+export function periodic_timeout(options = { }) {
+    const operiod = options?.period_ms ?? 1000;
+    const ocount = options?.count ?? 1;
+    const oinit = options?.init ?? function() {};
+    const ocallback = options?.callback ?? function() {};
+    const ocontinue = options?.onContinue ?? function() {};
+    const ocomplete = options?.onComplete ?? function() {};
+
+    oinit();
+    let called = 0;
+    return GLib.timeout_add(
+        GLib.PRIORITY_DEFAULT,
+        operiod,
+        () => {
+            // check for early exit (if callback returns false)
+            if (ocallback() === false) {
+                ocomplete();
+                return false;
+            }
+
+            if (called < ocount) {
+                called++;
+                ocontinue(called);
+                return true;
+            }
+
+            ocomplete();
+            return false; // on return false destroys timeout
+        });
+}
+
 export class Signals extends Map {
     static get [Symbol.species]() { return Map; }
 
