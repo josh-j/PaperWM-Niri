@@ -472,12 +472,18 @@ export function periodic_timeout(options = { }) {
         GLib.PRIORITY_DEFAULT,
         operiod,
         () => {
-            ocallback();
+            // check for early exit (if callback returns false)
+            if (ocallback() === false) {
+                ocomplete();
+                return false;
+            }
+
             if (called < ocount) {
                 called++;
                 ocontinue(called);
                 return true;
             }
+
             ocomplete();
             return false; // on return false destroys timeout
         });

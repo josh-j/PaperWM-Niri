@@ -3499,25 +3499,29 @@ export function registerWindow(metaWindow) {
             return;
         }
 
-        let tries = 0;
-        const timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-            if (tries >= 10) {
-                done(timeout);
-                return false;
+        const timeout = Utils.periodic_timeout(
+            {
+                period_ms: 100,
+                count: 10,
+                callback: () => {
+                    const f = metaWindow.get_frame_rect();
+                    if (metaWindow._targetHeight !== f.height) {
+                        if (!isNaN(metaWindow._targetHeight)) {
+                            metaWindow.move_resize_frame(
+                                true,
+                                f.x,
+                                f.y,
+                                f.width,
+                                metaWindow._targetHeight
+                            );
+                        }
+                    }
+                },
+                onComplete: () => {
+                    done(timeout);
+                },
             }
-            tries++;
-            // console.log(`try ${tries} height check on ${metaWindow.title}`);
-            const f = metaWindow.get_frame_rect();
-            if (metaWindow._targetHeight !== f.height) {
-                if (!isNaN(metaWindow._targetHeight)) {
-                    metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
-                }
-                return true;
-            }
-
-            done(timeout);
-            return false;
-        });
+        );
         workspaceChangeTimeouts.push(timeout);
     });
 
