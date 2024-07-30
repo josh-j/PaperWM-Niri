@@ -242,12 +242,18 @@ export class StackOverlay {
         const [x] = global.get_pointer();
         switch (this._direction) {
         case Meta.MotionDirection.LEFT:
-            if (x <= 2) {
+            if (
+                x >= this.monitor.x &&
+                x <= this.monitor.x + 2
+            ) {
                 return true;
             }
             break;
         case Meta.MotionDirection.RIGHT:
-            if (x >= this.monitor.width - 2) {
+            if (
+                x <= this.monitor.x + this.monitor.width &&
+                x >= this.monitor.x + this.monitor.width - 2
+            ) {
                 return true;
             }
             break;
