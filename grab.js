@@ -45,7 +45,7 @@ export class MoveGrab {
         this.type = type;
         this.signals = new Utils.Signals();
 
-        this.dragDriftPx = 6;
+        this.dragDriftPx = 12;
 
         this.initialSpace = space || Tiling.spaces.spaceOfWindow(metaWindow);
         this.zoneActors = new Set();
@@ -348,13 +348,13 @@ export class MoveGrab {
         // drift move
         const monitor = Utils.monitorAtPoint(gx, gy);
         const activeSpace = Tiling.spaces.activeSpace;
-        if (gx <= monitor.x + this.dragDriftPx) {
+        if (gx >= monitor.x && gx <= monitor.x + this.dragDriftPx) {
             this._dragDrfit(
                 activeSpace,
                 -1 * Settings.prefs.drag_drift_speed, x => x > monitor.x + this.dragDriftPx
             );
         }
-        if (gx >= monitor.x + monitor.width - this.dragDriftPx) {
+        if (gx <= monitor.x + monitor.width && gx >= monitor.x + monitor.width - this.dragDriftPx) {
             this._dragDrfit(
                 activeSpace,
                 Settings.prefs.drag_drift_speed, x => x < monitor.x + monitor.width - this.dragDriftPx
