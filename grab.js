@@ -410,6 +410,7 @@ export class MoveGrab {
 
     end() {
         grabbed = null;
+        Utils.timeout_remove(dragDriftTimeout);
         console.debug("#grab", "end");
         this.signals.destroy();
         this.signals = null;
