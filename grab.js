@@ -349,10 +349,16 @@ export class MoveGrab {
         const monitor = Utils.monitorAtPoint(gx, gy);
         const activeSpace = Tiling.spaces.activeSpace;
         if (gx <= monitor.x + this.dragDriftPx) {
-            this._dragDrfit(activeSpace, -1, x => x > monitor.x + this.dragDriftPx);
+            this._dragDrfit(
+                activeSpace,
+                -1 * Settings.prefs.drag_drift_speed, x => x > monitor.x + this.dragDriftPx
+            );
         }
         if (gx >= monitor.x + monitor.width - this.dragDriftPx) {
-            this._dragDrfit(activeSpace, 1, x => x < monitor.x + monitor.width - this.dragDriftPx);
+            this._dragDrfit(
+                activeSpace,
+                Settings.prefs.drag_drift_speed, x => x < monitor.x + monitor.width - this.dragDriftPx
+            );
         }
 
         if (event.type() === Clutter.EventType.TOUCH_UPDATE) {
