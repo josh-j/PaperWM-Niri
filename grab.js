@@ -9,12 +9,15 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import { Settings, Utils, Tiling, Navigator, Scratch, Gestures } from './imports.js';
 import { Easer } from './utils.js';
 
+export let grabbed = false;
+
 let dragDriftTimeout;
 export function enable() {
 
 }
 
 export function disable() {
+    grabbed = null;
     Utils.timeout_remove(dragDriftTimeout);
     dragDriftTimeout = null;
 }
@@ -41,7 +44,6 @@ export class MoveGrab {
         this.window = metaWindow;
         this.type = type;
         this.signals = new Utils.Signals();
-        this.grabbed = false;
 
         this.dragDriftPx = 6;
 
@@ -59,10 +61,10 @@ export class MoveGrab {
         console.debug("#grab", "begin");
 
         this.center = center;
-        if (this.grabbed)
+        if (grabbed)
             return;
 
-        this.grabbed = true;
+        grabbed = true;
         global.display.end_grab_op?.(global.get_current_time());
         global.display.set_cursor(Meta.Cursor.MOVE_OR_RESIZE_WINDOW);
         this.dispatcher = new Navigator.getActionDispatcher(Clutter.GrabState.POINTER);
@@ -403,6 +405,7 @@ export class MoveGrab {
     }
 
     end() {
+        grabbed = null;
         console.debug("#grab", "end");
         this.signals.destroy();
         this.signals = null;

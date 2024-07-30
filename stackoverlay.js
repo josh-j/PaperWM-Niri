@@ -361,6 +361,11 @@ export class StackOverlay {
             return;
         }
 
+        // don't show if window grabbed
+        if (Grab.grabbed) {
+            return;
+        }
+
         /**
          * if timeout is enabled, only show if valid timeout (e.g. if SHOW_DELAY <= timeout,
          * then won't see the preview anyway).
