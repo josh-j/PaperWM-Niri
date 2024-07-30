@@ -325,13 +325,18 @@ export class MoveGrab {
     }
 
     _dragDrfit(space, dx, xfunc) {
+        // only dift is more than one tiled window
+        if (space.getWindows().filter(w => Tiling.isTiled(w)).length <= 0) {
+            return;
+        }
+
         Utils.timeout_remove(dragDriftTimeout);
-        dragDriftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 16, () => {
+        dragDriftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
             const [px] = global.get_pointer();
             if (xfunc(px)) {
                 return false;
             }
-            Gestures.update(space, dx, 1000);
+            Gestures.update(space, dx, 1);
             return true;
         });
     }
@@ -344,10 +349,10 @@ export class MoveGrab {
         const monitor = Utils.monitorAtPoint(gx, gy);
         const activeSpace = Tiling.spaces.activeSpace;
         if (gx <= monitor.x + this.dragDriftPx) {
-            this._dragDrfit(activeSpace, -16, x => x > monitor.x + this.dragDriftPx);
+            this._dragDrfit(activeSpace, -1, x => x > monitor.x + this.dragDriftPx);
         }
         if (gx >= monitor.x + monitor.width - this.dragDriftPx) {
-            this._dragDrfit(activeSpace, 16, x => x < monitor.x + monitor.width - this.dragDriftPx);
+            this._dragDrfit(activeSpace, 1, x => x < monitor.x + monitor.width - this.dragDriftPx);
         }
 
         if (event.type() === Clutter.EventType.TOUCH_UPDATE) {
