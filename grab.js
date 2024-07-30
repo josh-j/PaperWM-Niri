@@ -303,19 +303,23 @@ export class MoveGrab {
         }
 
         const sameTarget = (a, b) => {
-            if (a === b)
+            if (a === b) {
                 return true;
-            if (!a || !b)
+            }
+            if (!a || !b) {
                 return false;
-            return a.space === b.space && a.position[0] === b.position[0] && a.position[1] === b.position[1];
+            }
+            if (a.space !== b.space) {
+                return false;
+            }
+            if (a.position.length !== b.position.length) {
+                return false;
+            }
+            return a.position[0] === b.position[0] &&
+                a.position[1] === b.position[1];
         };
 
         if (!sameTarget(target, this.dndTarget)) {
-            // has a new zone target
-            if (target) {
-                this.dndTargets.push(target);
-            }
-            this.dndTarget = null;
             this.activateDndTarget(target, initial);
         }
     }
