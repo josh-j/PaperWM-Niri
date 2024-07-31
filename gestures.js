@@ -402,6 +402,12 @@ export function done(space) {
     });
 }
 
+/**
+ * Finds a target window given a space and direction (-1 is left, 1 is right)
+ * @param {Tiling.Space} space
+ * @param {Boolean} direction
+ * @returns
+ */
 export function findTargetWindow(space, direction) {
     let selected = space.selectedWindow?.clone;
     if (!selected) {
