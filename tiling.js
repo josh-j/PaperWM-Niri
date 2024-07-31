@@ -4217,7 +4217,7 @@ export function ensuredX(meta_window, space) {
  * @returns
  */
 export function ensureViewport(meta_window, space, options = {}) {
-    space = space || spaces.spaceOfWindow(meta_window);
+    space = space ?? spaces.spaceOfWindow(meta_window);
     let force = options?.force ?? false;
     let moveto = options?.moveto ?? true;
     let animate = options?.animate ?? true;

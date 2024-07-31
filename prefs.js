@@ -235,6 +235,7 @@ class SettingsWidget {
         hFric.connect('value-changed', fricChanged);
 
         doubleValueChanged('animation_time_spin', 'animation-time');
+        intValueChanged('drag_drift_speed_spin', 'drag-drift-speed');
         percentValueChanged('minimap_scale_spin', 'minimap-scale');
         percentValueChanged('window_switcher_preview_scale_spin', 'window-switcher-preview-scale');
         percentValueChanged('overview_max_window_scale_spin', 'overview-max-window-scale');

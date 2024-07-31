@@ -703,6 +703,11 @@
         <summary>Duration of animations in seconds</summary>
     </key>
 
+    <key type="i" name="drag-drift-speed">
+        <default>2</default>
+        <summary>Drift speed (px/ms) when mouse is at edge of montior when dragging windows</summary>
+    </key>
+
     <key type="d" name="overview-max-window-scale">
         <default>0.95</default>
         <summary>Sets the maximum window scale (compared to actual window size) of Gnome overview windows</summary>
