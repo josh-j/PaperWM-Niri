@@ -195,7 +195,6 @@ class ActionDispatcher {
     }
 
     _keyReleaseEvent(_actor, event) {
-        this.keyReleaseCallbacks.forEach(callback => callback());
         if (this._destroy) {
             dismissDispatcher(Clutter.GrabState.KEYBOARD);
         }
@@ -210,6 +209,7 @@ class ActionDispatcher {
             this._resetNoModsTimeout();
         }
 
+        this.keyReleaseCallbacks.forEach(callback => callback());
         return Clutter.EVENT_STOP;
     }
 
