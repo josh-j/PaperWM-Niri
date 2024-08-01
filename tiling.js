@@ -1260,6 +1260,14 @@ export class Space extends Array {
         ensureViewport(metaWindow, space);
     }
 
+    driftLeft() {
+        Gestures.update(this, -10, 1);
+    }
+
+    driftRight() {
+        Gestures.update(this, 10, 1);
+    }
+
     /**
      * Return the x position of the visible element of this window.
      */

@@ -218,13 +218,23 @@
       <summary>Switch to the previous window</summary>
     </key>
     <key type="as" name="switch-right">
-        <default><![CDATA[['<Super>Right']]]></default>
+        <default><![CDATA[['<Super>Left']]]></default>
         <summary>Switch to the right window</summary>
     </key>
     <key type="as" name="switch-left">
-        <default><![CDATA[['<Super>Left']]]></default>
+        <default><![CDATA[['<Super>Right']]]></default>
         <summary>Switch to the left window</summary>
     </key>
+
+    <key type="as" name="drift-left">
+        <default><![CDATA[['<Ctrl><Super>Left']]]></default>
+        <summary>Drift tiling viewport to the left</summary>
+    </key>
+      <key type="as" name="drift-right">
+        <default><![CDATA[['<Ctrl><Super>Right']]]></default>
+        <summary>Drift tiling viewport to the right</summary>
+    </key>
+
     <key type="as" name="switch-up">
         <default><![CDATA[['<Super>Up']]]></default>
         <summary>Switch to the window above</summary>
