@@ -92,7 +92,7 @@ let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
 let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
-let monitorChangeTimeout;
+let monitorChangeTimeout, driftTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -217,6 +217,8 @@ export function disable() {
     workspaceChangeTimeouts = null;
     Utils.timeout_remove(monitorChangeTimeout);
     monitorChangeTimeout = null;
+    Utils.timeout_remove(driftTimeout);
+    driftTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -1261,7 +1263,15 @@ export class Space extends Array {
     }
 
     driftLeft() {
-        Gestures.update(this, -10, 1);
+        if (this.drifting) {
+            return;
+        }
+        this.drifting = true;
+        Utils.timeout_remove(driftTimeout);
+        driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            Gestures.update(this, -4, 1);
+            return true;
+        });
     }
 
     driftRight() {

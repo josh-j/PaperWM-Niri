@@ -384,7 +384,7 @@ export function impliedOptions(options) {
 export function registerAction(actionName, handler, options) {
     options = impliedOptions(options);
 
-    let {
+    const {
         settings,
         opensNavigator,
     } = options;
@@ -400,7 +400,7 @@ export function registerAction(actionName, handler, options) {
         // actionId, mutterName and keyHandler will be set if/when the action is bound
     }
 
-    let action = {
+    const action = {
         id: Meta.KeyBindingAction.NONE,
         name: actionName,
         mutterName,
