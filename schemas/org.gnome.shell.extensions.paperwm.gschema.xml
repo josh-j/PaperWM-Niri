@@ -227,11 +227,11 @@
     </key>
 
     <key type="as" name="drift-left">
-        <default><![CDATA[['<Ctrl><Super>Left']]]></default>
+        <default><![CDATA[['<Ctrl><Shift>Left']]]></default>
         <summary>Drift tiling viewport to the left</summary>
     </key>
       <key type="as" name="drift-right">
-        <default><![CDATA[['<Ctrl><Super>Right']]]></default>
+        <default><![CDATA[['<Ctrl><Shift>Right']]]></default>
         <summary>Drift tiling viewport to the right</summary>
     </key>
 
