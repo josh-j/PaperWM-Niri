@@ -198,8 +198,8 @@ export function setupActions(settings) {
     registerMinimapAction("switch-up", (mw, space) => space.switchUp(false));
     registerMinimapAction("switch-down", (mw, space) => space.switchDown(false));
 
-    registerNavigatorAction("drift-left", (mw, space) => space.driftLeft());
-    registerNavigatorAction("drift-right", (mw, space) => space.driftRight());
+    registerPaperAction("drift-left", (mw, space) => space.driftLeft());
+    registerPaperAction("drift-right", (mw, space) => space.driftRight());
 
     registerMinimapAction("switch-right-loop", (mw, space) => space.switchRight(true));
     registerMinimapAction("switch-left-loop", (mw, space) => space.switchLeft(true));

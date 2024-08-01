@@ -1278,6 +1278,11 @@ export class Space extends Array {
         Utils.timeout_remove(driftTimeout);
         driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
             Gestures.update(this, dx, 1);
+            const selected = Gestures.findTargetWindow(this, 1);
+            updateSelection(this, selected);
+            this.selectedWindow = selected;
+            this.emit('select');
+
             return true;
         });
     }
