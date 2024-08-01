@@ -1263,6 +1263,9 @@ export class Space extends Array {
     }
 
     _drift(dx) {
+        if (dx === 0) {
+            return;
+        }
         if (this.drifting) {
             return;
         }
@@ -1273,16 +1276,13 @@ export class Space extends Array {
             .addKeyReleaseCallback(() => {
                 Utils.timeout_remove(driftTimeout);
                 this.drifting = null;
-                Navigator.dismissDispatcher(Clutter.GrabState.KEYBOARD);
-                ensureViewport(this.selectedWindow, this);
             });
 
         Utils.timeout_remove(driftTimeout);
         driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
             Gestures.update(this, dx, 1);
-            const selected = Gestures.findTargetWindow(this, 1);
-            updateSelection(this, selected);
-            this.selectedWindow = selected;
+            this.selectedWindow = Gestures.findTargetWindow(this, dx < 0 ? -1 : 1);
+            ensureViewport(this.selectedWindow, this);
             return true;
         });
     }
