@@ -1262,21 +1262,29 @@ export class Space extends Array {
         ensureViewport(metaWindow, space);
     }
 
-    driftLeft() {
+    _drift(dx) {
         if (this.drifting) {
             return;
         }
         this.drifting = true;
+
+        // stop drifting on key_release
+        Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
+            .addKeyReleaseCallback(() => {
+                Utils.timeout_remove(driftTimeout);
+                this.drifting = null;
+            });
+
         Utils.timeout_remove(driftTimeout);
         driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
-            Gestures.update(this, -4, 1);
+            Gestures.update(this, dx, 1);
             return true;
         });
     }
 
-    driftRight() {
-        Gestures.update(this, 10, 1);
-    }
+    driftLeft() { this._drift(-10); }
+    driftRight() { this._drift(10); }
+
 
     /**
      * Return the x position of the visible element of this window.

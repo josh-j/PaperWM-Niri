@@ -92,6 +92,7 @@ class ActionDispatcher {
         this.signals.connect(this.actor, 'key-release-event', this._keyReleaseEvent.bind(this));
 
         this.keyPressCallbacks = [];
+        this.keyReleaseCallbacks = [];
 
         this._noModsTimeoutId = null;
         this._doActionTimeout = null;
@@ -103,6 +104,16 @@ class ActionDispatcher {
      */
     addKeypressCallback(handler) {
         this.keyPressCallbacks.push(handler);
+        return this;
+    }
+
+    /**
+     * Adds a signal to this dispatcher.  Will be destroyed when this
+     * dispatcher is destroyed.
+     */
+    addKeyReleaseCallback(handler) {
+        this.keyReleaseCallbacks.push(handler);
+        return this;
     }
 
     show(_backward, binding, mask) {
@@ -184,6 +195,7 @@ class ActionDispatcher {
     }
 
     _keyReleaseEvent(_actor, event) {
+        this.keyReleaseCallbacks.forEach(callback => callback());
         if (this._destroy) {
             dismissDispatcher(Clutter.GrabState.KEYBOARD);
         }
