@@ -1273,6 +1273,7 @@ export class Space extends Array {
             .addKeyReleaseCallback(() => {
                 Utils.timeout_remove(driftTimeout);
                 this.drifting = null;
+                Navigator.dismissDispatcher(Clutter.GrabState.KEYBOARD);
                 ensureViewport(this.selectedWindow, this);
             });
 
@@ -1286,8 +1287,8 @@ export class Space extends Array {
         });
     }
 
-    driftLeft() { this._drift(-10); }
-    driftRight() { this._drift(10); }
+    driftLeft() { this._drift(-1 * Settings.prefs.drift_speed); }
+    driftRight() { this._drift(Settings.prefs.drift_speed); }
 
 
     /**

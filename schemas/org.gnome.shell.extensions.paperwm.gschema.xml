@@ -713,6 +713,11 @@
         <summary>Duration of animations in seconds</summary>
     </key>
 
+    <key type="i" name="drift-speed">
+        <default>2</default>
+        <summary>Drift speed (px/ms) when using "drifting view to the left/right" keybinds</summary>
+    </key>
+
     <key type="i" name="drag-drift-speed">
         <default>2</default>
         <summary>Drift speed (px/ms) when mouse is at edge of montior when dragging windows</summary>
