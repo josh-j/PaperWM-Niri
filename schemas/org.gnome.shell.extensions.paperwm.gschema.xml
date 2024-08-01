@@ -218,11 +218,11 @@
       <summary>Switch to the previous window</summary>
     </key>
     <key type="as" name="switch-right">
-        <default><![CDATA[['<Super>Left']]]></default>
+        <default><![CDATA[['<Super>Right']]]></default>
         <summary>Switch to the right window</summary>
     </key>
     <key type="as" name="switch-left">
-        <default><![CDATA[['<Super>Right']]]></default>
+        <default><![CDATA[['<Super>Left']]]></default>
         <summary>Switch to the left window</summary>
     </key>
 
