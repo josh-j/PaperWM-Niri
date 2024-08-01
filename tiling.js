@@ -1273,6 +1273,7 @@ export class Space extends Array {
             .addKeyReleaseCallback(() => {
                 Utils.timeout_remove(driftTimeout);
                 this.drifting = null;
+                ensureViewport(this.selectedWindow, this);
             });
 
         Utils.timeout_remove(driftTimeout);
@@ -1281,8 +1282,6 @@ export class Space extends Array {
             const selected = Gestures.findTargetWindow(this, 1);
             updateSelection(this, selected);
             this.selectedWindow = selected;
-            this.emit('select');
-
             return true;
         });
     }
