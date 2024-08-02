@@ -303,7 +303,7 @@ export function update(space, dx, t) {
     space.cloneContainer.x -= dx;
     space.targetX = space.cloneContainer.x;
 
-    // Check which target windew will be selected if we releas the swipe at this
+    // Check which target window will be selected if we release the swipe at this
     // moment
     dx = Lib.sum(dxs.slice(-3));
     let v = dx / (t - dts.slice(-3)[0]);
