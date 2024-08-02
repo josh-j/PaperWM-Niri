@@ -92,6 +92,7 @@ class ActionDispatcher {
         this.signals.connect(this.actor, 'key-release-event', this._keyReleaseEvent.bind(this));
 
         this.keyPressCallbacks = [];
+        this.keyReleaseCallbacks = [];
 
         this._noModsTimeoutId = null;
         this._doActionTimeout = null;
@@ -103,6 +104,16 @@ class ActionDispatcher {
      */
     addKeypressCallback(handler) {
         this.keyPressCallbacks.push(handler);
+        return this;
+    }
+
+    /**
+     * Adds a signal to this dispatcher.  Will be destroyed when this
+     * dispatcher is destroyed.
+     */
+    addKeyReleaseCallback(handler) {
+        this.keyReleaseCallbacks.push(handler);
+        return this;
     }
 
     show(_backward, binding, mask) {
@@ -198,6 +209,7 @@ class ActionDispatcher {
             this._resetNoModsTimeout();
         }
 
+        this.keyReleaseCallbacks.forEach(callback => callback());
         return Clutter.EVENT_STOP;
     }
 

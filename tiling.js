@@ -92,7 +92,7 @@ let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
 let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
-let monitorChangeTimeout;
+let monitorChangeTimeout, driftTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -217,6 +217,8 @@ export function disable() {
     workspaceChangeTimeouts = null;
     Utils.timeout_remove(monitorChangeTimeout);
     monitorChangeTimeout = null;
+    Utils.timeout_remove(driftTimeout);
+    driftTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -1259,6 +1261,35 @@ export class Space extends Array {
         let metaWindow = space.getWindow(index, row);
         ensureViewport(metaWindow, space);
     }
+
+    _drift(dx) {
+        if (dx === 0) {
+            return;
+        }
+        if (this.drifting) {
+            return;
+        }
+        this.drifting = true;
+
+        // stop drifting on key_release
+        Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
+            .addKeyReleaseCallback(() => {
+                Utils.timeout_remove(driftTimeout);
+                this.drifting = null;
+            });
+
+        Utils.timeout_remove(driftTimeout);
+        driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            Gestures.update(this, dx, 1);
+            this.selectedWindow = Gestures.findTargetWindow(this, dx < 0 ? -1 : 1);
+            ensureViewport(this.selectedWindow, this);
+            return true;
+        });
+    }
+
+    driftLeft() { this._drift(-1 * Settings.prefs.drift_speed); }
+    driftRight() { this._drift(Settings.prefs.drift_speed); }
+
 
     /**
      * Return the x position of the visible element of this window.
