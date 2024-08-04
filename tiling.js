@@ -92,6 +92,7 @@ let gsettings, backgroundSettings, interfaceSettings;
 let displayConfig;
 let saveState;
 let startupTimeoutId, timerId, fullscreenStartTimeout, stackSlurpTimeout, workspaceChangeTimeouts;
+let monitorChangeTimeout, driftTimeout;
 let workspaceSettings;
 export let inGrab;
 export function enable(extension) {
@@ -214,6 +215,10 @@ export function disable() {
     stackSlurpTimeout = null;
     workspaceChangeTimeouts?.forEach(t => Utils.timeout_remove(t));
     workspaceChangeTimeouts = null;
+    Utils.timeout_remove(monitorChangeTimeout);
+    monitorChangeTimeout = null;
+    Utils.timeout_remove(driftTimeout);
+    driftTimeout = null;
 
     grabSignals.destroy();
     grabSignals = null;
@@ -1304,6 +1309,35 @@ export class Space extends Array {
         ensureViewport(metaWindow, space);
     }
 
+    _drift(dx) {
+        if (dx === 0) {
+            return;
+        }
+        if (this.drifting) {
+            return;
+        }
+        this.drifting = true;
+
+        // stop drifting on key_release
+        Navigator.getActionDispatcher(Clutter.GrabState.KEYBOARD)
+            .addKeyReleaseCallback(() => {
+                Utils.timeout_remove(driftTimeout);
+                this.drifting = null;
+            });
+
+        Utils.timeout_remove(driftTimeout);
+        driftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            Gestures.update(this, dx, 1);
+            this.selectedWindow = Gestures.findTargetWindow(this, dx < 0 ? -1 : 1);
+            ensureViewport(this.selectedWindow, this);
+            return true;
+        });
+    }
+
+    driftLeft() { this._drift(-1 * Settings.prefs.drift_speed); }
+    driftRight() { this._drift(Settings.prefs.drift_speed); }
+
+
     /**
      * Return the x position of the visible element of this window.
      */
@@ -2297,6 +2331,26 @@ export const Spaces = class Spaces extends Map {
         let mru = this.mru();
 
         let primary = Main.layoutManager.primaryMonitor;
+        if (!primary) {
+            // setup periodic timout to call layout on all spaces 5 times (1 second apart)
+            monitorChangeTimeout = Utils.periodic_timeout({
+                count: 5,
+                init: () => {
+                    Utils.timeout_remove(monitorChangeTimeout);
+                },
+                callback: () => {
+                    this?.forEach(s => s.layout());
+                },
+                onContinue: called => {
+                    console.warn(`MONITORS_CHANGED: no primary monitor - 'layout' on spaces call ${called}`);
+                },
+                onComplete: () => {
+                    monitorChangeTimeout = null;
+                },
+            });
+            return;
+        }
+
         // get monitors but ensure primary monitor is first
         let monitors = Main.layoutManager.monitors.filter(m => m !== primary);
         monitors.unshift(primary);
@@ -3524,25 +3578,29 @@ export function registerWindow(metaWindow) {
             return;
         }
 
-        let tries = 0;
-        const timeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
-            if (tries >= 10) {
-                done(timeout);
-                return false;
+        const timeout = Utils.periodic_timeout(
+            {
+                period_ms: 100,
+                count: 10,
+                callback: () => {
+                    const f = metaWindow.get_frame_rect();
+                    if (metaWindow._targetHeight !== f.height) {
+                        if (!isNaN(metaWindow._targetHeight)) {
+                            metaWindow.move_resize_frame(
+                                true,
+                                f.x,
+                                f.y,
+                                f.width,
+                                metaWindow._targetHeight
+                            );
+                        }
+                    }
+                },
+                onComplete: () => {
+                    done(timeout);
+                },
             }
-            tries++;
-            // console.log(`try ${tries} height check on ${metaWindow.title}`);
-            const f = metaWindow.get_frame_rect();
-            if (metaWindow._targetHeight !== f.height) {
-                if (!isNaN(metaWindow._targetHeight)) {
-                    metaWindow.move_resize_frame(true, f.x, f.y, f.width, metaWindow._targetHeight);
-                }
-                return true;
-            }
-
-            done(timeout);
-            return false;
-        });
+        );
         workspaceChangeTimeouts.push(timeout);
     });
 
@@ -4238,7 +4296,7 @@ export function ensuredX(meta_window, space) {
  * @returns
  */
 export function ensureViewport(meta_window, space, options = {}) {
-    space = space || spaces.spaceOfWindow(meta_window);
+    space = space ?? spaces.spaceOfWindow(meta_window);
     let force = options?.force ?? false;
     let moveto = options?.moveto ?? true;
     let animate = options?.animate ?? true;

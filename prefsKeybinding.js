@@ -33,6 +33,8 @@ const actions = {
         'switch-right-loop',
         'switch-up-loop',
         'switch-down-loop',
+        'drift-left',
+        'drift-right',
         'switch-global-left',
         'switch-global-right',
         'switch-global-up',

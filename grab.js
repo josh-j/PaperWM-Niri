@@ -1,12 +1,26 @@
 import Clutter from 'gi://Clutter';
+import GLib from 'gi://GLib';
 import Graphene from 'gi://Graphene';
 import Meta from 'gi://Meta';
 import St from 'gi://St';
 
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-import { Settings, Utils, Tiling, Navigator, Scratch } from './imports.js';
+import { Settings, Utils, Tiling, Navigator, Scratch, Gestures } from './imports.js';
 import { Easer } from './utils.js';
+
+export let grabbed = false;
+
+let dragDriftTimeout;
+export function enable() {
+
+}
+
+export function disable() {
+    grabbed = null;
+    Utils.timeout_remove(dragDriftTimeout);
+    dragDriftTimeout = null;
+}
 
 /**
  * Returns a virtual pointer (i.e. mouse) device that can be used to
@@ -30,7 +44,8 @@ export class MoveGrab {
         this.window = metaWindow;
         this.type = type;
         this.signals = new Utils.Signals();
-        this.grabbed = false;
+
+        this.dragDriftPx = 12;
 
         this.initialSpace = space || Tiling.spaces.spaceOfWindow(metaWindow);
         this.zoneActors = new Set();
@@ -46,10 +61,10 @@ export class MoveGrab {
         console.debug("#grab", "begin");
 
         this.center = center;
-        if (this.grabbed)
+        if (grabbed)
             return;
 
-        this.grabbed = true;
+        grabbed = true;
         global.display.end_grab_op?.(global.get_current_time());
         global.display.set_cursor(Meta.Cursor.MOVE_OR_RESIZE_WINDOW);
         this.dispatcher = new Navigator.getActionDispatcher(Clutter.GrabState.POINTER);
@@ -288,33 +303,73 @@ export class MoveGrab {
         }
 
         const sameTarget = (a, b) => {
-            if (a === b)
+            if (a === b) {
                 return true;
-            if (!a || !b)
+            }
+            if (!a || !b) {
                 return false;
-            return a.space === b.space && a.position[0] === b.position[0] && a.position[1] === b.position[1];
+            }
+            if (a.space !== b.space) {
+                return false;
+            }
+            if (a.position.length !== b.position.length) {
+                return false;
+            }
+            return a.position[0] === b.position[0] &&
+                a.position[1] === b.position[1];
         };
 
         if (!sameTarget(target, this.dndTarget)) {
-            // has a new zone target
-            if (target) {
-                this.dndTargets.push(target);
-            }
-            this.dndTarget = null;
             this.activateDndTarget(target, initial);
         }
     }
 
+    _dragDrfit(space, dx, xfunc) {
+        // only dift is more than one tiled window
+        if (space.getWindows().filter(w => Tiling.isTiled(w)).length <= 0) {
+            return;
+        }
+
+        Utils.timeout_remove(dragDriftTimeout);
+        dragDriftTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1, () => {
+            const [px] = global.get_pointer();
+            if (xfunc(px)) {
+                return false;
+            }
+            if (space !== Tiling?.spaces?.activeSpace) {
+                return false;
+            }
+            Gestures.update(space, dx, 1);
+            return true;
+        });
+    }
+
     motion(_actor, event) {
-        let metaWindow = this.window;
+        const metaWindow = this.window;
         let [gx, gy] = global.get_pointer();
+
+        // drift move
+        const monitor = Utils.monitorAtPoint(gx, gy);
+        if (gx >= monitor.x && gx <= monitor.x + this.dragDriftPx) {
+            this._dragDrfit(
+                this.initialSpace,
+                -1 * Settings.prefs.drag_drift_speed, x => x > monitor.x + this.dragDriftPx
+            );
+        }
+        if (gx <= monitor.x + monitor.width && gx >= monitor.x + monitor.width - this.dragDriftPx) {
+            this._dragDrfit(
+                this.initialSpace,
+                Settings.prefs.drag_drift_speed, x => x < monitor.x + monitor.width - this.dragDriftPx
+            );
+        }
+
         if (event.type() === Clutter.EventType.TOUCH_UPDATE) {
             [gx, gy] = event.get_coords();
             // We update global pointer to match touch event
             Utils.warpPointer(gx, gy, false);
         }
         let [dx, dy] = this.pointerOffset;
-        let clone = metaWindow?.clone;
+        const clone = metaWindow?.clone;
 
         // check if window and clone exists
         if (!clone) {
@@ -333,41 +388,42 @@ export class MoveGrab {
                 clone.x = gx - dx;
                 clone.y = gy - dy;
             }
-        } else {
-            let monitor = Utils.monitorAtPoint(gx, gy);
-            if (monitor !== this.initialSpace.monitor) {
-                this.beginDnD();
-                return;
-            }
+            return;
+        }
 
-            if (event.get_state() & Clutter.ModifierType.CONTROL_MASK) {
-                // NB: only works in wayland
-                this.beginDnD();
-                return;
-            }
+        if (monitor !== this.initialSpace.monitor) {
+            this.beginDnD();
+            return;
+        }
 
-            let space = this.initialSpace;
-            let clone = metaWindow.clone;
-            let [x, y] = space.globalToViewport(gx, gy);
-            space.targetX = x - this.scrollAnchor;
-            space.cloneContainer.x = space.targetX;
+        if (event.get_state() & Clutter.ModifierType.CONTROL_MASK) {
+            // NB: only works in wayland
+            this.beginDnD();
+            return;
+        }
 
-            clone.y = y - dy;
+        const space = this.initialSpace;
+        let [x, y] = space.globalToViewport(gx, gy);
+        space.targetX = x - this.scrollAnchor;
+        space.cloneContainer.x = space.targetX;
 
-            const threshold = 300;
-            dy = Math.min(threshold, Math.abs(clone.y - this.initialY));
-            let s = 1 - Math.pow(dy / 500, 3);
-            let actor = metaWindow.get_compositor_private();
-            actor.set_scale(s, s);
-            clone.set_scale(s, s);
+        clone.y = y - dy;
 
-            if (dy >= threshold) {
-                this.beginDnD();
-            }
+        const threshold = 300;
+        dy = Math.min(threshold, Math.abs(clone.y - this.initialY));
+        let s = 1 - Math.pow(dy / 500, 3);
+        let actor = metaWindow.get_compositor_private();
+        actor.set_scale(s, s);
+        clone.set_scale(s, s);
+
+        if (dy >= threshold) {
+            this.beginDnD();
         }
     }
 
     end() {
+        grabbed = null;
+        Utils.timeout_remove(dragDriftTimeout);
         console.debug("#grab", "end");
         this.signals.destroy();
         this.signals = null;

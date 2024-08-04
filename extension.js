@@ -7,7 +7,7 @@ import * as Util from 'resource:///org/gnome/shell/misc/util.js';
 
 import {
     Utils, Settings, Gestures, Keybindings, LiveAltTab, Navigator,
-    Stackoverlay, Scratch, Workspace, Tiling, Topbar, Patches, App
+    Stackoverlay, Scratch, Workspace, Tiling, Topbar, Patches, App, Grab
 } from './imports.js';
 
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
@@ -49,14 +49,13 @@ export default class PaperWM extends Extension {
     modules = [
         Utils, Settings, Patches,
         Gestures, Keybindings, LiveAltTab, Navigator, Stackoverlay, Scratch,
-        Workspace, Tiling, Topbar, App,
+        Workspace, Tiling, Topbar, App, Grab,
     ];
 
     #userStylesheet = null;
 
     enable() {
         console.log(`#PaperWM enabled`);
-
         this.enableUserConfig();
         this.enableUserStylesheet();
 

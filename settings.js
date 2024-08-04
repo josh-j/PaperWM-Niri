@@ -39,6 +39,8 @@ export function enable(extension) {
         'workspace-colors',
         'default-background',
         'animation-time',
+        'drift-speed',
+        'drag-drift-speed',
         'default-show-top-bar',
         'swipe-sensitivity',
         'swipe-friction',

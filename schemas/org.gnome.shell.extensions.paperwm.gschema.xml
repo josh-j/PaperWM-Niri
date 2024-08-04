@@ -230,6 +230,16 @@
         <default><![CDATA[['<Super>Left']]]></default>
         <summary>Switch to the left window</summary>
     </key>
+
+    <key type="as" name="drift-left">
+        <default><![CDATA[['<Ctrl><Shift>Left']]]></default>
+        <summary>Drift tiling viewport to the left</summary>
+    </key>
+      <key type="as" name="drift-right">
+        <default><![CDATA[['<Ctrl><Shift>Right']]]></default>
+        <summary>Drift tiling viewport to the right</summary>
+    </key>
+
     <key type="as" name="switch-up">
         <default><![CDATA[['<Super>Up']]]></default>
         <summary>Switch to the window above</summary>
@@ -706,6 +716,16 @@
     <key type="d" name="animation-time">
         <default>0.25</default>
         <summary>Duration of animations in seconds</summary>
+    </key>
+
+    <key type="i" name="drift-speed">
+        <default>2</default>
+        <summary>Drift speed (px/ms) when using "drifting view to the left/right" keybinds</summary>
+    </key>
+
+    <key type="i" name="drag-drift-speed">
+        <default>2</default>
+        <summary>Drift speed (px/ms) when mouse is at edge of montior when dragging windows</summary>
     </key>
 
     <key type="d" name="overview-max-window-scale">
