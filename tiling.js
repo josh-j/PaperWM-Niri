@@ -287,7 +287,7 @@ export class Space extends Array {
         this.actor = actor;
         let cloneClip = new Clutter.Actor({ name: "clone-clip" });
         this.cloneClip = cloneClip;
-        let cloneContainer = new St.Widget({ name: "clone-container" });
+        let cloneContainer = new St.Widget({ name: "clone-container", style_class: "clone-container" });
         this.cloneContainer = cloneContainer;
 
         const workspaceIndicator = new St.Widget({
@@ -898,6 +898,10 @@ export class Space extends Array {
                 onComplete: () => {
                     if (this.selectedWindow) {
                         ensureViewport(this.selectedWindow, this);
+
+                        // centre clone container
+                        const gap = this.width - this.cloneContainer.width * scale;
+                        this.cloneContainer.x = Math.round(gap / 2);
                     }
 
                     // remove any previous signals

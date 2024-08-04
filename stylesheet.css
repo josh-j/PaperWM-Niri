@@ -1,6 +1,10 @@
 /*
 NOTE: please update `./config/users.css` with any new styles added here.
 */
+.clone-container {
+    background-color: rgba(109, 218, 67, 0.8);
+}
+
 .background-clear {
     background-color: rgba(0, 0, 0, 0);
 }
