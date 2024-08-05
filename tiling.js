@@ -4955,7 +4955,7 @@ export function centerWindowHorizontally(metaWindow) {
 
     const targetX = workArea.x + Math.round((workArea.width - frame.width) / 2);
     if (space.indexOf(metaWindow) === -1) {
-        metaWindow.move_frame(true, targetX + monitor.x, frame.y);
+        Scratch.easeScratch(metaWindow, targetX + monitor.x, frame.y);
     } else {
         move_to(space, metaWindow, {
             x: targetX,
