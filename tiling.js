@@ -801,7 +801,7 @@ export class Space extends Array {
         // if only one column on space, then center it
         if (centerIfOne && this.length === 1) {
             const mw = this.getWindows()[0];
-            centerWindowHorizontally(mw);
+            centerWindow(mw);
         }
 
         callback && callback();
@@ -4947,15 +4947,17 @@ function activateWindowAfterRendered(actor, mw) {
 /**
  * Centers the currently selected window.
  */
-export function centerWindowHorizontally(metaWindow) {
+export function centerWindow(metaWindow, horizontal = true, vertical = true) {
     const frame = metaWindow.get_frame_rect();
     const space = spaces.spaceOfWindow(metaWindow);
     const monitor = space.monitor;
     const workArea = space.workArea();
 
-    const targetX = workArea.x + Math.round((workArea.width - frame.width) / 2);
+    const targetX = horizontal ? workArea.x + Math.round((workArea.width - frame.width) / 2) : frame.x;    
+    let targetY = vertical ? workArea.y + Math.round((workArea.height - frame.height) / 2) : frame.y;
+    targetY = Math.max(targetY, workArea.y);
     if (space.indexOf(metaWindow) === -1) {
-        Scratch.easeScratch(metaWindow, targetX + monitor.x, frame.y);
+        Scratch.easeScratch(metaWindow, targetX + monitor.x, targetY);
     } else {
         move_to(space, metaWindow, {
             x: targetX,
@@ -5003,7 +5005,7 @@ export function setFocusMode(mode, space) {
             } else {
                 space.unfocusXPosition = workArea.width;
             }
-            centerWindowHorizontally(selectedWin);
+            centerWindow(selectedWin);
         }
         break;
     default:
