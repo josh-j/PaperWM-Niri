@@ -425,6 +425,11 @@
       <summary>Center window vertically (non-tiled window)</summary>
     </key>
 
+    <key type="as" name="center">
+      <default><![CDATA[[]]]></default>
+      <summary>Center window</summary>
+    </key>
+
     <key type="as" name="toggle-maximize-width">
       <default><![CDATA[['<Super>f']]]></default>
       <summary>Maximize the width of the active window</summary>

@@ -4953,7 +4953,7 @@ export function centerWindow(metaWindow, horizontal = true, vertical = true) {
     const monitor = space.monitor;
     const workArea = space.workArea();
 
-    const targetX = horizontal ? workArea.x + Math.round((workArea.width - frame.width) / 2) : frame.x;    
+    const targetX = horizontal ? workArea.x + Math.round((workArea.width - frame.width) / 2) : frame.x;
     let targetY = vertical ? workArea.y + Math.round((workArea.height - frame.height) / 2) : frame.y;
     targetY = Math.max(targetY, workArea.y);
     if (space.indexOf(metaWindow) === -1) {
