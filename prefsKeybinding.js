@@ -73,6 +73,8 @@ const actions = {
         'barf-out',
         'barf-out-active',
         'center-horizontally',
+        'center-vertically',
+        'center',
         'paper-toggle-fullscreen',
         'toggle-maximize-width',
         'resize-h-inc',
