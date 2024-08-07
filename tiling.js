@@ -4961,7 +4961,7 @@ export function centerWindow(metaWindow, horizontal = true, vertical = false) {
     let targetY = vertical ? workArea.y + Math.round((workArea.height - frame.height) / 2) : frame.y;
     targetY = Math.max(targetY, workArea.y);
     if (space.indexOf(metaWindow) === -1) {
-        Scratch.easeScratch(metaWindow, targetX + monitor.x, targetY);
+        Scratch.easeScratch(metaWindow, targetX + monitor.x, targetY + monitor.y);
     } else {
         move_to(space, metaWindow, {
             x: targetX,
