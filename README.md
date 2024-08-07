@@ -59,7 +59,7 @@ Users are enouraged to submit [issues](https://github.com/paperwm/PaperWM/issues
 
 Most functionality is available using a mouse, eg. activating a window at the edge of the monitor by clicking on it. Wayland support gestures (See the [Touchpad Gestures](#touchpad-gestures) section). PaperWM is designed to work work well with keyboard + mouse, trackpads etc.
 
-Most keybindings start with the <kbd>Super</kbd> modifier (by default), which is usually the Windows key, or on mac keyboards it's the Command key. It's possible to modify the keyboard layout so that <kbd>Super</kbd> is switched with <kbd>Alt</kbd> making all the keybindings easier to reach. This can be done through Gnome Tweaks under `Keybard & Mouse` ⟶ `Additional Layout Options` ⟶ `Alt/Win key behavior` ⟶ `Left Alt is swapped with Left Win`.
+Most keybindings start with the <kbd>Super</kbd> modifier (by default), which is usually the Windows key, or on mac keyboards it's the Command key. It's possible to modify the keyboard layout so that <kbd>Super</kbd> is switched with <kbd>Alt</kbd> making all the keybindings easier to reach. This can be done through Gnome Tweaks under `Keyboard & Mouse` ⟶ `Additional Layout Options` ⟶ `Alt/Win key behavior` ⟶ `Left Alt is swapped with Left Win`.
 
 Most keybindings will grab the keyboard while <kbd>Super</kbd> is held down, only switching focus when <kbd>Super</kbd> is released. <kbd>Escape</kbd> will abort the navigation taking you back to the previously active window.
 
