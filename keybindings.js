@@ -300,7 +300,15 @@ export function setupActions(settings) {
         Meta.KeyBindingFlags.PER_WINDOW);
 
     registerPaperAction("center-horizontally",
-        Tiling.centerWindowHorizontally,
+        (mw, _space) => Tiling.centerWindow(mw, true, false),
+        Meta.KeyBindingFlags.PER_WINDOW);
+
+    registerPaperAction("center-vertically",
+        (mw, _space) => Tiling.centerWindow(mw, false, true),
+        Meta.KeyBindingFlags.PER_WINDOW);
+
+    registerPaperAction("center",
+        (mw, _space) => Tiling.centerWindow(mw, true, true),
         Meta.KeyBindingFlags.PER_WINDOW);
 
     registerPaperAction('new-window',
