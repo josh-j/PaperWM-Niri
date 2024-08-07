@@ -4947,7 +4947,7 @@ function activateWindowAfterRendered(actor, mw) {
 /**
  * Centers the currently selected window.
  */
-export function centerWindow(metaWindow, horizontal = true, vertical = true) {
+export function centerWindow(metaWindow, horizontal = true, vertical = false) {
     const frame = metaWindow.get_frame_rect();
     const space = spaces.spaceOfWindow(metaWindow);
     const monitor = space.monitor;
