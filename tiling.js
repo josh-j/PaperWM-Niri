@@ -3967,6 +3967,7 @@ export function add_handler(_ws, metaWindow) {
 export function insertWindow(metaWindow, options = {}) {
     const existing = options?.existing ?? false;
     const dropping = options?.dropping ?? false;
+    const dropCallback = options?.dropCallback ?? function() {};
 
     // Add newly created windows to the space being previewed
     if (!existing &&
@@ -4110,16 +4111,20 @@ export function insertWindow(metaWindow, options = {}) {
             break;
         }
 
-        // if need to slurp (i.e. vertical stack)
-        if (slurpPosition) {
-            stackSlurpTimeout = GLib.timeout_add(
-                GLib.PRIORITY_DEFAULT,
-                100,
-                () => {
-                    slurp(active, slurpPosition);
-                    return false; // on return false destroys timeout
-                });
+        if (!slurpPosition) {
+            dropCallback(metaWindow);
+            return;
         }
+
+        // if need to slurp (i.e. vertical stack)
+        stackSlurpTimeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            100,
+            () => {
+                slurp(active, slurpPosition);
+                dropCallback(metaWindow);
+                return false; // on return false destroys timeout
+            });
     };
 
     /**
@@ -5415,8 +5420,16 @@ export function takeWindow(metaWindow, space, options = {}) {
                 case Clutter.KEY_q: {
                     navigator._moving.forEach(w => {
                         changeSpace(w);
-                        insertWindow(w, { existing: true, dropping: true });
-                        w.delete(global.get_current_time());
+                        insertWindow(
+                            w,
+                            {
+                                existing: true,
+                                dropping: true,
+                                dropCallback: mw => {
+                                    console.log(`deleting window ${mw.title}`);
+                                    mw.delete(global.get_current_time());
+                                },
+                            });
                     });
 
                     navigator._moving = [];
