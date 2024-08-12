@@ -4100,7 +4100,7 @@ export function insertWindow(metaWindow, options = {}) {
     // run a simple layout in pre-prepare layout
     space.layout(false);
 
-    const slurpCheck = () => {
+    const slurpCheck = timeout => {
         let slurpPosition;
         switch (Settings.prefs.open_window_position) {
         case Settings.OpenWindowPositions.DOWN:
@@ -4112,6 +4112,13 @@ export function insertWindow(metaWindow, options = {}) {
         }
 
         if (!slurpPosition) {
+            dropCallback(metaWindow);
+            return;
+        }
+
+        // has slurpPosition but no timeout
+        if (!timeout) {
+            slurp(active, slurpPosition);
             dropCallback(metaWindow);
             return;
         }
@@ -4149,7 +4156,7 @@ export function insertWindow(metaWindow, options = {}) {
             ensureViewport(space.selectedWindow, space);
             space.setSpaceTopbarElementsVisible(true);
 
-            slurpCheck();
+            slurpCheck(true);
         });
 
         return;
@@ -4166,7 +4173,7 @@ export function insertWindow(metaWindow, options = {}) {
     }
 
     if (dropping) {
-        slurpCheck();
+        slurpCheck(false);
     }
 }
 
@@ -5426,7 +5433,6 @@ export function takeWindow(metaWindow, space, options = {}) {
                                 existing: true,
                                 dropping: true,
                                 dropCallback: mw => {
-                                    console.log(`deleting window ${mw.title}`);
                                     mw.delete(global.get_current_time());
                                 },
                             });
