@@ -5141,6 +5141,10 @@ export function slurp(metaWindow, insertAt = SlurpInsertPosition.BOTTOM) {
     }
 
     const space = spaces.spaceOfWindow(metaWindow);
+    if (!space) {
+        return;
+    }
+
     const index = space.indexOf(metaWindow);
     let to, from, metaWindowToSlurp;
 
