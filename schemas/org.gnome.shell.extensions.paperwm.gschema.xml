@@ -182,31 +182,31 @@
 
     <key type="as" name="switch-open-window-position">
       <default><![CDATA[['<Super><Shift>w']]]></default>
-      <summary>Switch between positions for creating windows (e.g. right, left)</summary>
+      <summary>Switch between positions for creating/dropping windows</summary>
     </key>
     <key type="as" name="open-window-position-right">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows to the right</summary>
+      <summary>Create/drop windows to the right</summary>
     </key>
     <key type="as" name="open-window-position-left">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows to the left</summary>
+      <summary>Create/drop windows to the left</summary>
     </key>
     <key type="as" name="open-window-position-down">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows in vertical stack (down)</summary>
+      <summary>Create/drop windows in vertical stack (down)</summary>
     </key>
     <key type="as" name="open-window-position-up">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows in vertical stack (up)</summary>
+      <summary>Create/drop windows in vertical stack (up)</summary>
     </key>
     <key type="as" name="open-window-position-start">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows at start position</summary>
+      <summary>Create/drop windows at start position</summary>
     </key>
     <key type="as" name="open-window-position-end">
       <default><![CDATA[[]]]></default>
-      <summary>Create new windows at end position</summary>
+      <summary>Create/drop windows at end position</summary>
     </key>
 
     <key type="as" name="switch-next">
