@@ -3964,7 +3964,11 @@ export function add_handler(_ws, metaWindow) {
    and `Display::window-created` through `WindowActor::show` if window is newly
    created to ensure that the WindowActor exists.
 */
-export function insertWindow(metaWindow, { existing }) {
+export function insertWindow(metaWindow, options = {}) {
+    const existing = options?.existing ?? false;
+    const dropping = options?.dropping ?? false;
+    const dropCallback = options?.dropCallback ?? function() {};
+
     // Add newly created windows to the space being previewed
     if (!existing &&
         !metaWindow.is_on_all_workspaces() &&
@@ -4096,6 +4100,40 @@ export function insertWindow(metaWindow, { existing }) {
     // run a simple layout in pre-prepare layout
     space.layout(false);
 
+    const slurpCheck = timeout => {
+        let slurpPosition;
+        switch (Settings.prefs.open_window_position) {
+        case Settings.OpenWindowPositions.DOWN:
+            slurpPosition = SlurpInsertPosition.BELOW;
+            break;
+        case Settings.OpenWindowPositions.UP:
+            slurpPosition = SlurpInsertPosition.ABOVE;
+            break;
+        }
+
+        if (!slurpPosition) {
+            dropCallback(metaWindow);
+            return;
+        }
+
+        // has slurpPosition but no timeout
+        if (!timeout) {
+            slurp(active, slurpPosition);
+            dropCallback(metaWindow);
+            return;
+        }
+
+        // if need to slurp (i.e. vertical stack)
+        stackSlurpTimeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            100,
+            () => {
+                slurp(active, slurpPosition);
+                dropCallback(metaWindow);
+                return false; // on return false destroys timeout
+            });
+    };
+
     /**
      * If window is new, then setup and ensure is in view
      * after actor is shown on stage.
@@ -4118,26 +4156,7 @@ export function insertWindow(metaWindow, { existing }) {
             ensureViewport(space.selectedWindow, space);
             space.setSpaceTopbarElementsVisible(true);
 
-            let slurpPosition;
-            switch (Settings.prefs.open_window_position) {
-            case Settings.OpenWindowPositions.DOWN:
-                slurpPosition = SlurpInsertPosition.BELOW;
-                break;
-            case Settings.OpenWindowPositions.UP:
-                slurpPosition = SlurpInsertPosition.ABOVE;
-                break;
-            }
-
-            // if need to slurp (i.e. vertical stack)
-            if (slurpPosition) {
-                stackSlurpTimeout = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT,
-                    100,
-                    () => {
-                        slurp(active, slurpPosition);
-                        return false; // on return false destroys timeout
-                    });
-            }
+            slurpCheck(true);
         });
 
         return;
@@ -4151,6 +4170,10 @@ export function insertWindow(metaWindow, { existing }) {
         Main.activateWindow(metaWindow);
     } else {
         ensureViewport(space.selectedWindow, space);
+    }
+
+    if (dropping) {
+        slurpCheck(false);
     }
 }
 
@@ -5130,6 +5153,10 @@ export function slurp(metaWindow, insertAt = SlurpInsertPosition.BOTTOM) {
     }
 
     const space = spaces.spaceOfWindow(metaWindow);
+    if (!space) {
+        return;
+    }
+
     const index = space.indexOf(metaWindow);
     let to, from, metaWindowToSlurp;
 
@@ -5299,11 +5326,11 @@ export function moveUpSpace(_mw, _space) {
    Detach the @metaWindow, storing it at the bottom right corner while
    navigating. When done, insert all the detached windows again.
  */
-export function takeWindow(metaWindow, space, params) {
+export function takeWindow(metaWindow, space, options = {}) {
     space = space ?? spaces.selectedSpace;
     metaWindow = metaWindow ?? space.selectedWindow;
-    const navigator = params?.navigator ?? Navigator.getNavigator();
-    const existing = params?.existing ?? false;
+    const navigator = options?.navigator ?? Navigator.getNavigator();
+    const existing = options?.existing ?? false;
 
     if (!existing && !space.removeWindow(metaWindow))
         return;
@@ -5375,7 +5402,7 @@ export function takeWindow(metaWindow, space, params) {
                     const pop = navigator._moving.pop();
                     if (pop) {
                         changeSpace(pop);
-                        insertWindow(pop, { existing: true });
+                        insertWindow(pop, { existing: true, dropping: true });
                         // make space selectedWindow (keeps index for next insert)
                         selectedSpace().selectedWindow = pop;
                         ensureViewport(pop);
@@ -5400,8 +5427,15 @@ export function takeWindow(metaWindow, space, params) {
                 case Clutter.KEY_q: {
                     navigator._moving.forEach(w => {
                         changeSpace(w);
-                        insertWindow(w, { existing: true });
-                        w.delete(global.get_current_time());
+                        insertWindow(
+                            w,
+                            {
+                                existing: true,
+                                dropping: true,
+                                dropCallback: mw => {
+                                    mw.delete(global.get_current_time());
+                                },
+                            });
                     });
 
                     navigator._moving = [];
@@ -5421,7 +5455,7 @@ export function takeWindow(metaWindow, space, params) {
             let selectedSpace = spaces.selectedSpace;
             navigator._moving.forEach(w => {
                 changeSpace(w);
-                insertWindow(w, { existing: true });
+                insertWindow(w, { existing: true, dropping: true });
 
                 // make space selectedWindow (keeps index for next insert)
                 selectedSpace.selectedWindow = w;

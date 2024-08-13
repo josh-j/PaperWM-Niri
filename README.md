@@ -95,13 +95,13 @@ Swiping the trackpad horizontally with three fingers (only available in Wayland)
 | <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                                       | Cycle through previously active scratch windows | 
 | <kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd>                                       | Cycle through previously active scratch windows (backward order) |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>C</kbd>                                                      | Switch between window focus modes |
-| <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating new windows |
-| _Not set by default (set in extension settings)_                                                  | Create new windows to the right of current window |
-| _Not set by default (set in extension settings)_                                                  | Create new windows to the left of current window |
-| _Not set by default (set in extension settings)_                                                  | Create new windows in vertical stack (down) |
-| _Not set by default (set in extension settings)_                                                  | Create new windows in vertical stack (up) |
-| _Not set by default (set in extension settings)_                                                  | Create new windows at start position |
-| _Not set by default (set in extension settings)_                                                  | Create new windows at end position |
+| <kbd>Shift</kbd><kbd>Super</kbd><kbd>W</kbd>                                                      | Switch between positions for creating/dropping new windows |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows to the right of current window |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows to the left of current window |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows in vertical stack (down) |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows in vertical stack (up) |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows at start position |
+| _Not set by default (set in extension settings)_                                                  | Create/drop windows at end position |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>,</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>.</kbd>        | Move the current window to the left or right |
 | <kbd>Shift</kbd><kbd>Super</kbd><kbd>,</kbd> or <kbd>Shift</kbd><kbd>Super</kbd><kbd>.</kbd>      | Move the current window to the left or right |
 | <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Left</kbd> or <kbd>Super</kbd><kbd>Ctrl</kbd><kbd>Right</kbd> | Move the current window to the left or right |
@@ -280,9 +280,9 @@ You do this by using the special "match all" operator `*` as an input for `wm_cl
 This special operator is at a lower precedence, so more specific properties that match a window will always take precedence and be applied.
 
 
-## Window insertion position for new windows
+## Window insertion position for new windows (and dropped windows in `take` mode)
 
-By default PaperWM inserts new windows to the right of the currently active window.  This behaviour can be changed via PaperWM settings, or with the `Open Window Position` button/icon (which is to the right of the focus mode icon):
+By default PaperWM inserts new windows (and drops windows in `take` mode, see [Managing multiple windows at once](#managing-multiple-windows-at-once)) to the right of the currently active window.  This behaviour can be changed via PaperWM settings, or with the `Open Window Position` button/icon (which is to the right of the focus mode icon):
 
 ![Open positions button](media/open-position-button.png)
 
