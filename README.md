@@ -71,7 +71,7 @@ Window management and navigation is based around the three following concepts.
 
 ![The window tiling with the minimap shown](https://github.com/paperwm/media/blob/master/tiling.png)
 
-New windows are automatically tiled to the right of the active window (see [here](#window-insertion-position-for-new-windows) for dynamically changing the insertion position of new windows), taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
+New windows are automatically tiled to the right of the active window (see [here](#window-insertion-position-for-new-windows-and-dropped-windows-in-take-mode) for dynamically changing the insertion position of new windows), taking up as much height as possible. <kbd>Super</kbd><kbd>Return</kbd> will open a new window of the same type as the active window.
 
 Activating a window will ensure it's fully visible, scrolling the tiling if necessary. By default, pressing <kbd>Super</kbd><kbd>.</kbd> activates the window to the right. <kbd>Super</kbd><kbd>,</kbd> activates the window to the left. On a US keyboard these keys are intuitively marked by <kbd><</kbd> and <kbd>></kbd>, they are also ordered the same way on almost all keyboard layouts. Navigating around windows brings up the minimap as can be seen in the above screenshot. The minimap will stay visible as long as <kbd>Super</kbd> is continually being pressed.
 
