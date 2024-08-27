@@ -16,7 +16,7 @@ Have questions or comments?  Please ask on our [Github Discussions](https://gith
 
 ### Install via [extensions.gnome.org](https://extensions.gnome.org/extension/6099/paperwm/) (recommended)
 
-[<img alt="Intall it on extensions.gnome.org" src="media/get-it-on-ego.svg" width="150px">](https://extensions.gnome.org/extension/6099/paperwm/)
+[<img alt="Install it on extensions.gnome.org" src="media/get-it-on-ego.svg" width="150px">](https://extensions.gnome.org/extension/6099/paperwm/)
 
 ### Install via Source
 
@@ -49,7 +49,7 @@ To uninstall simply run `./uninstall.sh`.
 Running the extension will automatically install a user config file as described in [User configuration & development](#user-configuration--development).
 
 ## Contributing
-Users are enouraged to submit [issues](https://github.com/paperwm/PaperWM/issues/new/choose) and [Pull Requests](https://github.com/paperwm/PaperWM/pulls)!
+Users are encouraged to submit [issues](https://github.com/paperwm/PaperWM/issues/new/choose) and [Pull Requests](https://github.com/paperwm/PaperWM/pulls)!
 
 > #### ➡️ Please ensure pull requests are based off, and submitted to, [develop](https://github.com/paperwm/PaperWM/tree/develop) branch.
 > 
@@ -250,7 +250,7 @@ _Note: changing this setting during a PaperWM session will set all spaces to the
 
 ### Hiding the focus mode icon
 
-Users may also prefer to hide the focus mode icon.  You can do so from the `Avanced` tab in PaperWM extension settings:
+Users may also prefer to hide the focus mode icon.  You can do so from the `Advanced` tab in PaperWM extension settings:
 
 <img alt="Hiding the focus mode icon" src="media/hide-focus-mode-icon.png" width="560px">
 
@@ -271,7 +271,7 @@ The `wm_class` or `title` of a window can be found by using looking glass: <kbd>
 
 ### Setting a default window property rule
 
-You can use the functionality defined in the [setting window specific properities](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
+You can use the functionality defined in the [setting window specific properties](#setting-window-specific-properties) section to define a `default` window property rule that will be applied to all windows NOT matched by a more specific window property rule.
 
 You do this by using the special "match all" operator `*` as an input for `wm_class` or `title`.  The below image shows setting a default `Preferred width` value of `50%`.
 
@@ -306,7 +306,7 @@ _Selecting all windows across spaces to close at once (pressing `q`):_
 
 https://github.com/paperwm/PaperWM/assets/30424662/e6596de2-f5f7-46af-b447-044f17f326f9
 
-_Reordring "taken" windows and selectively dropping them:_
+_Reordering "taken" windows and selectively dropping them:_
 
 https://github.com/paperwm/PaperWM/assets/30424662/c7c50471-f352-4693-a936-2e711189f933
 
