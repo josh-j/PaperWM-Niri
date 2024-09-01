@@ -63,7 +63,7 @@ Most keybindings start with the <kbd>Super</kbd> modifier (by default), which is
 
 Most keybindings will grab the keyboard while <kbd>Super</kbd> is held down, only switching focus when <kbd>Super</kbd> is released. <kbd>Escape</kbd> will abort the navigation taking you back to the previously active window.
 
-All PaperWM keybinds can be changed (and disabled) via PaperWM extension settings, which can be accessed through `Extensions` ⟶ `PaperWM` ⟶ `Settings`.
+All PaperWM keybinds can be changed (and disabled) via PaperWM extension settings, which can be accessed through [`Extensions`](https://apps.gnome.org/Extensions/) ⟶ `PaperWM` ⟶ `Settings`.
 
 Window management and navigation is based around the three following concepts.
 
