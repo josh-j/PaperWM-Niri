@@ -10,7 +10,7 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {
-    Settings, Utils, Lib, Gestures, Navigator, Grab, Topbar, Scratch, Stackoverlay, Background
+    Settings, Utils, Lib, Gestures, Navigator, Grab, Topbar, Scratch, Stackoverlay, BackgroundLegacy, Background
 } from './imports.js';
 import { Easer } from './utils.js';
 import { ClickOverlay } from './stackoverlay.js';
@@ -1683,13 +1683,24 @@ border-radius: ${borderWidth}px;
         this.metaBackground?.destroy();
         this.metaBackground = null;
 
-        this.metaBackground = new Background.Background({
-            monitorIndex: this.monitor.index,
-            layoutManager: Main.layoutManager,
-            settings: backgroundSettings,
-            file: Gio.File.new_for_commandline_arg(path),
-            style: GDesktopEnums.BackgroundStyle.ZOOM,
-        });
+        // attempt Gnome 47+ Background, fallback to Gnome 45/46 Background
+        try {
+            this.metaBackground = new Background.Background({
+                monitorIndex: this.monitor.index,
+                layoutManager: Main.layoutManager,
+                settings: backgroundSettings,
+                file: Gio.File.new_for_commandline_arg(path),
+                style: GDesktopEnums.BackgroundStyle.ZOOM,
+            });
+        } catch (error) {
+            this.metaBackground = new BackgroundLegacy.Background({
+                monitorIndex: this.monitor.index,
+                layoutManager: Main.layoutManager,
+                settings: backgroundSettings,
+                file: Gio.File.new_for_commandline_arg(path),
+                style: GDesktopEnums.BackgroundStyle.ZOOM,
+            });
+        }
 
         this.background.content.set({
             background: this.metaBackground,
@@ -1697,7 +1708,13 @@ border-radius: ${borderWidth}px;
 
         // after creating new background apply this space's color
         if (this.color) {
-            this.metaBackground.set_color(Cogl.Color.from_string(this.color)[1]);
+            try {
+                // Gnome 47 merged Clutter.Color into Cogl.Color
+                this.metaBackground.set_color(Cogl.Color.from_string(this.color)[1]);
+            } catch (error) {
+                // fallback for Gnome 45, 46
+                this.metaBackground.set_color(Clutter.Color.from_string(this.color)[1]);
+            }
         }
     }
 
