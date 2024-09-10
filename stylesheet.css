@@ -59,6 +59,10 @@ NOTE: please update `./config/users.css` with any new styles added here.
     border-radius: 8px;
 }
 
+.paperwm-selection {
+    border: 0px;
+}
+
 .paperwm-clone-shade {
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 7px 7px 0px 0px;
