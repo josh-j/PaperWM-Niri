@@ -1,4 +1,3 @@
-import Cogl from 'gi://Cogl';
 import Clutter from 'gi://Clutter';
 import GDesktopEnums from 'gi://GDesktopEnums';
 import Gio from 'gi://Gio';
