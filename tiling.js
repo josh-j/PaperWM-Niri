@@ -1708,13 +1708,7 @@ border-radius: ${borderWidth}px;
 
         // after creating new background apply this space's color
         if (this.color) {
-            try {
-                // Gnome 47 merged Clutter.Color into Cogl.Color
-                this.metaBackground.set_color(Cogl.Color.from_string(this.color)[1]);
-            } catch (error) {
-                // fallback for Gnome 45, 46
-                this.metaBackground.set_color(Clutter.Color.from_string(this.color)[1]);
-            }
+            this.metaBackground.set_color(Utils.color_from_string(this.color)[1]);
         }
     }
 
