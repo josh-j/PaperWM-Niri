@@ -23,6 +23,8 @@ import * as LoginManager from 'resource:///org/gnome/shell/misc/loginManager.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as Params from 'resource:///org/gnome/shell/misc/params.js';
 
+import { Utils } from './imports.js';
+
 const PRIMARY_COLOR_KEY = 'primary-color';
 const SECONDARY_COLOR_KEY = 'secondary-color';
 const COLOR_SHADING_TYPE_KEY = 'color-shading-type';
@@ -266,9 +268,9 @@ export const Background = GObject.registerClass({
         let colorString, res_, color, secondColor;
 
         colorString = this._settings.get_string(PRIMARY_COLOR_KEY);
-        [res_, color] = Cogl.Color.from_string(colorString);
+        [res_, color] = Utils.color_from_string(colorString);
         colorString = this._settings.get_string(SECONDARY_COLOR_KEY);
-        [res_, secondColor] = Cogl.Color.from_string(colorString);
+        [res_, secondColor] = Utils.color_from_string(colorString);
 
         let shadingType = this._settings.get_enum(COLOR_SHADING_TYPE_KEY);
 

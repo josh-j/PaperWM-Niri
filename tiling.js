@@ -9,7 +9,7 @@ import St from 'gi://St';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 import {
-    Settings, Utils, Lib, Gestures, Navigator, Grab, Topbar, Scratch, Stackoverlay, BackgroundLegacy, Background
+    Settings, Utils, Lib, Gestures, Navigator, Grab, Topbar, Scratch, Stackoverlay, Background
 } from './imports.js';
 import { Easer } from './utils.js';
 import { ClickOverlay } from './stackoverlay.js';
@@ -1682,24 +1682,13 @@ border-radius: ${borderWidth}px;
         this.metaBackground?.destroy();
         this.metaBackground = null;
 
-        // attempt Gnome 47+ Background, fallback to Gnome 45/46 Background
-        try {
-            this.metaBackground = new Background.Background({
-                monitorIndex: this.monitor.index,
-                layoutManager: Main.layoutManager,
-                settings: backgroundSettings,
-                file: Gio.File.new_for_commandline_arg(path),
-                style: GDesktopEnums.BackgroundStyle.ZOOM,
-            });
-        } catch (error) {
-            this.metaBackground = new BackgroundLegacy.Background({
-                monitorIndex: this.monitor.index,
-                layoutManager: Main.layoutManager,
-                settings: backgroundSettings,
-                file: Gio.File.new_for_commandline_arg(path),
-                style: GDesktopEnums.BackgroundStyle.ZOOM,
-            });
-        }
+        this.metaBackground = new Background.Background({
+            monitorIndex: this.monitor.index,
+            layoutManager: Main.layoutManager,
+            settings: backgroundSettings,
+            file: Gio.File.new_for_commandline_arg(path),
+            style: GDesktopEnums.BackgroundStyle.ZOOM,
+        });
 
         this.background.content.set({
             background: this.metaBackground,
