@@ -2,13 +2,13 @@
  * This is a copy and modification of Gnome shell's background.js (keeping only the
  * relevant parts).
  *
- * This was done since `Background` class isn't exported in Gnome 45, and we use the
+ * This was done since `Background` class isn't exported in Gnome 47, and we use the
  * `Background` to add support for animated wallpapers in PaperWM spaces
  * (we previously used Meta.Background but it doesn't support animated wallpapers).
  *
- * See https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/45.0/js/ui/background.js
+ * See https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/449a7a13034d507cd8b6776c8e1a021264c8bf41/js/ui/background.js
  */
-import Clutter from 'gi://Clutter';
+import Cogl from 'gi://Cogl';
 import GDesktopEnums from 'gi://GDesktopEnums';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
@@ -266,9 +266,9 @@ export const Background = GObject.registerClass({
         let colorString, res_, color, secondColor;
 
         colorString = this._settings.get_string(PRIMARY_COLOR_KEY);
-        [res_, color] = Clutter.Color.from_string(colorString);
+        [res_, color] = Cogl.Color.from_string(colorString);
         colorString = this._settings.get_string(SECONDARY_COLOR_KEY);
-        [res_, secondColor] = Clutter.Color.from_string(colorString);
+        [res_, secondColor] = Cogl.Color.from_string(colorString);
 
         let shadingType = this._settings.get_enum(COLOR_SHADING_TYPE_KEY);
 
