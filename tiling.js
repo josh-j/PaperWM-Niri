@@ -3978,10 +3978,6 @@ export function insertWindow(metaWindow, options = {}) {
         return;
     }
 
-    const actor = metaWindow.get_compositor_private();
-    const space = spaces.spaceOfWindow(metaWindow);
-    const active = space.selectedWindow;
-
     const connectSizeChanged = tiled => {
         if (tiled) {
             animateWindow(metaWindow);
@@ -3992,6 +3988,7 @@ export function insertWindow(metaWindow, options = {}) {
         delete metaWindow.unmapped;
     };
 
+    let overwriteSpace = undefined;
     if (!existing) {
         /**
          * Note: Can't trust global.display.focus_window to determine currently focused window.
@@ -4021,6 +4018,11 @@ export function insertWindow(metaWindow, options = {}) {
 
             // pass winprop properties to metaWindow
             metaWindow.preferredWidth = winprop.preferredWidth;
+            overwriteSpace = winprop.spaceIndex;
+            if (typeof overwriteSpace !== "number") {
+                console.error("#winprops", `${overwriteSpace} is not a valid index. Ignoring.`);
+                overwriteSpace = undefined;
+            }
         }
 
         if (addToScratch) {
@@ -4060,6 +4062,31 @@ export function insertWindow(metaWindow, options = {}) {
         Scratch.makeScratch(metaWindow);
         return;
     }
+
+    const actor = metaWindow.get_compositor_private();
+    const spaceOfWindow = spaces.spaceOfWindow(metaWindow);
+    // allow winprops to overwrite which space the window is inserted into
+    let space = spaceOfWindow;
+    if (overwriteSpace) {
+        space = spaces.spaceOfIndex(overwriteSpace);
+        if (!space) {
+            console.error("#winprops", `Failed to find space with index ${overwriteSpace}. Can't insert window there.`);
+            space = spaceOfWindow;
+        }
+    }
+    if (spaceOfWindow !== space) {
+        console.log("#winprops", `Inserting window into space ${space.name}`);
+        spaceOfWindow.removeWindow(metaWindow);
+        metaWindow.foreach_transient(t => {
+            spaceOfWindow.removeWindow(t);
+        });
+        metaWindow.change_workspace(space.workspace);
+        metaWindow.foreach_transient(t => {
+            space.addFloating(t);
+        });
+        // activate?
+    }
+    const active = space.selectedWindow;
 
     if (!add_filter(metaWindow)) {
         connectSizeChanged();
