@@ -32,12 +32,17 @@ export const WinpropsPane = GObject.registerClass({
 
         this._expandedRow = null;
         this.rows = [];
+        this.workspaces = [];
     }
 
     addWinprops(winprops) {
         winprops.forEach(winprop => {
             this._listbox.insert(this._createRow(winprop), -1);
         });
+    }
+
+    setWorkspaces(workspaces) {
+        this.workspaces = workspaces;
     }
 
     _removeRow(row) {
@@ -61,7 +66,7 @@ export const WinpropsPane = GObject.registerClass({
 
     _createRow(winprop) {
         let wp = winprop ?? { wm_class: '' };
-        const row = new WinpropsRow({ winprop: wp });
+        const row = new WinpropsRow({ winprop: wp, workspaces: this.workspaces });
         this.rows.push(row);
         row.connect('notify::expanded', row => this._onRowExpanded(row));
         row.connect('row-deleted', row => this._removeRow(row));
@@ -110,6 +115,12 @@ export const WinpropsRow = GObject.registerClass({
             'winprop',
             'Winprop',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY
+        ),
+        workspaces: GObject.ParamSpec.jsobject(
+            'workspaces',
+            'workspaces',
+            'Workspaces',
+            GObject.ParamFlags.READWRITE
         ),
         expanded: GObject.ParamSpec.boolean(
             'expanded',
@@ -192,18 +203,20 @@ export const WinpropsRow = GObject.registerClass({
             }
         });
 
-        // TODO make dropdown of workspace names
-        this._space.set_text(this.winprop.spaceIndex?.toString() ?? '');
+        this._space.append_text("CURRENT");
+        for (const [i, name] of this.workspaces.entries()) {
+            // Combo box entries in normal workspace index order
+            this._space.append_text(`${i}: ${name}`);
+        }
+        // index 0 is CURRENT, so add 1
+        this._space.set_active((this.winprop.spaceIndex ?? -1) + 1)
         this._space.connect('changed', () => {
-            let text = this._space.get_text();
-            let value = parseInt(text);
-            if (isNaN(value)) {
-                this._setError(this._space);
-            } else {
-                this._setError(this._space, false);
-                this.winprop.spaceIndex = value;
-                this.emit('changed');
+            let value = this._space.get_active() - 1;
+            if (value < 0) {
+                value = undefined;
             }
+            this.winprop.spaceIndex = value;
+            this.emit('changed');
         });
 
         this._updateState();

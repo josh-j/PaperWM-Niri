@@ -357,11 +357,15 @@ class SettingsWidget {
             workspaceStack.add_named(view, i.toString());
         }
 
+        let workspaces = [];
         for (let i of wsIndices) {
             // Combo box entries in normal workspace index order
             let name = this.getWorkspaceName(wsSettingsByIndex[i], i);
             workspaceCombo.append_text(name);
+            workspaces.push(name);
         }
+
+        this.builder.get_object('winpropsPane').setWorkspaces(workspaces);
 
         this.builder.get_object('workspace_reset_button').connect('clicked', () => {
             this._updatingName = true;
