@@ -101,6 +101,7 @@ export const WinpropsRow = GObject.registerClass({
         'title',
         'scratchLayer',
         'preferredWidth',
+        'space',
         'deleteButton',
     ],
     Properties: {
@@ -187,6 +188,20 @@ export const WinpropsRow = GObject.registerClass({
                 // having no preferredWidth is valid
                 this._setError(this._preferredWidth, false);
                 delete this.winprop.preferredWidth;
+                this.emit('changed');
+            }
+        });
+
+        // TODO make dropdown of workspace names
+        this._space.set_text(this.winprop.spaceIndex?.toString() ?? '');
+        this._space.connect('changed', () => {
+            let text = this._space.get_text();
+            let value = parseInt(text);
+            if (isNaN(value)) {
+                this._setError(this._space);
+            } else {
+                this._setError(this._space, false);
+                this.winprop.spaceIndex = value;
                 this.emit('changed');
             }
         });
