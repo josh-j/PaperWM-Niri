@@ -107,6 +107,7 @@ export const WinpropsRow = GObject.registerClass({
         'scratchLayer',
         'preferredWidth',
         'space',
+        'focus',
         'deleteButton',
     ],
     Properties: {
@@ -216,6 +217,13 @@ export const WinpropsRow = GObject.registerClass({
                 value = undefined;
             }
             this.winprop.spaceIndex = value;
+            this.emit('changed');
+        });
+
+        this._focus.set_active(this.winprop.focus ?? true);
+        this._focus.connect('state-set', () => {
+            let isActive = this._focus.get_active();
+            this.winprop.focus = isActive;
             this.emit('changed');
         });
 
