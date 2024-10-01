@@ -2694,6 +2694,15 @@ export const Spaces = class Spaces extends Map {
         this.forEach(s => s.setSpaceTopbarElementsVisible(true, { force: true }));
     }
 
+    switchSpace(fromSpace, toSpace, animate = false) {
+        const fromId = fromSpace?.index;
+        const toId = toSpace?.index;
+        if (!fromSpace || !toSpace) {
+            return;
+        }
+        spaces.switchWorkspace(null, fromId, toId, animate);
+    }
+
     switchWorkspace(wm, fromIndex, toIndex, animate = false) {
         /**
          * disable swipetrackers on workspace switch to avoid gesture confusion
@@ -3988,7 +3997,7 @@ export function insertWindow(metaWindow, options = {}) {
         delete metaWindow.unmapped;
     };
 
-    let overwriteSpace = undefined;
+    let overwriteSpace;
     let focusOnOpen = true;
 
     if (!existing) {
@@ -4091,13 +4100,6 @@ export function insertWindow(metaWindow, options = {}) {
         metaWindow.foreach_transient(t => {
             space.addFloating(t);
         });
-
-        if (focusOnOpen) {
-            console.log("#winprops", "focussing space of inserted window");
-            // TODO doesn't seem to work
-            spaces.animateToSpace(spaceOfWindow, space, true);
-            // space.activateWithFocus(metaWindow, false, false);
-        }
     }
     const active = space.selectedWindow;
 
@@ -4204,6 +4206,11 @@ export function insertWindow(metaWindow, options = {}) {
 
     space.layout();
     animateWindow(metaWindow);
+    if (focusOnOpen) {
+        console.log("#winprops", "focusing space of inserted window");
+        spaces.switchSpace(space, spaces.spaceOfWindow(metaWindow), true);
+    }
+
     if (metaWindow === display.focus_window) {
         focus_handler(metaWindow);
     } else if (space === spaces.activeSpace) {
