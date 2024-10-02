@@ -4025,6 +4025,7 @@ export function insertWindow(metaWindow, options = {}) {
             // pass winprop properties to metaWindow
             metaWindow.preferredWidth = winprop.preferredWidth;
             if (winprop.focus) {
+                console.error("#winprops", `setting ${metaWindow?.title} to focusOnOpen`);
                 metaWindow.focusOnOpen = true;
             }
 
