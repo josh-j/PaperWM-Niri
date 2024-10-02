@@ -3977,7 +3977,6 @@ export function insertWindow(metaWindow, options = {}) {
     const existing = options?.existing ?? false;
     const dropping = options?.dropping ?? false;
     const dropCallback = options?.dropCallback ?? function() {};
-    const spaceOverwritten = options?.spaceOverwritten ?? false;
 
     // Add newly created windows to the space being previewed
     if (!existing &&
@@ -4014,7 +4013,7 @@ export function insertWindow(metaWindow, options = {}) {
         let addToScratch = false;
 
         let winprop = Settings.find_winprop(metaWindow);
-        if (!spaceOverwritten && winprop) {
+        if (winprop) {
             if (winprop.oneshot) {
                 Settings.winprops.splice(Settings.winprops.indexOf(winprop), 1);
             }
@@ -4077,7 +4076,7 @@ export function insertWindow(metaWindow, options = {}) {
     const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
 
-    if (!spaceOverwritten && overwriteSpace) {
+    if (overwriteSpace) {
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (newspace) {
             console.log("#winprops", `Inserting window into space ${newspace.name}`);
@@ -4086,7 +4085,7 @@ export function insertWindow(metaWindow, options = {}) {
                 space.addFloating(t);
             });
             connectSizeChanged(true);
-            insertWindow(metaWindow, { spaceOverwritten: true });
+            insertWindow(metaWindow, { existing: true });
             return;
         }
     }
