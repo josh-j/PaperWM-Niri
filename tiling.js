@@ -4030,9 +4030,11 @@ export function insertWindow(metaWindow, options = {}) {
             }
 
             overwriteSpace = winprop.spaceIndex;
-            if (typeof overwriteSpace !== "number") {
-                console.error("#winprops", `${overwriteSpace} is not a valid index. Ignoring.`);
-                overwriteSpace = undefined;
+            if (overwriteSpace !== undefined) {
+                if (typeof overwriteSpace !== "number") {
+                    console.error("#winprops", `${overwriteSpace} is not a valid index. Ignoring.`);
+                    overwriteSpace = undefined;
+                }
             }
         }
 
@@ -4077,7 +4079,8 @@ export function insertWindow(metaWindow, options = {}) {
     const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
 
-    if (overwriteSpace) {
+    if (overwriteSpace !== undefined) {
+        console.log("#winprops", `overwrite space to index ${overwriteSpace} for ${metaWindow?.title}`);
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (newspace) {
             console.log("#winprops", `Inserting window into space ${newspace.name}`);
