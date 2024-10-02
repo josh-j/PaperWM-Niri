@@ -3977,6 +3977,7 @@ export function insertWindow(metaWindow, options = {}) {
     const existing = options?.existing ?? false;
     const dropping = options?.dropping ?? false;
     const dropCallback = options?.dropCallback ?? function() {};
+    const spaceOverwritten = options?.spaceOverwritten ?? false;
 
     // Add newly created windows to the space being previewed
     if (!existing &&
@@ -4013,7 +4014,7 @@ export function insertWindow(metaWindow, options = {}) {
         let addToScratch = false;
 
         let winprop = Settings.find_winprop(metaWindow);
-        if (winprop) {
+        if (!spaceOverwritten && winprop) {
             if (winprop.oneshot) {
                 Settings.winprops.splice(Settings.winprops.indexOf(winprop), 1);
             }
@@ -4076,7 +4077,7 @@ export function insertWindow(metaWindow, options = {}) {
     const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
 
-    if (overwriteSpace) {
+    if (!spaceOverwritten && overwriteSpace) {
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (newspace) {
             console.log("#winprops", `Inserting window into space ${newspace.name}`);
@@ -4085,7 +4086,7 @@ export function insertWindow(metaWindow, options = {}) {
                 space.addFloating(t);
             });
             connectSizeChanged(true);
-            insertWindow(metaWindow, { existing: true, dropping: false });
+            insertWindow(metaWindow, { spaceOverwritten: true });
             return;
         }
     }
@@ -4199,7 +4200,8 @@ export function insertWindow(metaWindow, options = {}) {
         console.log("#winprops", "focusing space of inserted window");
         spaces.spaceOfWindow(metaWindow)?.activateWithFocus(metaWindow, false, true);
     }
-    else if (metaWindow === display.focus_window) {
+
+    if (metaWindow === display.focus_window) {
         focus_handler(metaWindow);
     } else if (space === spaces.activeSpace) {
         Main.activateWindow(metaWindow);
