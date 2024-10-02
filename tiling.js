@@ -3998,8 +3998,6 @@ export function insertWindow(metaWindow, options = {}) {
     };
 
     let overwriteSpace;
-    let focusOnOpen = true;
-
     if (!existing) {
         /**
          * Note: Can't trust global.display.focus_window to determine currently focused window.
@@ -4023,20 +4021,17 @@ export function insertWindow(metaWindow, options = {}) {
                 console.debug("#winprops", `Move ${metaWindow?.title} to scratch`);
                 addToScratch = true;
             }
-            if (winprop.focus) {
-                Main.activateWindow(metaWindow);
-            }
 
             // pass winprop properties to metaWindow
             metaWindow.preferredWidth = winprop.preferredWidth;
+            if (winprop.focus) {
+                metaWindow.focusOnOpen = true;
+            }
+
             overwriteSpace = winprop.spaceIndex;
             if (typeof overwriteSpace !== "number") {
                 console.error("#winprops", `${overwriteSpace} is not a valid index. Ignoring.`);
                 overwriteSpace = undefined;
-            }
-
-            if (winprop.focus === false) {
-                focusOnOpen = false;
             }
         }
 
@@ -4079,27 +4074,20 @@ export function insertWindow(metaWindow, options = {}) {
     }
 
     const actor = metaWindow.get_compositor_private();
-    const spaceOfWindow = spaces.spaceOfWindow(metaWindow);
-    // allow winprops to overwrite which space the window is inserted into
-    let space = spaceOfWindow;
+    const space = spaces.spaceOfWindow(metaWindow);
+
     if (overwriteSpace) {
-        space = spaces.spaceOfIndex(overwriteSpace);
-        if (!space) {
-            console.error("#winprops", `Failed to find space with index ${overwriteSpace}. Can't insert window there.`);
-            space = spaceOfWindow;
+        const newspace = spaces.spaceOfIndex(overwriteSpace);
+        if (newspace) {
+            console.log("#winprops", `Inserting window into space ${newspace.name}`);
+            metaWindow.change_workspace(newspace.workspace);
+            metaWindow.foreach_transient(t => {
+                space.addFloating(t);
+            });
+            connectSizeChanged(true);
+            insertWindow(metaWindow, { existing: true, dropping: false });
+            return;
         }
-    }
-    if (spaceOfWindow !== space) {
-        console.log("#winprops", `Inserting window into space ${space.name} (current space ${spaceOfWindow.name})`);
-        spaceOfWindow.removeWindow(metaWindow);
-        metaWindow.foreach_transient(t => {
-            spaceOfWindow.removeWindow(t);
-        });
-        // TODO do we need metaWindow.move_to_monitor(...)
-        metaWindow.change_workspace(space.workspace);
-        metaWindow.foreach_transient(t => {
-            space.addFloating(t);
-        });
     }
     const active = space.selectedWindow;
 
@@ -4206,12 +4194,12 @@ export function insertWindow(metaWindow, options = {}) {
 
     space.layout();
     animateWindow(metaWindow);
-    if (focusOnOpen) {
+    if (metaWindow.focusOnOpen) {
+        delete metaWindow.focusOnOpen;
         console.log("#winprops", "focusing space of inserted window");
-        spaces.switchSpace(space, spaces.spaceOfWindow(metaWindow), true);
+        spaces.spaceOfWindow(metaWindow)?.activateWithFocus(metaWindow, false, true);
     }
-
-    if (metaWindow === display.focus_window) {
+    else if (metaWindow === display.focus_window) {
         focus_handler(metaWindow);
     } else if (space === spaces.activeSpace) {
         Main.activateWindow(metaWindow);
