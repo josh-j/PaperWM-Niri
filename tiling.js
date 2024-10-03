@@ -4081,8 +4081,12 @@ export function insertWindow(metaWindow, options = {}) {
 
     if (overwriteSpace !== undefined) {
         const newspace = spaces.spaceOfIndex(overwriteSpace);
-        if (newspace) {
-            console.debug("#winprops", `Inserting window into space ${newspace.name}`);
+        if (!newspace) {
+            console.warn("#winprops", `overwriteSpace with index ${overwriteSpace} does not exist. \
+Opening "${metaWindow?.title}" on current space.`);
+        }
+        else {
+            console.debug("#winprops", `inserting window into space ${newspace.name}`);
             metaWindow.change_workspace(newspace.workspace);
             metaWindow.foreach_transient(t => {
                 space.addFloating(t);
