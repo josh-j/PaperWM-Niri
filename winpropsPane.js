@@ -210,7 +210,7 @@ export const WinpropsRow = GObject.registerClass({
             this._space.append_text(`${i}: ${name}`);
         }
         // index 0 is CURRENT, so add 1
-        this._space.set_active((this.winprop.spaceIndex ?? -1) + 1)
+        this._space.set_active((this.winprop.spaceIndex ?? -1) + 1);
         this._space.connect('changed', () => {
             let value = this._space.get_active() - 1;
             if (value < 0) {
@@ -298,15 +298,16 @@ export const WinpropsRow = GObject.registerClass({
     }
 
     _setAccelLabel() {
-        let isScratch = this.winprop.scratch_layer ?? false;
-        let isPreferredWidth = this.winprop.preferredWidth || false;
-
-        if (isScratch) {
+        if (this.winprop.scratch_layer ?? false) {
             return 'scratch layer';
         }
-        else if (isPreferredWidth) {
+        else if (this.winprop.preferredWidth ?? false) {
             return 'preferred width';
-        } else {
+        }
+        else if (this.winprop.spaceIndex !== undefined) {
+            return 'workspace';
+        }
+        else {
             return 'no setting';
         }
     }
