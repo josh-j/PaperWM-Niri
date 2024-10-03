@@ -4025,7 +4025,7 @@ export function insertWindow(metaWindow, options = {}) {
             // pass winprop properties to metaWindow
             metaWindow.preferredWidth = winprop.preferredWidth;
             if (winprop.focus) {
-                console.error("#winprops", `setting ${metaWindow?.title} to focusOnOpen`);
+                console.debug("#winprops", `setting ${metaWindow?.title} to focusOnOpen`);
                 metaWindow.focusOnOpen = true;
             }
 
@@ -4080,10 +4080,9 @@ export function insertWindow(metaWindow, options = {}) {
     const space = spaces.spaceOfWindow(metaWindow);
 
     if (overwriteSpace !== undefined) {
-        console.log("#winprops", `overwrite space to index ${overwriteSpace} for ${metaWindow?.title}`);
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (newspace) {
-            console.log("#winprops", `Inserting window into space ${newspace.name}`);
+            console.debug("#winprops", `Inserting window into space ${newspace.name}`);
             metaWindow.change_workspace(newspace.workspace);
             metaWindow.foreach_transient(t => {
                 space.addFloating(t);
@@ -4200,7 +4199,7 @@ export function insertWindow(metaWindow, options = {}) {
     animateWindow(metaWindow);
     if (metaWindow.focusOnOpen) {
         delete metaWindow.focusOnOpen;
-        console.log("#winprops", "focusing space of inserted window");
+        console.debug("#winprops", "focusing space of inserted window");
         spaces.spaceOfWindow(metaWindow)?.activateWithFocus(metaWindow, false, true);
     }
 
