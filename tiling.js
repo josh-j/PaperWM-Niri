@@ -3997,6 +3997,8 @@ export function insertWindow(metaWindow, options = {}) {
         delete metaWindow.unmapped;
     };
 
+    const actor = metaWindow.get_compositor_private();
+
     let overwriteSpace;
     if (!existing) {
         /**
@@ -4076,7 +4078,6 @@ export function insertWindow(metaWindow, options = {}) {
         return;
     }
 
-    const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
 
     if (overwriteSpace !== undefined) {
