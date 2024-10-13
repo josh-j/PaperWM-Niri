@@ -3997,6 +3997,8 @@ export function insertWindow(metaWindow, options = {}) {
         delete metaWindow.unmapped;
     };
 
+    const actor = metaWindow.get_compositor_private();
+
     let overwriteSpace;
     if (!existing) {
         /**
@@ -4024,10 +4026,6 @@ export function insertWindow(metaWindow, options = {}) {
 
             // pass winprop properties to metaWindow
             metaWindow.preferredWidth = winprop.preferredWidth;
-            if (winprop.focus) {
-                console.debug("#winprops", `setting ${metaWindow?.title} to focusOnOpen`);
-                metaWindow.focusOnOpen = true;
-            }
 
             overwriteSpace = winprop.spaceIndex;
             if (overwriteSpace !== undefined) {
@@ -4035,6 +4033,13 @@ export function insertWindow(metaWindow, options = {}) {
                     console.error("#winprops", `${overwriteSpace} is not a valid index. Ignoring.`);
                     overwriteSpace = undefined;
                 }
+                // save temporary as metaWindow property
+                metaWindow.overwriteSpace = overwriteSpace;
+            }
+
+            if (winprop.focus) {
+                console.debug("#winprops", `setting ${metaWindow?.title} to focusOnOpen`);
+                metaWindow.focusOnOpen = true;
             }
         }
 
@@ -4076,7 +4081,6 @@ export function insertWindow(metaWindow, options = {}) {
         return;
     }
 
-    const actor = metaWindow.get_compositor_private();
     const space = spaces.spaceOfWindow(metaWindow);
 
     if (overwriteSpace !== undefined) {
@@ -4208,10 +4212,16 @@ Opening "${metaWindow?.title}" on current space.`);
 
     space.layout();
     animateWindow(metaWindow);
-    if (metaWindow.focusOnOpen) {
-        delete metaWindow.focusOnOpen;
-        console.debug("#winprops", "focusing space of inserted window");
-        spaces.spaceOfWindow(metaWindow)?.activateWithFocus(metaWindow, false, true);
+    if (metaWindow.overwriteSpace !== undefined) {
+        delete metaWindow.overwriteSpace;
+        if (!metaWindow.focusOnOpen) {
+            return;
+        }
+        else {
+            delete metaWindow.focusOnOpen;
+            console.debug("#winprops", "focusing space of inserted window");
+            spaces.spaceOfWindow(metaWindow)?.activateWithFocus(metaWindow, false, true);
+        }
     }
 
     if (metaWindow === display.focus_window) {
