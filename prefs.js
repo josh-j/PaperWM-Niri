@@ -656,7 +656,7 @@ class SettingsWidget {
             'folder-open-symbolic',
             {
                 action: Gtk.FileChooserAction.SELECT_FOLDER,
-                title: 'Select workspace background',
+                title: 'Select workspace directory',
                 select_multiple: false,
                 modal: true,
                 transient_for: this.window.get_root(),
