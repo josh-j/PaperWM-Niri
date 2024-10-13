@@ -330,15 +330,6 @@ class SettingsWidget {
             this._settings.set_boolean('show-workspace-indicator', !state);
         });
 
-        enumOptionsChanged(
-            'dynamic-workspace-behavior',
-            {
-                'gnome': 0,
-                'paperwm': 1,
-            },
-            'paperwm',
-            1);
-
         // Workspaces
         booleanStateChanged('use-default-background');
 
