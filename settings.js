@@ -81,7 +81,6 @@ export function enable(extension) {
         'open-window-position-option-end',
         'open-window-position-option-down',
         'open-window-position-option-up',
-        'dynamic-workspace-behavior',
     ]
         .forEach(k => setState(null, k));
     prefs.__defineGetter__("minimum_margin", () => {

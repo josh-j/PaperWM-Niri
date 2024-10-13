@@ -4084,13 +4084,6 @@ export function insertWindow(metaWindow, options = {}) {
     const space = spaces.spaceOfWindow(metaWindow);
 
     if (overwriteSpace !== undefined) {
-        // create required spaces
-        let created = 0;
-        while (workspaceManager.nWorkspaces <= overwriteSpace) {
-            workspaceManager.append_new_workspace(false, global.get_current_time());
-            created++;
-        }
-        console.debug("#winprops", `created ${created} new spaces for insertion`);
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (!newspace) {
             console.warn("#winprops", `overwriteSpace with index ${overwriteSpace} does not exist. \
