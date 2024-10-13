@@ -678,11 +678,20 @@ export function _checkWorkspaces() {
 
     // Delete empty workspaces except for the last one; do it from the end
     // to avoid index changes
+    // PaperWM dynamic workspace behaviour
+    const removeCheck = i => {
+        switch (Settings.prefs.dynamic_workspace_behavior) {
+        case 0:
+            // eslint-disable-next-line eqeqeq
+            return emptyWorkspaces[i] && i != lastEmptyIndex;
+        default:
+            return emptyWorkspaces[i] && i > lastEmptyIndex;
+        }
+    };
     for (i = lastIndex; i >= 0; i--) {
         // eslint-disable-next-line eqeqeq
-        if (emptyWorkspaces[i] && i != lastEmptyIndex) {
-            workspaceManager.remove_workspace(this._workspaces[i]
-                , global.get_current_time());
+        if (removeCheck(i)) {
+            workspaceManager.remove_workspace(this._workspaces[i], global.get_current_time());
         }
     }
 
