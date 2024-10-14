@@ -7,7 +7,6 @@
   "shell-version": [ "45", "46", "47" ],
   "version-name": "47.1.0",
   "donations": {
-    "buymeacoffee": "jaytaala",
-    "patreon": "valpackett"
+    "buymeacoffee": "jaytaala"
   }
 }
