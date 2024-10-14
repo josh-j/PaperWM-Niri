@@ -4086,6 +4086,11 @@ export function insertWindow(metaWindow, options = {}) {
     if (overwriteSpace !== undefined) {
         const newspace = spaces.spaceOfIndex(overwriteSpace);
         if (!newspace) {
+            Main.notify(
+                `PaperWM [winprop]: cannot open window on workspace ${overwriteSpace} (index)`,
+                `"${metaWindow?.title}" cannot be opened on workspace with index ${overwriteSpace} 
+(workspace not found). Opening on current workspace instead.`
+            );
             console.warn("#winprops", `overwriteSpace with index ${overwriteSpace} does not exist. \
 Opening "${metaWindow?.title}" on current space.`);
         }
