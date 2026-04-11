@@ -9,7 +9,7 @@ import { AcceleratorParse } from './acceleratorparse.js';
     at the top).
  */
 
-const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm.keybindings';
+const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm-niri.keybindings';
 const RESTORE_KEYBINDS_KEY = 'restore-keybinds';
 
 // This is the value mutter uses for the keyvalue of above_tab
@@ -445,7 +445,7 @@ export function defwinprop(spec) {
 
 /**
  * Adds user-defined winprops from gsettings (as defined in
- * org.gnome.shell.extensions.paperwm.winprops) to the winprops array.
+ * org.gnome.shell.extensions.paperwm-niri.winprops) to the winprops array.
  */
 export function addWinpropsFromGSettings() {
     // add gsetting (user config) winprops
@@ -483,7 +483,7 @@ export function removeGSettingWinpropsFromArray() {
  * Effectively reloads winprops from gsettings.
  * This is a convenience function which removes gsetting winprops from winprops
  * array and then adds the currently defined
- * org.gnome.shell.extensions.paperwm.winprops winprops.
+ * org.gnome.shell.extensions.paperwm-niri.winprops winprops.
  */
 export function reloadWinpropsFromGSettings() {
     removeGSettingWinpropsFromArray();

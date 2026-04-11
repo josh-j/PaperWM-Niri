@@ -6,8 +6,8 @@ import * as Lib from './lib.js';
 /**
  * Workspace related utility functions used by other modules.
  */
-const WORKSPACE_LIST_KEY = 'org.gnome.shell.extensions.paperwm.workspacelist';
-const WORKSPACE_KEY = 'org.gnome.shell.extensions.paperwm.workspace';
+const WORKSPACE_LIST_KEY = 'org.gnome.shell.extensions.paperwm-niri.workspacelist';
+const WORKSPACE_KEY = 'org.gnome.shell.extensions.paperwm-niri.workspace';
 
 export class WorkspaceSettings {
     constructor(extension) {

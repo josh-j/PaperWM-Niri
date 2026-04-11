@@ -8,7 +8,7 @@ import { AcceleratorParse } from './acceleratorparse.js';
 
 const _ = s => s;
 
-const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm.keybindings';
+const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm-niri.keybindings';
 
 const sections = {
     windows: 'Windows',

@@ -1,8 +1,8 @@
 <schemalist>
 
   <!-- Keybindings -->
-  <schema id="org.gnome.shell.extensions.paperwm.keybindings"
-          path="/org/gnome/shell/extensions/paperwm/keybindings/">
+  <schema id="org.gnome.shell.extensions.paperwm-niri.keybindings"
+          path="/org/gnome/shell/extensions/paperwm-niri/keybindings/">
 
     <key type="as" name="new-window">
       <default><![CDATA[['<Super>Return', '<Super>n']]]></default>
@@ -451,7 +451,7 @@
     </key>
   </schema>
 
-  <schema id="org.gnome.shell.extensions.paperwm.workspace">
+  <schema id="org.gnome.shell.extensions.paperwm-niri.workspace">
       <key type="i" name="index">
           <default>-1</default>
           <summary>The workspace index</summary>
@@ -482,14 +482,14 @@
       </key>
   </schema>
 
-  <schema id="org.gnome.shell.extensions.paperwm.workspacelist"
-          path="/org/gnome/shell/extensions/paperwm/workspaces/">
+  <schema id="org.gnome.shell.extensions.paperwm-niri.workspacelist"
+          path="/org/gnome/shell/extensions/paperwm-niri/workspaces/">
       <key name="list" type="as">
           <default>[]</default>
       </key>
   </schema>
 
-  <schema id="org.gnome.shell.extensions.paperwm" path="/org/gnome/shell/extensions/paperwm/">
+  <schema id="org.gnome.shell.extensions.paperwm-niri" path="/org/gnome/shell/extensions/paperwm-niri/">
     <key type="s" name="last-used-display-server">
         <default>''</default>
         <summary>Saves the last display server used for PaperWM (Wayland / X11)</summary>
@@ -768,8 +768,8 @@
         <summary>Number of fingers for workspace switching. 0:DISABLED 3:THREE_FINGERS 4:FOUR_FINGERS</summary>
     </key>
 
-    <child name="keybindings" schema="org.gnome.shell.extensions.paperwm.keybindings"/>
-    <child name="workspaces" schema="org.gnome.shell.extensions.paperwm.workspacelist"/>
+    <child name="keybindings" schema="org.gnome.shell.extensions.paperwm-niri.keybindings"/>
+    <child name="workspaces" schema="org.gnome.shell.extensions.paperwm-niri.workspacelist"/>
 
   </schema>
 

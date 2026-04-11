@@ -41,7 +41,7 @@ esac
 
 
 dconf reset -f /  # Reset settings
-dconf write /org/gnome/shell/enabled-extensions "['paperwm@paperwm.github.com']"
+dconf write /org/gnome/shell/enabled-extensions "['paperwm-niri@josh-j.github.com']"
 
 gnome-shell $args
 

@@ -1,10 +1,10 @@
 { pkgs, stdenv, glib, ... }:
 
 let
-  uuid = "paperwm@paperwm.github.com";
+  uuid = "paperwm-niri@josh-j.github.com";
 in
 stdenv.mkDerivation {
-  pname = "gnome-shell-extension-paperwm";
+  pname = "gnome-shell-extension-paperwm-niri";
   version = "unstable";
   src = ./.;
 
@@ -15,7 +15,7 @@ stdenv.mkDerivation {
     ];
 
   passthru = {
-    extensionPortalSlug = "paperwm";
+    extensionPortalSlug = "paperwm-niri";
     extensionUuid = uuid;
   };
 }

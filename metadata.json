@@ -1,9 +1,9 @@
 {
-  "uuid": "paperwm@paperwm.github.com",
-  "name": "PaperWM",
+  "uuid": "paperwm-niri@josh-j.github.com",
+  "name": "PaperWM-Niri",
   "description": "Tiling window manager with a twist",
-  "url": "https://github.com/paperwm/PaperWM",
-  "settings-schema": "org.gnome.shell.extensions.paperwm",
+  "url": "https://github.com/josh-j/PaperWM-Niri",
+  "settings-schema": "org.gnome.shell.extensions.paperwm-niri",
   "shell-version": [ "45", "46", "47", "48", "49" ],
   "version-name": "49.0.2"
 }

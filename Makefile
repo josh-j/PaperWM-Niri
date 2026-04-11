@@ -5,12 +5,12 @@ XDG_DATA_HOME := ${HOME}/.local/share
 endif
 
 SOURCE      := $$PWD
-EXT_ID      := paperwm@paperwm.github.com
+EXT_ID      := paperwm-niri@josh-j.github.com
 EXT_DIR     := $(XDG_DATA_HOME)/gnome-shell/extensions
 TARGET      := $(EXT_DIR)/$(EXT_ID)
 
 CONFIG_FILES   = config/user.js config/user.css
-GSCHEMA_FILES  = schemas/org.gnome.shell.extensions.paperwm.gschema.xml
+GSCHEMA_FILES  = schemas/org.gnome.shell.extensions.paperwm-niri.gschema.xml
 JS_FILES       = $(wildcard *.js)
 UI_FILES       = $(wildcard *.ui)
 RESOURCE_FILES = $(wildcard resources/*)

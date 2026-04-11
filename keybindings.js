@@ -12,7 +12,7 @@ import {
 const Seat = Clutter.get_default_backend().get_default_seat();
 const display = global.display;
 
-const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm.keybindings';
+const KEYBINDINGS_KEY = 'org.gnome.shell.extensions.paperwm-niri.keybindings';
 
 let keybindSettings;
 export function enable(extension) {

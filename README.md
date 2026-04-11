@@ -1,4 +1,4 @@
-# PaperWM #
+# PaperWM-Niri #
 
 [![project chat](https://img.shields.io/badge/PaperWM_Discussions-join_chat-brightgreen)](https://github.com/paperwm/PaperWM/discussions)
 
@@ -40,7 +40,7 @@ Running the extension will automatically install a user config file as described
 >
 > After logging back in, you can then enable PaperWM via the `Extensions` application, or by running the following command from the command-line:
 >
-> `/usr/bin/gnome-extensions enable paperwm@paperwm.github.com`
+> `/usr/bin/gnome-extensions enable paperwm-niri@josh-j.github.com`
 >
 
 > if you have run into issues, delete any older `paperwm@...` symlinks from `~/.local/share/gnome-shell/extensions` and re-run the `install.sh` script.
@@ -328,7 +328,7 @@ https://github.com/paperwm/PaperWM/assets/30424662/c7c50471-f352-4693-a936-2e711
 
 ## User configuration & development ##
 
-You can supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm@paperwm.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm@paperwm.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
+You can supply a custom `user.css` in `~/.config/paperwm/`. This user stylesheet can override the default styles of paperwm (e.g. from `~/.local/share/gnome-shell/extensions/paperwm-niri@josh-j.github.com/user.css` or `/usr/share/gnome-shell/extensions/paperwm-niri@josh-j.github.com/user.css`), gnome or even other extensions. The same rules as for CSS in the browser apply (i.e. CSS rules are additive). 
 
 You can reload the `user.css` by disabling (turning off) PaperWM and then re-enabling PaperWM (turning on), e.g via `Extensions` app, or by running `Main.loadTheme()` in looking glass (i.e. <kbd>Alt</kbd><kbd>F2</kbd> `lg` <kbd>Return</kbd>). Note that the latter approach will reload all other .css files (e.g. from other extensions) and `user.css` needs to already be loaded for this to work. So after initially creating the file you'll need to disable then enable PaperWM (or restart Gnome).
 
@@ -339,7 +339,7 @@ PaperWM provides an extension settings UI to modify many of PaperWM's more preva
 You can also use `dconf-editor` to view and modify all PaperWM user settings.  You can view all settings by executing the following command from a terminal:
 
 ```shell
-GSETTINGS_SCHEMA_DIR=::$HOME/.local/share/gnome-shell/extensions/paperwm@paperwm.github.com/schemas dconf-editor /org/gnome/shell/extensions/paperwm/ &>/dev/null
+GSETTINGS_SCHEMA_DIR=::$HOME/.local/share/gnome-shell/extensions/paperwm-niri@josh-j.github.com/schemas dconf-editor /org/gnome/shell/extensions/paperwm-niri/ &>/dev/null
 ```
 
 ### PaperWM user-configurable settings _not_ available in settings UI
